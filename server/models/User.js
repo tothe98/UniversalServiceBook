@@ -3,7 +3,8 @@ const mongoose = require('mongoose')
 const UserSchema = new mongoose.Schema({
     WId: {
         type: String,
-        required: false
+        required: false,
+        default: ""
     },
     fname: {
         type: String,
@@ -15,9 +16,15 @@ const UserSchema = new mongoose.Schema({
     },
     username: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    password: {
         type: String,
         required: true
     },
@@ -27,6 +34,10 @@ const UserSchema = new mongoose.Schema({
 
     },
     isActive: {
+        type: Boolean,
+        default: false
+    },
+    isAdmin: {
         type: Boolean,
         default: false
     }
