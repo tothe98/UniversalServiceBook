@@ -38,8 +38,11 @@ exports.signin = async (req, res) => {
     if (!user) {
         return res.status(400).json({ message: 'notExist' })
     }
+    if (!user.isActive) {
+        return res.status(403).json({ message: 'notActive' })
+    }
     if (await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({ userId: user.id, username: user.username, email: user.email }, process.env.JWT_SECRET)
+        const token = jwt.sign({ userId: user.id, username: user.username, email: user.email, wid: user.WId, isAdmin: user.isAdmin }, process.env.JWT_SECRET)
 
         if (res.status(201)) {
             return res.status(201).json({ token: token })
