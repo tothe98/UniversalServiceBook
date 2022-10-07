@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const VeichelsSchema = new mongoose.Schema({
+const VehiclesSchema = new mongoose.Schema({
     UId: {
         type: String,
         required: true
@@ -24,7 +24,8 @@ const VeichelsSchema = new mongoose.Schema({
         unique: true
     },
     engine: {
-        type: String
+        type: String,
+        default:""
     },
     fuel: {
         type: String,
@@ -36,8 +37,13 @@ const VeichelsSchema = new mongoose.Schema({
         enum: ['', 'Manual', 'Automatic', 'Sequential'],
         default: ''
     },
+    color: {
+        type: String,
+        default: ""
+    },
     picture: {
-        type: Binary
+        type: String,
+        default: ""
     },
     isDelete: {
         type: Boolean,
@@ -46,7 +52,7 @@ const VeichelsSchema = new mongoose.Schema({
 
 },
     {
-        collection: 'VeichelsInfo'
+        collection: 'VehiclesInfo'
     })
 
-mongoose.model('VeichelsInfo', VeichelsSchema)
+mongoose.model('VehiclesInfo', VehiclesSchema)

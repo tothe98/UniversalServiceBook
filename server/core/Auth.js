@@ -10,7 +10,7 @@ function authenticateToken(req, res, next) {
             if (err) {
                 res.status(403).json({ auth: false, message: 'Nincs hitelesítve!' })
             } else {
-                req.userId = decoded.id
+                req.userId = decoded.userId
                 req.username = decoded.username
                 req.email = decoded.email
                 req.isAdmin = decoded.isAdmin
