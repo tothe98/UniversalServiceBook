@@ -44,8 +44,4 @@ mongoose
 
 app.use('/api', routesUrls)
 
-app.get("/api", (req, res) => {
-    res.status(200).json({ name: 'signin', url: '/api/signin', method: 'GET' })
-})
-
 app.listen(process.env.PORT, () => { console.log(`Szerver elindult a ${process.env.PORT}-as porton.`) })
