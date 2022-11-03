@@ -2,17 +2,20 @@ import { createTheme } from "@mui/material";
 
 export default createTheme({
     palette: {
-        dark: {
-            main: '#17181D'
+        common: {
+            darkblack: '#24292F',
+            gray: 'rgba(102, 102, 102, 0.05)'
+        }
+    },
+    typography: {
+        h1: {
+            // base fontsize is 16px
+            fontSize: '1.875rem',
+            fontFamily: 'Inter',
+            color: '#fff'
         },
-        lightdark: {
-            main: '#22222C'
-        },
-        yellow: {
-            main: '#FFF500'
-        },
-        orange: {
-            main: '#FFC412'
+        link: {
+            textDecoration: 'none'
         }
     }
 })
