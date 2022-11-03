@@ -14,6 +14,13 @@ export default createTheme({
             fontFamily: 'Inter',
             color: '#fff'
         },
+        h2: {
+
+        },
+        h3: {
+            fontFamily: 'Montserrat',
+            fontSize: '1.4375rem'
+        },
         link: {
             textDecoration: 'none'
         }

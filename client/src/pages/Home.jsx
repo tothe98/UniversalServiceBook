@@ -12,6 +12,15 @@ const PageBody = styled(Box)(({theme}) => ({
     alignItems: 'flex-start'
 }))
 
+const PageContent = styled(Box)(({theme}) => ({
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start',
+    paddingTop: '53px',
+    marginLeft: '21px'
+}))
+
 function Home() {
     return (
         <React.Fragment>
@@ -19,6 +28,23 @@ function Home() {
             <PageSelector />
             <PageBody>
                 <Profile />
+                <PageContent>
+                    <Typography variant='h3'>Legútóbbi aktivításaim</Typography>
+
+                    <div>Autó 1</div>
+                    <div>Autó 2</div>
+                    <div>Autó 3</div>
+                    <div>Autó 4</div>
+                    <div>Autó 5</div>
+                    
+                    <Typography variant='h3'>Szervíz Információk</Typography>
+
+                    <div>Szervíz 1</div>
+                    <div>Szervíz 2</div>
+                    <div>Szervíz 3</div>
+                    <div>Szervíz4</div>
+                    <div>Szervíz 5</div>
+                </PageContent>
             </PageBody>
             <Footer />
         </React.Fragment>

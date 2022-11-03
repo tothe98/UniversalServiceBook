@@ -10,6 +10,7 @@ const ContainerDiv = styled('div')(({theme}) => ({
     height: '100%',
     maxWidth: MAX_WIDTH,
     width: '100%',
+    marginTop: '40px',
     marginLeft: 'auto',
     marginRight: 'auto'
 }))
@@ -26,6 +27,7 @@ const SubMenuContainer = styled(Toolbar)(({theme}) => ({
 }))
 
 const FooterElement = styled(Typography)(({theme}) => ({
+    ...theme.typography.link,
     margin: '0 10px'
 }))
 
@@ -36,9 +38,9 @@ function Footer() {
             <Typography>(C) Minden jog fenntartva.</Typography>
 
             <SubMenuContainer>
-                <FooterElement>Segítség kérés</FooterElement>
-                <FooterElement>Általános szerződési feltételek</FooterElement>
-                <FooterElement>Elérhetőségeink</FooterElement>
+                <FooterElement component={Link} to="/#" >Segítség kérés</FooterElement>
+                <FooterElement component={Link} to="/#" >Általános szerződési feltételek</FooterElement>
+                <FooterElement component={Link} to="/#" >Elérhetőségeink</FooterElement>
             </SubMenuContainer>
         </FooterText>
     </ContainerDiv>
