@@ -9,12 +9,10 @@ import theme from "../themes/theme";
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 
-const Wrapper = styled('div')(({theme}) => ({
-}))
-
 const SubTitle = styled(Typography)(({theme}) => ({
     marginBottom: "2rem"
 }))
+
 const ContentBox = styled('div')(({theme}) => ({
     position: "relative",
     width: "100",
