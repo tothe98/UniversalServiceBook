@@ -1,13 +1,15 @@
-import { styled, Toolbar, Typography } from '@mui/material';
+import {Grid, styled, Toolbar, Typography, useMediaQuery} from '@mui/material';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import theme from "../themes/theme";
 
 const MAX_HEIGHT = '100px';
 
-const ContainerDiv = styled('div')(({theme}) => ({
+const Wrapper = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.common.darkblack,
     maxHeight: MAX_HEIGHT,
-    height: '100%'
+    height: "100%",
+    padding: "32px 0"
 }))
 
 const Title = styled(Typography)(({theme}) => ({
@@ -15,13 +17,19 @@ const Title = styled(Typography)(({theme}) => ({
 }))
 
 function Header() {
-    return <ContainerDiv>
-        <Toolbar>
-            <Title variant='h1' component={Link} to="/">
-                Univerzális Szervíz Könyv
-            </Title>
-        </Toolbar>
-    </ContainerDiv>
+    const underS = useMediaQuery(theme.breakpoints.down("sm"))
+
+    return (<Wrapper>
+        <Grid container>
+            <Grid item xs></Grid>
+            <Grid item md={10} xs={12} >
+                <Title variant="h1" component={Link} to="/">
+                    Univerzális Szervízkönyv
+                </Title>
+            </Grid>
+            <Grid item xs></Grid>
+        </Grid>
+    </Wrapper>)
 }
 
 export default Header;
