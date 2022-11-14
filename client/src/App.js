@@ -4,7 +4,7 @@ import {
   Routes,
   Route
 } from "react-router-dom";
-import React, { Component } from 'react';
+import React, {Component, useState} from 'react';
 import theme from './themes/theme'
 import Home from './pages/Home';
 import Header from "./global/Header";
@@ -15,6 +15,7 @@ import Profile from "./global/Profile";
 import Garage from "./pages/Garage";
 import Mails from "./pages/Mails";
 import Settings from "./pages/Settings";
+import GarageVehiclePreview from "./pages/GarageVehiclePreview";
 
 const Wrapper = styled('div')(({theme}) => ({
 }))
@@ -27,6 +28,7 @@ const MyHr = styled('hr')(({theme}) => ({
 function App() {
   const underS = useMediaQuery(theme.breakpoints.down("sm"));
   const betweenSM_MD = useMediaQuery(theme.breakpoints.between("sm", "md"));
+  const [activePage, setActivePage] = useState(0);
 
   theme.typography.h1 = {
       ...theme.typography.h1,
@@ -73,57 +75,16 @@ function App() {
           fontSize: "0.9375rem"
       }
   }
-  /*theme.typography.h4 = {
-      ...theme.typography.h4,
-      [theme.breakpoints.between("lg", "xl")]: {
-          fontSize: "1.25rem"
-      },
-      [theme.breakpoints.between("md", "lg")]: {
-          fontSize: "0.9375rem"
-      },
-      [theme.breakpoints.between("sm", "md")]: {
-          fontSize: "0.9375rem"
-      },
-      [theme.breakpoints.between("xs", "sm")]: {
-          fontSize: "0.9375rem"
-      }
+
+  const handleChangeTab = (newValue) => {
+    setActivePage(newValue)
   }
-  theme.typography.h5 = {
-      ...theme.typography.h5,
-      [theme.breakpoints.between("lg", "xl")]: {
-          fontSize: "1.25rem"
-      },
-      [theme.breakpoints.between("md", "lg")]: {
-          fontSize: "0.9375rem"
-      },
-      [theme.breakpoints.between("sm", "md")]: {
-          fontSize: "0.9375rem"
-      },
-      [theme.breakpoints.between("xs", "sm")]: {
-          fontSize: "0.9375rem"
-      }
-  }
-  theme.typography.h6 = {
-      ...theme.typography.h6,
-      [theme.breakpoints.between("lg", "xl")]: {
-          fontSize: "1.5625rem"
-      },
-      [theme.breakpoints.between("md", "lg")]: {
-          fontSize: "1.25rem"
-      },
-      [theme.breakpoints.between("sm", "md")]: {
-          fontSize: "0.9375rem"
-      },
-      [theme.breakpoints.between("xs", "sm")]: {
-          fontSize: "0.9375rem"
-      }
-  }*/
 
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
           <Header />
-          <PageSelector />
+          <PageSelector activePage={activePage} handleChangeTab={handleChangeTab} />
           <Wrapper>
               <Grid container direction={underS || betweenSM_MD ? "column" : "row"}>
                   <Grid item md={1} xs={0}></Grid>
@@ -136,6 +97,7 @@ function App() {
                       <Routes>
                           <Route path='/' element={<Home />} />
                           <Route path='/garazs' element={<Garage />} />
+                          <Route path='/garazs/:id' element={<GarageVehiclePreview />} />
                           <Route path='/levelek' element={<Mails />} />
                           <Route path='/beallitasok' element={<Settings />} />
                         <Route path='/*' element={<Error />} />

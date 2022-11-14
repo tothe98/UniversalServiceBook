@@ -60,5 +60,8 @@ export default createTheme({
         link: {
             textDecoration: 'none'
         }
+    },
+    shadows: {
+        25: "0px 0px 8px #D9D9D9"
     }
 })
