@@ -1,8 +1,8 @@
 const mongoose = require('mongoose')
-require('../models/Vehicle')
+require('../models/VehicleModel')
 
 exports.addNewVehicle = async (req, res) => {
-    //const Vehicle = mongoose.model('VehiclesInfo')
+    //const Vehicle = mongoose.model('Vehicles')
     const {
         manufacturer,
         model,
