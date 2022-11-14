@@ -1,5 +1,5 @@
 import {Grid, styled, Tab, Tabs} from '@mui/material';
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useState } from 'react';
 import {Link} from "react-router-dom";
 
@@ -14,21 +14,50 @@ const Wrapper = styled(Grid)(({theme}) => ({
     }
 }))
 
-function PageSelector() {
-    const [value, setValue] = useState(0);
+function PageSelector({activePage, handleChangeTab}) {
+    const routes = [
+        { name: 'Főoldal', link: '/', activeIndex: 0 },
+        {
+            name: 'Garázs', link: '/garazs', activeIndex: 1
+        },
+        { name: 'Leveleim', link: '/levelek', activeIndex: 2 },
+        { name: 'Beállítások', link: '/beallitasok', activeIndex: 3 }
+    ]
 
-    const handlePageChange = (e, newValue) => {
-        setValue(newValue);
-    }
+    useEffect(() => {
+        [...routes].forEach(route => {
+            switch (window.location.pathname)
+            {
+                case `${route.link}`:
+                    if (activePage !== route.activeIndex)
+                    {
+                        handleChangeTab(route.activeIndex)
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (window.location.pathname.includes(route.link) && route.link !== "/")
+            {
+                if (activePage !== route.activeIndex)
+                {
+                    handleChangeTab(route.activeIndex)
+                }
+            }
+        })
+    }, [activePage, routes])
 
     return (<Wrapper container>
         <Grid container>
             <Grid item md={3} xs={0}></Grid>
             <Grid item md={8} xs={12}>
-                <Tabs value={value} onChange={handlePageChange}>
-                    <Tab label="Főoldal" component={Link} to="/"/>
-                    <Tab label="Garázs" component={Link} to="/garazs"/>
-                    <Tab label="Leveleim" component={Link} to="/levelek"/>
+                <Tabs value={activePage} onChange={handleChangeTab}>
+                    {
+                        routes.map((route, i) => {
+                            return <Tab key={route+"-"+i} label={route.name} component={Link} to={route.link}/>
+                        })
+                    }
                 </Tabs>
             </Grid>
             <Grid item md={1} xs={0}></Grid>
