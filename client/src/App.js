@@ -16,6 +16,7 @@ import Garage from "./pages/Garage";
 import Mails from "./pages/Mails";
 import Settings from "./pages/Settings";
 import GarageVehiclePreview from "./pages/GarageVehiclePreview";
+import MailPreview from "./pages/MailPreview";
 
 const Wrapper = styled('div')(({theme}) => ({
 }))
@@ -99,6 +100,7 @@ function App() {
                           <Route path='/garazs' element={<Garage />} />
                           <Route path='/garazs/:id' element={<GarageVehiclePreview />} />
                           <Route path='/levelek' element={<Mails />} />
+                          <Route path='/levelek/:id' element={<MailPreview />} />
                           <Route path='/beallitasok' element={<Settings />} />
                         <Route path='/*' element={<Error />} />
                       </Routes>

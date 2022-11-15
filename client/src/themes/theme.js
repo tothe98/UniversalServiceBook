@@ -5,7 +5,8 @@ export default createTheme({
         common: {
             darkblack: '#24292F',
             gray: 'rgba(102, 102, 102, 0.05)',
-            lightgray: '#D0D7DE'
+            lightgray: '#D0D7DE',
+            blue: "#1B30F5"
         }
     },
     mixins: {
