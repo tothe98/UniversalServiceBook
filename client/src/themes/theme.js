@@ -24,7 +24,22 @@ export default createTheme({
           "&:hover": {
               background: "#24292F"
           }
-      }
+      },
+      cancelButton: {
+        maxWidth: "149px",
+        maxHeight: "40px",
+        width: "100%",
+        height: "100%",
+        background: "#fff",
+        border: `1px solid #24292F`,
+        borderRadius: "5px",
+        textTransform: "none",
+        color: "#24292F",
+        padding: "1em 2em",
+        "&:hover": {
+            background: "#fff"
+        }
+        }
     },
     typography: {
         h1: {
