@@ -48,6 +48,7 @@ mongoose.connect(
 
 const swaggerOptions = {
     swaggerDefinition: {
+        openapi: '3.0.1',
         info: {
             version: "1.0.0",
             title: "Universal ServiceBook Backend",

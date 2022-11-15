@@ -29,11 +29,12 @@ router.get('/', (req, res) => {
         }
     )
 })
+
 /**
  * @swagger
  * /api/v1/signup:
  *   post:
- *     summary: Felhasználó regisztrálása
+ *     summary: Felhasználó regisztrálása.
  *     requestBody:
  *       required: true
  *       content:
@@ -43,25 +44,37 @@ router.get('/', (req, res) => {
  *             properties:
  *               fname:
  *                 type: string
- *                 description: Felhasználó keresztneve.
+ *                 description: Keresztnév
  *                 example: Erik
  *               lname:
- *                  type: string
- *                  description: Felhasználó vezetékneve.
- *                  example: Molnár
+ *                 type: string
+ *                 description: Vezetéknév
+ *                 example: Tóth
  *               email:
- *                  type: string
- *                  description: Felhasználó email címe.
- *                  example: erik.molnar@gmail.com
+ *                 type: string
+ *                 description: Email
+ *                 example: pelda@email.com
  *               password:
- *                  type: string
- *                  description: Felhasználó jelszava.
+ *                 type: string
+ *                 description: Jelszó
+ *                 example: 
+ *               phone:
+ *                 type: string
+ *                 description: Telefonszám
+ *                 example: +36322211222
  *     responses:
  *       201:
- *         'Sikeres regisztráció'
+ *         description: Felhasználó sikeresen létrejött
+ *       409:
+ *         description: Létező felhasználó
+ *       400:
+ *         description: Hiányos adat
 */
 router.post('/signup', signup)
 router.post('/signin', signin)
+
+
+
 router.post('/addNewVehicle', authenticateToken, addNewVehicle)
 
 module.exports = router
