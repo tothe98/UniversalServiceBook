@@ -18,8 +18,19 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    _profilImg:{
+    _profilImg: {
         type: mongoose.Types.ObjectId
+    },
+    _workshop: {
+        type: mongoose.Types.ObjectId
+    },
+    phone: {
+        type: String,
+        required: true
+    },
+    home:{
+        type: String,
+        required: false,
     },
     createdAt: {
         type: Date,

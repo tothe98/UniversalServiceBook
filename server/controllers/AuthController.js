@@ -6,26 +6,31 @@ require('../models/UserModel')
 
 exports.signup = async (req, res) => {
     const User = mongoose.model('UserInfo')
-    const { fname, lname, email, password, } = req.body
+    const { fname, lname, email, password, phone } = req.body
 
-    const salt = await bcrypt.genSalt(10)
-    const encryptedPassword = await bcrypt.hash(password, salt)
+    if (!password) {
+        return res.status(400).json({ message: 'error', data: {} })
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const encryptedPassword = bcrypt.hashSync(password, salt);
 
     try {
-        const isExistEmail = await User.findOne({ email })
-        const isExistUser = await User.findOne({ username })
-        if (isExistUser || isExistEmail) {
-            return res.status(409).json({ message: 'exist' }, { expries: '14s' })
+        const isExistEmail = await User.findOne({ email: email })
+
+        if (isExistEmail) {
+            return res.status(409).json({ message: 'exist', data: {} })
         }
         await User.create({
-            fname: fname,
-            lname: lname,
+            fName: fname,
+            lName: lname,
             email: email,
+            phone: phone,
             password: encryptedPassword
         })
-        res.status(201).json({ message: 'success' })
+        res.status(201).json({ message: 'success', data: {} })
     } catch (error) {
-        res.status(400).json({ message: error })
+        res.status(400).json({ message: 'error', data: { error } })
     }
 }
 
@@ -35,21 +40,21 @@ exports.signin = async (req, res) => {
 
     const emailIsExist = await User.findOne({ email })
     if (!emailIsExist) {
-        return res.status(400).json({ message: 'notExist' })
+        return res.status(400).json({ message: 'error', data: {} })
     }
     if (!emailIsExist.isActive) {
-        return res.status(403).json({ message: 'notActive' })
+        return res.status(403).json({ message: 'notActive', data: {} })
     }
     if (await bcrypt.compare(password, emailIsExist.password)) {
-        const token = jwt.sign({ userId: emailIsExist.id, email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET)
+        const token = jwt.sign({ userId: emailIsExist.id, email: emailIsExist.email, isAdmin: emailIsExist.isAdmin, workShop:emailIsExist._workshop}, process.env.JWT_SECRET)
 
-        if (res.status(201)) {
-            return res.status(201).json({ token: token })
+        if (res.status(200)) {
+            return res.status(200).json({ message: 'success', data: { token: token } })
         } else {
-            return res.status(400).json({ token: null })
+            return res.status(400).json({ message: 'error', data: { token: null } })
         }
     } else {
-        res.status(400).json({ message: 'wrongPassword' })
+        res.status(400).json({ message: 'error', data: {} })
     }
 
 }
