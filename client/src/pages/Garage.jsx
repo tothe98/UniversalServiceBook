@@ -38,14 +38,10 @@ function Garage() {
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
     const [cars, setCars] = useState([]);
-    const [car, setCar] = useState({})
-    const { id } = useParams()
 
     useEffect(() => {
-        if (id)
-        {
-            // TODO: axios request to the api (getting the specified car)
-            const car = {
+        const cars = [
+            {
                 carId: "2e2zbahdb2a#",
                 imageUrl: "https://hasznaltauto.medija.hu/2700439/18711995_1.jpg?v=1665186628",
                 carName: "Honda Accord",
@@ -53,42 +49,28 @@ function Garage() {
                 licensePlateNumber: "AA AA 001",
                 motorNumber: "Z14XEP19ET4682",
                 registeredServices: 10
+            },
+            {
+                carId: "2e2zbasdhdb2a#",
+                imageUrl: "https://hasznaltauto.medija.hu/11497/18779656_1.jpg?v=1666966921",
+                carName: "SEAT Alhambra",
+                chassisNumber: "JACUBS25DN7100010",
+                licensePlateNumber: "CA AA 021",
+                motorNumber: "Z14XEP19ET4682",
+                registeredServices: 43
+            },
+            {
+                carId: "2e2zbahdveeeb2a#",
+                imageUrl: "https://hasznaltauto.medija.hu/17297/18627843_1.jpg?v=1662994088",
+                carName: "Honda Civic",
+                chassisNumber: "JACUBS25DN7100010",
+                licensePlateNumber: "AA AB 101",
+                motorNumber: "Z14XEP19ET4682",
+                registeredServices: 212
             }
-            setCar(car);
-        }
-        else
-        {
-            const cars = [
-                {
-                    carId: "2e2zbahdb2a#",
-                    imageUrl: "https://hasznaltauto.medija.hu/2700439/18711995_1.jpg?v=1665186628",
-                    carName: "Honda Accord",
-                    chassisNumber: "JACUBS25DN7100010",
-                    licensePlateNumber: "AA AA 001",
-                    motorNumber: "Z14XEP19ET4682",
-                    registeredServices: 10
-                },
-                {
-                    carId: "2e2zbasdhdb2a#",
-                    imageUrl: "https://hasznaltauto.medija.hu/11497/18779656_1.jpg?v=1666966921",
-                    carName: "SEAT Alhambra",
-                    chassisNumber: "JACUBS25DN7100010",
-                    licensePlateNumber: "CA AA 021",
-                    motorNumber: "Z14XEP19ET4682",
-                    registeredServices: 43
-                },
-                {
-                    carId: "2e2zbahdveeeb2a#",
-                    imageUrl: "https://hasznaltauto.medija.hu/17297/18627843_1.jpg?v=1662994088",
-                    carName: "Honda Civic",
-                    chassisNumber: "JACUBS25DN7100010",
-                    licensePlateNumber: "AA AB 101",
-                    motorNumber: "Z14XEP19ET4682",
-                    registeredServices: 212
-                }
-            ]
-            setCars(cars);
-        }
+        ]
+        setCars(cars);
+
     }, []);
 
     return (<React.Fragment>
