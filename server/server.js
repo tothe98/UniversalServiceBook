@@ -7,6 +7,7 @@ const session = require('express-session')
 const mongoose = require('mongoose')
 const routesUrls = require('./routes/routes')
 
+
 const app = express()
 app.use(express.json())
 app.use(
@@ -31,10 +32,10 @@ app.use(
     })
 )
 
-mongoose
-    .connect(process.env.MONGODB, {
-        useNewUrlParser: true,
-    })
+mongoose.connect(
+    process.env.MONGODB, {
+    useNewUrlParser: true,
+})
     .then(() => {
         console.log("Adatbázis kapcsolat létrejött.");
     })
@@ -42,6 +43,8 @@ mongoose
         console.log(e);
     })
 
+
+
 app.use('/api', routesUrls)
 
-app.listen(process.env.PORT, () => { console.log(`Szerver elindult a ${process.env.PORT}-as porton.`) })
+app.listen(process.env.PORT || 5000, () => { console.log(`Szerver elindult a ${process.env.PORT || 5000}-as porton.`) })

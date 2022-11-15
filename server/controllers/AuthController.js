@@ -1,12 +1,12 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-require('../models/User')
+require('../models/UserModel')
 
 
 exports.signup = async (req, res) => {
     const User = mongoose.model('UserInfo')
-    const { fname, lname, username, email, password, } = req.body
+    const { fname, lname, email, password, } = req.body
 
     const salt = await bcrypt.genSalt(10)
     const encryptedPassword = await bcrypt.hash(password, salt)
@@ -20,7 +20,6 @@ exports.signup = async (req, res) => {
         await User.create({
             fname: fname,
             lname: lname,
-            username: username,
             email: email,
             password: encryptedPassword
         })
@@ -32,17 +31,17 @@ exports.signup = async (req, res) => {
 
 exports.signin = async (req, res) => {
     const User = mongoose.model('UserInfo')
-    const { username, password } = req.body
+    const { email, password } = req.body
 
-    const user = await User.findOne({ username })
-    if (!user) {
+    const emailIsExist = await User.findOne({ email })
+    if (!emailIsExist) {
         return res.status(400).json({ message: 'notExist' })
     }
-    if (!user.isActive) {
+    if (!emailIsExist.isActive) {
         return res.status(403).json({ message: 'notActive' })
     }
-    if (await bcrypt.compare(password, user.password)) {
-        const token = jwt.sign({ userId: user.id, username: user.username, email: user.email, wid: user.WId, isAdmin: user.isAdmin }, process.env.JWT_SECRET)
+    if (await bcrypt.compare(password, emailIsExist.password)) {
+        const token = jwt.sign({ userId: emailIsExist.id, email: user.email, isAdmin: user.isAdmin }, process.env.JWT_SECRET)
 
         if (res.status(201)) {
             return res.status(201).json({ token: token })
