@@ -145,7 +145,8 @@ function GarageVehiclePreview() {
                         "2023.01.13-án kötelező szervízen kell résztvennie!",
                     images: [
                         "https://bontoplaza.hu/pic.php?guid=0FACD49A-E9D1-4B94-B142-299679E55EBE"
-                    ]
+                    ],
+                    kmHour: 200_012
                 },
                 {
                     id: "asdawd2e21a",
@@ -154,7 +155,8 @@ function GarageVehiclePreview() {
                         "2023.01.13-án kötelező szervízen kell résztvennie!",
                     images: [
                         "https://bontoplaza.hu/bontott-alkatresz-kepek/opel-astra-h-1.6-gyujtotrafo_532EB777-49C6-464D-BFB2-46194A7A8CA6_MEDIUM.jpg"
-                    ]
+                    ],
+                    kmHour: 200_013
                 },
                 {
                     id: "12312QA2132",
@@ -163,7 +165,8 @@ function GarageVehiclePreview() {
                         "2023.01.13-án kötelező szervízen kell résztvennie!",
                     images: [
                         "https://bontoplaza.hu/pic.php?guid=3FC4B8AB-A1CB-43E6-B228-941F8F6D96AC&size=LARGE"
-                    ]
+                    ],
+                    kmHour: 200_015
                 }
             ]
         }
@@ -411,7 +414,7 @@ function GarageVehiclePreview() {
                                         <Typography sx={{ width: '33%', flexShrink: 0 }}>
                                             #{i+1} Szervíz Bejegyzés
                                         </Typography>
-                                        { !underMD && <Typography sx={{ color: 'text.secondary' }}>{service.message.substring(0, service.message.length > 20 ? 20 : service.message.length)}...</Typography> }
+                                        { !underMD && <Typography sx={{ color: 'text.secondary' }}>{service.kmHour} km</Typography> }
                                     </AccordionSummary>
                                     <AccordionDetails>
                                         <Typography  dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(service.message)}}>
