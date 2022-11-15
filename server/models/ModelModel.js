@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const ModelSchema = new mongoose.Schema({
     model: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     _manufacture: {
@@ -10,7 +10,7 @@ const ModelSchema = new mongoose.Schema({
         required: true
     },
     isActive: {
-        type: mongoose.Types.Boolean,
+        type: Boolean,
         default: true
     }
 

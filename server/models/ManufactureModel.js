@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const ManufactureSchema = new mongoose.Schema({
     manufacture: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     _vehicleType: {
@@ -10,7 +10,7 @@ const ManufactureSchema = new mongoose.Schema({
         required: true
     },
     isActive: {
-        type: mongoose.Types.Boolean,
+        type: Boolean,
         default: true
     }
 

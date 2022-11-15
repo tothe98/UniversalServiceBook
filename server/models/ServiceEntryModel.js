@@ -10,11 +10,11 @@ const ServiceEntrySchema = new mongoose.Schema({
         required: true
     },
     description: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     mileage: {
-        type: mongoose.Types.Number,
+        type: Number,
         required: true
     },
     pictures: {
@@ -23,16 +23,16 @@ const ServiceEntrySchema = new mongoose.Schema({
         default: [""]
     },
     createdAt: {
-        type: mongoose.Types.Date,
+        type: Date,
         default: Date.now,
         required: true
     },
     updatedAt: {
-        type: mongoose.Types.Date,
+        type: Date,
         required: false
     },
     isDelete: {
-        type: mongoose.Types.Boolean,
+        type: Boolean,
         default: false
     },
 

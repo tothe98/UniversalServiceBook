@@ -30,45 +30,45 @@ const VehiclesSchema = new mongoose.Schema({
         required: true
     },
     licenseNumber: {
-        type: mongoose.Types.String,
+        type: String,
         required: false,
         unique: true
     },
     vin: {
-        type: mongoose.Types.String,
+        type: String,
         required: true,
         unique: true
     },
     vintage: {
-        type: mongoose.Types.Date,
+        type: Date,
         required: true
     },
     ownMass: {
-        type: mongoose.Types.Number,
+        type: Number,
         required: false
     },
     fullMass: {
-        type: mongoose.Types.Number,
+        type: Number,
         required: false
     },
     cylinderCapacity: {
-        type: mongoose.Types.Number,
+        type: Number,
         required: false
     },
     performance: {
-        type: mongoose.Types.Number,
+        type: Number,
         required: false
     },
     nod: {
-        type: mongoose.Types.String,
+        type: String,
         required: false
     },
     validityTechnicalExam: {
-        type: mongoose.Types.Date,
+        type: Date,
         required: true
     },
     mileage: {
-        type: mongoose.Types.Number,
+        type: Number,
         required: false
     },
     pictures: {
@@ -77,7 +77,7 @@ const VehiclesSchema = new mongoose.Schema({
         default: [""]
     },
     isActive: {
-        type: mongoose.Types.Boolean,
+        type: Boolean,
         default: true
     }
 

@@ -2,11 +2,11 @@ const mongoose = require('mongoose')
 
 const TransmissionSchema = new mongoose.Schema({
     transmission: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     isActive: {
-        type: mongoose.Types.Boolean,
+        type: Boolean,
         default: true
     }
 

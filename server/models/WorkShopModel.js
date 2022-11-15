@@ -2,19 +2,19 @@ const mongoose = require('mongoose')
 
 const WorkShopSchema = new mongoose.Schema({
     name: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     country: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     town: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     address: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     _owner: {
@@ -27,11 +27,11 @@ const WorkShopSchema = new mongoose.Schema({
         default: [""]
     },
     isActive: {
-        type: mongoose.Types.Boolean,
+        type: Boolean,
         default: false
     },
     createdAt: {
-        type: mongoose.Types.Date,
+        type: Date,
         default: Date.now,
         required: true
     }

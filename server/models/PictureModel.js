@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const PictureSchema = new mongoose.Schema({
     picture: {
-        type: mongoose.Types.String,
+        type: String,
         required: true
     },
     _uploadFrom: {
@@ -10,11 +10,11 @@ const PictureSchema = new mongoose.Schema({
         required: true
     },
     isDelete: {
-        type: mongoose.Types.Boolean,
+        type: Boolean,
         default: false
     },
     uploadAt:{
-        type: mongoose.Types.Date,
+        type: Date,
         default: Date.now,
         required: true
     }
