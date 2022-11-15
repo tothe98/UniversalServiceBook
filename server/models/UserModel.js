@@ -1,23 +1,13 @@
 const mongoose = require('mongoose')
 
 const UserSchema = new mongoose.Schema({
-    WId: {
-        type: String,
-        required: false,
-        default: ""
-    },
-    fname: {
+    fName: {
         type: String,
         required: true
     },
-    lname: {
+    lName: {
         type: String,
         required: true
-    },
-    username: {
-        type: String,
-        required: true,
-        unique: true
     },
     email: {
         type: String,
@@ -28,10 +18,17 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    date: {
+    _profilImg:{
+        type: mongoose.Types.ObjectId
+    },
+    createdAt: {
         type: Date,
-        default: Date.now
-
+        default: Date.now,
+        required: true
+    },
+    updatedAt: {
+        type: Date,
+        required: false
     },
     isActive: {
         type: Boolean,
