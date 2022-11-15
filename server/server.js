@@ -47,7 +47,7 @@ mongoose.connect(
 
 
 const swaggerOptions = {
-    swaggerDefinition: {
+    definition: {
         openapi: '3.0.1',
         info: {
             version: "1.0.0",
@@ -57,7 +57,21 @@ const swaggerOptions = {
                 name: "Molnár Dániel & Tóth Erik"
             },
             servers: [`http://127.0.0.1:${process.env.PORT}/api/v1`]
-        }
+        },
+        components: {
+            securitySchemas: {
+                bearerAuth: {
+                    type: "http",
+                    scheme: "bearer",
+                    bearerFormat: "JWT"
+                }
+            }
+        },
+        security: [
+            {
+                bearerAuth: [],
+            }
+        ]
     },
     // ['.routes/*.js']
     apis: ["routes/*.js"]

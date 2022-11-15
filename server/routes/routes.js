@@ -34,6 +34,8 @@ router.get('/', (req, res) => {
  * @swagger
  * /api/v1/signup:
  *   post:
+ *     tags:
+ *         - Authentication
  *     summary: Felhasználó regisztrálása.
  *     requestBody:
  *       required: true
@@ -71,6 +73,36 @@ router.get('/', (req, res) => {
  *         description: Hiányos adat
 */
 router.post('/signup', signup)
+/**
+ * @swagger
+ * /api/v1/signin:
+ *   post:
+ *     tags:
+ *      - Authentication
+ *     summary: Felhasználó bejelentkeztetése.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: Email
+ *                 example: pelda@email.com
+ *               password:
+ *                 type: string
+ *                 description: Jelszó
+ *                 example:  
+ *     responses:
+ *       200:
+ *         description: Sikeres bejelentkezés
+ *       400:
+ *         description: Sikertelen bejelentkezés
+ *       403:
+ *         description: Nincs aktiválva
+*/
 router.post('/signin', signin)
 
 
