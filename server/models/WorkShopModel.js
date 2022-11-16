@@ -19,7 +19,8 @@ const WorkShopSchema = new mongoose.Schema({
     },
     _owner: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'UserInfo'
     },
     employees: {
         type: [mongoose.Types.ObjectId],

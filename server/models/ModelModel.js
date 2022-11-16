@@ -7,7 +7,8 @@ const ModelSchema = new mongoose.Schema({
     },
     _manufacture: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Manufactures'
     },
     isActive: {
         type: Boolean,

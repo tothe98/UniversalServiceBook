@@ -3,31 +3,38 @@ const mongoose = require('mongoose')
 const VehiclesSchema = new mongoose.Schema({
     _userId: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'UserInfo'
     },
     _manufacturer: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Manufactures',
     },
     _model: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Models'
     },
     _fuel: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Fuels'
     },
     _driveType: {
         type: mongoose.Types.ObjectId,
-        required: false
+        required: false,
+        ref: 'DriveTypes'
     },
     _designType: {
         type: mongoose.Types.ObjectId,
-        required: false
+        required: false,
+        ref: 'DesignTypes'
     },
     _transmission: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Transmissions'
     },
     licenseNumber: {
         type: String,
@@ -71,11 +78,11 @@ const VehiclesSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
-    pictures: {
-        tpye: [mongoose.Types.ObjectId],
+    pictures: [{
+        type: mongoose.Types.ObjectId,
         required: false,
-        default: [""]
-    },
+        ref: 'Pictures'
+    }],
     isActive: {
         type: Boolean,
         default: true

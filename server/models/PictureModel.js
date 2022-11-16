@@ -7,7 +7,8 @@ const PictureSchema = new mongoose.Schema({
     },
     _uploadFrom: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'UserInfo'
     },
     isDelete: {
         type: Boolean,

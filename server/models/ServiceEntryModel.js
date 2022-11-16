@@ -3,11 +3,13 @@ const mongoose = require('mongoose')
 const ServiceEntrySchema = new mongoose.Schema({
     _vehicle: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Vehicles'
     },
     _workshop: {
         type: mongoose.Types.ObjectId,
-        required: true
+        required: true,
+        ref: 'Workshops'
     },
     description: {
         type: String,
@@ -17,11 +19,12 @@ const ServiceEntrySchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    pictures: {
-        type: [mongoose.Types.ObjectId],
+    pictures: [{
+        type: mongoose.Types.ObjectId,
         required: false,
-        default: [""]
-    },
+        ref: 'Pictures'
+
+    }],
     createdAt: {
         type: Date,
         default: Date.now,
