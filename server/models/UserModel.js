@@ -28,7 +28,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    home:{
+    home: {
         type: String,
         required: false,
     },
@@ -54,5 +54,9 @@ const UserSchema = new mongoose.Schema({
     {
         collection: 'UserInfo'
     })
+
+UserSchema.virtual("getUserData").get(function () {
+    return { "fName": this.fName, "lName": this.lName, "email": this.email, "phone": this.phone, "home": this.home, isAdmin: this.isAdmin }
+})
 
 mongoose.model('UserInfo', UserSchema)
