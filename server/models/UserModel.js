@@ -65,4 +65,9 @@ UserSchema.virtual("getUserData").get(function () {
     }
 })
 
+UserSchema.pre('save', function (next) {
+    this.updatedAt = Date.now()
+    next()
+})
+
 mongoose.model('UserInfo', UserSchema)
