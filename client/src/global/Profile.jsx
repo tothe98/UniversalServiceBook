@@ -32,7 +32,12 @@ function Profile() {
             <AvatarImage src='https://assets1.cbsnewsstatic.com/hub/i/2018/11/06/0c1af1b8-155a-458e-b105-78f1e7344bf4/2018-11-06t054310z-1334124005-rc1be15a8050-rtrmadp-3-people-sexiest-man.jpg' />
         </Grid>
         <Grid item>
-            <Typography variant="h2">Profile Name</Typography>
+            <Typography variant="h2">
+            {
+                JSON.parse(localStorage.getItem("user")) && (
+                JSON.parse(localStorage.getItem("user")).user.fName + " " + JSON.parse(localStorage.getItem("user")).user.lName
+            )}
+            </Typography>
         </Grid>
         <Grid item>
             <SettingsButton sx={{marginTop: "10px", marginLeft: underS ? "auto" : "" }} component={Link} to="/beallitasok">Beállítások</SettingsButton>

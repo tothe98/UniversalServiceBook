@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import {Button, Grid, styled, TextField, Typography} from "@mui/material";
+import axios from "axios";
+import {toast} from "react-toastify";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     marginBottom: "2rem"
@@ -15,7 +17,32 @@ function Login() {
 
     const sendLogin = async (e) => {
         e.preventDefault();
-        console.log(email, password)
+        const axiosInstance = axios.create({
+            baseURL: process.env.REACT_APP_URL
+        })
+        const response = await axiosInstance.post("signin", {
+            email: email,
+            password: password
+        });
+        const data = await response.data;
+        if (response.status === 400)
+        {
+            // sikertelen
+            toast.error("Sikertelen bejelentkezés!")
+        }
+        else if (response.status === 403)
+        {
+            // nincs aktiválva
+            toast.warning("Nincs aktiválva a fiók!")
+        }
+        else if (response.status === 200)
+        {
+            // ok
+            localStorage.setItem("token", data.data.token);
+            toast.success("Sikeresen bejelentkeztél!")
+            global.location.href = "/"
+            global.location.reload()
+        }
     }
 
     const handleEmailChange = (e) => { setEmail(e.target.value) }

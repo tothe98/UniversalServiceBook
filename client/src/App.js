@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import React, {Component, useEffect, useState} from 'react';
 import theme from './themes/theme'
+import {ToastContainer} from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
 import Home from './pages/Home';
 import Header from "./global/Header";
 import PageSelector from "./global/PageSelector";
@@ -84,17 +86,25 @@ function App() {
     setActivePage(newValue)
   }
 
-  const authenticate = async () => {
+  const getUserDatas = async (token) => {
       const axiosInstance = axios.create({
           baseURL: process.env.REACT_APP_URL
       })
-      const response = await axiosInstance.get("");
+      const response = await axiosInstance.get("getUserData", {
+          headers: {
+              "x-access-token": token
+          }
+      });
       const data = await response.data;
-      console.log(data)
+      localStorage.setItem("user", JSON.stringify(data.data));
   }
 
   useEffect(() => {
-      authenticate();
+      if (localStorage.getItem("token"))
+      {
+          setLoggedIn(true)
+          getUserDatas(localStorage.getItem("token"));
+      }
   });
 
 
@@ -127,6 +137,7 @@ function App() {
           </Wrapper>
         <Footer />
       </BrowserRouter>
+      <ToastContainer />
     </ThemeProvider>
   );
 }
