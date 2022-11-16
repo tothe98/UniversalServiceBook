@@ -4,17 +4,16 @@ const jwt = require('jsonwebtoken')
 function authenticateToken(req, res, next) {
     const token = req.headers['x-access-token']
     if (!token) {
-        res.status(401).send('Unauthorized')
+        res.status(401).json({ message: 'Unauthorized', data: [] })
     } else {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) {
-                res.status(403).json({ auth: false, message: 'Nincs hitelesítve!' })
+                res.status(401).json({ message: 'Unauthorized', data: [] })
             } else {
                 req.userId = decoded.userId
-                req.username = decoded.username
                 req.email = decoded.email
                 req.isAdmin = decoded.isAdmin
-                req.wid = decoded.wid
+                req.wid = decoded.workShop
                 next()
             }
         })
@@ -24,19 +23,18 @@ function authenticateToken(req, res, next) {
 function authenticateAdmin(req, res, next) {
     const token = req.headers['x-access-token']
     if (!token) {
-        res.status(401).send('Unauthorized')
+        res.status(401).json({ message: 'Unauthorized', data: [] })
     } else {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) {
-                res.status(403).json({ auth: false, message: 'Nincs hitelesítve!' })
+                res.status(401).json({ message: 'Unauthorized', data: [] })
             } else if (!decoded.isAdmin) {
-                res.status(403).json({ auth: false, message: 'notAdmin' })
+                res.status(403).json({ message: 'outOfRole', data: [] })
             } else {
-                req.userId = decoded.id
-                req.username = decoded.username
+                req.userId = decoded.userId
                 req.email = decoded.email
                 req.isAdmin = decoded.isAdmin
-                req.wid = decoded.wid
+                req.wid = decoded.workShop
                 next()
 
             }
@@ -47,19 +45,18 @@ function authenticateAdmin(req, res, next) {
 function authenticateWorkshop(req, res, next) {
     const token = req.headers['x-access-token']
     if (!token) {
-        res.status(401).send('Unauthorized')
+        res.status(401).json({ message: 'Unauthorized', data: [] })
     } else {
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
             if (err) {
-                res.status(403).json({ auth: false, message: 'Nincs hitelesítve!' })
+                res.status(401).json({ message: 'Unauthorized', data: [] })
             } else if (decoded.wid === "") {
-                res.status(403).json({ auth: false, message: 'notWorkshop' })
+                res.status(403).json({ message: 'outOfRole', data: [] })
             } else {
-                req.userId = decoded.id
-                req.username = decoded.username
+                req.userId = decoded.userId
                 req.email = decoded.email
                 req.isAdmin = decoded.isAdmin
-                req.wid = decoded.wid
+                req.wid = decoded.workShop
                 next()
 
             }
