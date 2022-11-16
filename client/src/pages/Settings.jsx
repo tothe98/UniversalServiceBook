@@ -36,11 +36,6 @@ const MyGridItem = styled(Grid)(({theme}) => ({
 }))
 
 function Settings() {
-    const [wallpaper, setWallpaper] = useState("https://assets1.cbsnewsstatic.com/hub/i/2018/11/06/0c1af1b8-155a-458e-b105-78f1e7344bf4/2018-11-06t054310z-1334124005-rc1be15a8050-rtrmadp-3-people-sexiest-man.jpg");
-    const [email, setEmail] = useState("george.ohv@gmail.co.uk")
-    const [phoneNumber, setPhoneNumber] = useState("00/002234323")
-    const [country, setCountry] = useState("Kőszeg")
-
     const handleProfileImageChange = (e) => {
         const profileImage = e.currentTarget.parentNode.parentNode.parentNode.querySelectorAll("#WallpaperItem")[0].querySelectorAll("#wallpaperIMG")[0];
         const file = e.target.files[0];
@@ -50,13 +45,14 @@ function Settings() {
             profileImage.setAttribute('src', ""+fileReader.result);
         }
     }
+    const { fName, lName, email, phone, home } = JSON.parse(localStorage.getItem("user")).user;
 
     return (<React.Fragment>
         <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start">
             <MyGridItem item>
                 <Grid container direction="row" spacing={1.5}>
                     <Grid item id="WallpaperItem">
-                        <AvatarImage src={wallpaper} alt="profile image" id="wallpaperIMG" />
+                        <AvatarImage src="https://picsum.photos/200" alt="profile image" id="wallpaperIMG" />
                     </Grid>
 
                     <Grid item>
@@ -84,15 +80,29 @@ function Settings() {
                     <Grid item><TextField
                         fullWidth
                         id="outlined-disabled"
+                        label="Kereszt név:"
+                        defaultValue={fName}
+                    /></Grid>
+
+                    <Grid item><TextField
+                        fullWidth
+                        id="outlined-disabled"
+                        label="Család név:"
+                        defaultValue={lName}
+                    /></Grid>
+
+                    <Grid item><TextField
+                        fullWidth
+                        id="outlined-disabled"
                         label="Telefonszám"
-                        defaultValue={phoneNumber}
+                        defaultValue={phone}
                     /></Grid>
 
                     <Grid item><TextField
                         fullWidth
                         id="outlined-disabled"
                         label="Város"
-                        defaultValue={country}
+                        defaultValue={ home ? home : ""}
                     /></Grid>
                 </Grid>
             </MyGridItem>
