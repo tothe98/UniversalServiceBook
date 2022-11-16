@@ -4,7 +4,7 @@ import {
   Routes,
   Route
 } from "react-router-dom";
-import React, {Component, useState} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import theme from './themes/theme'
 import Home from './pages/Home';
 import Header from "./global/Header";
@@ -17,6 +17,8 @@ import Mails from "./pages/Mails";
 import Settings from "./pages/Settings";
 import GarageVehiclePreview from "./pages/GarageVehiclePreview";
 import MailPreview from "./pages/MailPreview";
+import Login from "./pages/Login";
+import axios from "axios";
 
 const Wrapper = styled('div')(({theme}) => ({
 }))
@@ -30,6 +32,7 @@ function App() {
   const underS = useMediaQuery(theme.breakpoints.down("sm"));
   const betweenSM_MD = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const [activePage, setActivePage] = useState(0);
+  const [loggedIn, setLoggedIn] = useState(false);
 
   theme.typography.h1 = {
       ...theme.typography.h1,
@@ -81,6 +84,20 @@ function App() {
     setActivePage(newValue)
   }
 
+  const authenticate = async () => {
+      const axiosInstance = axios.create({
+          baseURL: process.env.REACT_APP_URL
+      })
+      const response = await axiosInstance.get("");
+      const data = await response.data;
+      console.log(data)
+  }
+
+  useEffect(() => {
+      authenticate();
+  });
+
+
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
@@ -96,13 +113,13 @@ function App() {
 
                   <Grid item md={8} xs={10} sx={{paddingTop: underS || betweenSM_MD ? "1rem" : "53px"}}>
                       <Routes>
-                          <Route path='/' element={<Home />} />
-                          <Route path='/garazs' element={<Garage />} />
-                          <Route path='/garazs/:id' element={<GarageVehiclePreview />} />
-                          <Route path='/levelek' element={<Mails />} />
-                          <Route path='/levelek/:id' element={<MailPreview />} />
-                          <Route path='/beallitasok' element={<Settings />} />
-                        <Route path='/*' element={<Error />} />
+                          <Route path='/' element={loggedIn ? <Home /> : <Login />} />
+                          <Route path='/garazs' element={loggedIn ? <Garage /> : <Login />} />
+                          <Route path='/garazs/:id' element={loggedIn ? <GarageVehiclePreview /> : <Login />} />
+                          <Route path='/levelek' element={loggedIn ? <Mails /> : <Login />} />
+                          <Route path='/levelek/:id' element={loggedIn ? <MailPreview /> : <Login />} />
+                          <Route path='/beallitasok' element={loggedIn ? <Settings /> : <Login />} />
+                          <Route path='/*' element={loggedIn ? <Error /> : <Login />} />
                       </Routes>
                   </Grid>
                   <Grid item md={1} xs={0}></Grid>

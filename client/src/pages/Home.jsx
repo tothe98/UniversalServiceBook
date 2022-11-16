@@ -112,7 +112,7 @@ function Home() {
 
     return (
         <>
-            <SubTitle variant='h3'>Legútóbbi aktivításaim</SubTitle>
+            <SubTitle variant='h3'>Legutóbbi aktivításaim</SubTitle>
 
             {
                cars.map(car => {
