@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import {Button, Grid, styled, TextField, Typography} from "@mui/material";
 import axios from "axios";
 import {toast} from "react-toastify";
+import {Link} from "react-router-dom";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     marginBottom: "2rem"
@@ -23,26 +24,28 @@ function Login() {
         const response = await axiosInstance.post("signin", {
             email: email,
             password: password
+            })
+            .then(response => {
+                const data = response.data;
+                // ok
+                console.log(data)
+                localStorage.setItem("token", data.data.token);
+                toast.success("Sikeresen bejelentkeztél!")
+                global.location.href = "/"
+                global.location.reload()
+            })
+            .catch(e => {
+                if (e.response.status === 400)
+                {
+                    // sikertelen
+                    toast.error("Sajnáljuk :/ Sikertelen bejelentkezés!")
+                }
+                else if (e.response.status === 403)
+                {
+                    // nincs aktiválva
+                    toast.warning("Opss! Nincs aktiválva a fiók! Kérlek aktiváld a fiókodat!")
+                }
         });
-        const data = await response.data;
-        if (response.status === 400)
-        {
-            // sikertelen
-            toast.error("Sikertelen bejelentkezés!")
-        }
-        else if (response.status === 403)
-        {
-            // nincs aktiválva
-            toast.warning("Nincs aktiválva a fiók!")
-        }
-        else if (response.status === 200)
-        {
-            // ok
-            localStorage.setItem("token", data.data.token);
-            toast.success("Sikeresen bejelentkeztél!")
-            global.location.href = "/"
-            global.location.reload()
-        }
     }
 
     const handleEmailChange = (e) => { setEmail(e.target.value) }
@@ -70,6 +73,8 @@ function Login() {
                         onChange={e=>handlePasswordChange(e)}
                     />
                 </Grid>
+
+                <Grid item><Typography component={Link} to="/regisztracio">Nincs még fiókod?</Typography></Grid>
 
                 <Grid item><SendButton type="submit">Belépés</SendButton></Grid>
             </Grid>
