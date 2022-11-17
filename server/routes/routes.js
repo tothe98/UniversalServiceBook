@@ -3,7 +3,7 @@ const router = express.Router()
 
 const { signup, signin } = require('../controllers/AuthController')
 const { addNewVehicle } = require('../controllers/VehicleController')
-const { getUser } = require('../controllers/UserController')
+const { getUser, updateUser } = require('../controllers/UserController')
 const { authenticateToken, authenticateAdmin, authenticateWorkshop } = require('../core/Auth')
 
 /**
@@ -80,11 +80,37 @@ router.post('/signup', signup)
  *         description: Nincs aktiválva
 */
 router.post('/signin', signin)
+router.get('/isLoggedIn', authenticateToken, (req, res) => { res.status(200).json({ message: 'ok', data: {} }) })
 
 
-
-router.post('/addNewVehicle', authenticateToken, addNewVehicle)
-router.get('/isLoggedIn', authenticateToken)
+/**
+ * @swagger
+ * /api/v1/getUserData:
+ *   get:
+ *     tags:
+ *      - Users
+ *     summary: Felhasználó adatok lekérése.
+ *     header:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               x-access-token:
+ *                 type: string
+ *                 description: Email
+ *                 example: pelda@email.com 
+ *     responses:
+ *       200:
+ *         description: Felhasználó adatai
+ *       400:
+ *         description: Bad Request
+ *       401:
+ *         description: Nincs hitelesítve
+*/
 router.get('/getUserData', authenticateToken, getUser)
+router.put('/updateUser', authenticateToken, updateUser)
+router.post('/addNewVehicle', authenticateToken, addNewVehicle)
 
 module.exports = router

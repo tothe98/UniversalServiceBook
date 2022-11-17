@@ -11,7 +11,6 @@ function authenticateToken(req, res, next) {
                 res.status(401).json({ message: 'Unauthorized', data: [] })
             } else {
                 req.userId = decoded.userId
-                req.email = decoded.email
                 req.isAdmin = decoded.isAdmin
                 req.wid = decoded.workShop
                 next()
@@ -32,7 +31,6 @@ function authenticateAdmin(req, res, next) {
                 res.status(403).json({ message: 'outOfRole', data: [] })
             } else {
                 req.userId = decoded.userId
-                req.email = decoded.email
                 req.isAdmin = decoded.isAdmin
                 req.wid = decoded.workShop
                 next()
@@ -54,7 +52,6 @@ function authenticateWorkshop(req, res, next) {
                 res.status(403).json({ message: 'outOfRole', data: [] })
             } else {
                 req.userId = decoded.userId
-                req.email = decoded.email
                 req.isAdmin = decoded.isAdmin
                 req.wid = decoded.workShop
                 next()

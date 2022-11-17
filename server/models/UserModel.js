@@ -19,10 +19,12 @@ const UserSchema = new mongoose.Schema({
         required: true
     },
     _profilImg: {
-        type: mongoose.Types.ObjectId
+        type: mongoose.Types.ObjectId,
+        ref: 'Pictures'
     },
     _workshop: {
-        type: mongoose.Types.ObjectId
+        type: mongoose.Types.ObjectId,
+        ref: 'Workshops'
     },
     phone: {
         type: String,
@@ -56,7 +58,16 @@ const UserSchema = new mongoose.Schema({
     })
 
 UserSchema.virtual("getUserData").get(function () {
-    return { "fName": this.fName, "lName": this.lName, "email": this.email, "phone": this.phone, "home": this.home, isAdmin: this.isAdmin }
+    return {
+        "fName": this.fName, "lName": this.lName, "email": this.email,
+        "phone": this.phone, "home": this.home, "isAdmin": this.isAdmin,
+        "picture": (this._profilImg ? this._profilImg.picture : undefined)
+    }
+})
+
+UserSchema.pre('save', function (next) {
+    this.updatedAt = Date.now()
+    next()
 })
 
 mongoose.model('UserInfo', UserSchema)
