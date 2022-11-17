@@ -16,6 +16,7 @@ exports.getUser = async (req, res) => {
 
 exports.updateUser = async (req, res) => {
     const User = mongoose.model('UserInfo')
+    console.log(req.body)
     const { lname, fname, picture, phone, home, oldPassword, newPassword } = req.body
 
     const updateUser = await User.findOne({ _id: req.userId })
