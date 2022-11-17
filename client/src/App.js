@@ -21,6 +21,7 @@ import GarageVehiclePreview from "./pages/GarageVehiclePreview";
 import MailPreview from "./pages/MailPreview";
 import Login from "./pages/Login";
 import axios from "axios";
+import Registration from "./pages/Registration";
 
 const Wrapper = styled('div')(({theme}) => ({
 }))
@@ -129,6 +130,8 @@ function App() {
                           <Route path='/levelek' element={loggedIn ? <Mails /> : <Login />} />
                           <Route path='/levelek/:id' element={loggedIn ? <MailPreview /> : <Login />} />
                           <Route path='/beallitasok' element={loggedIn ? <Settings /> : <Login />} />
+                          <Route path='/bejelentkezes' element={<Login />} />
+                          <Route path='/regisztracio' element={<Registration />} />
                           <Route path='/*' element={loggedIn ? <Error /> : <Login />} />
                       </Routes>
                   </Grid>
