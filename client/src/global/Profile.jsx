@@ -30,7 +30,7 @@ function Profile() {
     return <Grid container spacing={underS ? 1 : 2} direction="column" alignItems="center" justifyContent="center" sx={{ marginTop: underS ? "0.25em" : 0 }}>
         <Grid item>
             <AvatarImage src={
-                JSON.parse(localStorage.getItem("user")) ? JSON.parse(localStorage.getItem("user")).user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='
+                JSON.parse(localStorage.getItem("user")).user.picture ? JSON.parse(localStorage.getItem("user")).user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='
             } alt="profil kép" />
         </Grid>
         <Grid item>
