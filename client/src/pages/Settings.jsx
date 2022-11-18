@@ -111,12 +111,6 @@ function Settings() {
 
         // password changing
         if (password){
-            if (password !== "régi jelszó") {
-                setOldPasswordError("A régi jelszó nem stimmel!")
-                toast.error(oldPasswordError)
-                return;
-            }
-
             if (newPassword !== reNewPassword) {
                 setChangePasswordError("A két jelszó nem stimmel!");
                 toast.error(changePasswordError)

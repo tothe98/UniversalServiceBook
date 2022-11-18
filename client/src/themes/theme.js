@@ -1,12 +1,15 @@
 import { createTheme } from "@mui/material";
 
+const ROSE_RED_HEX = "#BD1E51";
+
 export default createTheme({
     palette: {
         common: {
             darkblack: '#24292F',
             gray: 'rgba(102, 102, 102, 0.05)',
             lightgray: '#D0D7DE',
-            blue: "#1B30F5"
+            blue: "#1B30F5",
+            _RoseRed: ROSE_RED_HEX
         }
     },
     mixins: {

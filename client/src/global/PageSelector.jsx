@@ -14,7 +14,7 @@ const Wrapper = styled(Grid)(({theme}) => ({
     }
 }))
 
-function PageSelector({activePage, handleChangeTab}) {
+function PageSelector({activePage, loggedIn, handleChangeTab}) {
     const routes = [
         { name: 'Főoldal', link: '/', activeIndex: 0 },
         {
@@ -50,8 +50,8 @@ function PageSelector({activePage, handleChangeTab}) {
 
     return (<Wrapper container>
         <Grid container>
-            <Grid item md={3} xs={0}></Grid>
-            <Grid item md={8} xs={12}>
+            <Grid item md={loggedIn ? 3 : 1 } xs={0}></Grid>
+            <Grid item md={loggedIn ? 8 : 11} xs={12}>
                 <Tabs value={activePage} onChange={handleChangeTab}>
                     {
                         routes.map((route, i) => {

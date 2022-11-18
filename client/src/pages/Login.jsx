@@ -32,7 +32,6 @@ function Login() {
                 localStorage.setItem("token", data.data.token);
                 toast.success("Sikeresen bejelentkeztél!")
                 global.location.href = "/"
-                global.location.reload()
             })
             .catch(e => {
                 if (e.response.status === 400)
