@@ -9,7 +9,9 @@ const Wrapper = styled('div')(({theme}) => ({
     backgroundColor: theme.palette.common.darkblack,
     maxHeight: MAX_HEIGHT,
     height: "100%",
-    padding: "32px 0"
+    padding: "32px 0",
+    paddingLeft: theme.global.basePadding,
+    paddingRight: theme.global.basePadding
 }))
 
 const Title = styled(Typography)(({theme}) => ({

@@ -1,8 +1,8 @@
-import { createTheme } from "@mui/material";
+import {createTheme, responsiveFontSizes} from "@mui/material";
 
 const ROSE_RED_HEX = "#BD1E51";
 
-export default createTheme({
+let theme = createTheme({
     palette: {
         common: {
             darkblack: '#24292F',
@@ -13,35 +13,35 @@ export default createTheme({
         }
     },
     mixins: {
-      button: {
-          maxWidth: "149px",
-          maxHeight: "40px",
-          width: "100%",
-          height: "100%",
-          background: "#24292F",
-          border: `#D0D7DE`,
-          borderRadius: "5px",
-          textTransform: "none",
-          color: "#fff",
-          padding: "1em 2em",
-          "&:hover": {
-              background: "#24292F"
-          }
-      },
-      cancelButton: {
-        maxWidth: "149px",
-        maxHeight: "40px",
-        width: "100%",
-        height: "100%",
-        background: "#fff",
-        border: `1px solid #24292F`,
-        borderRadius: "5px",
-        textTransform: "none",
-        color: "#24292F",
-        padding: "1em 2em",
-        "&:hover": {
-            background: "#fff"
-        }
+        button: {
+            maxWidth: "149px",
+            maxHeight: "40px",
+            width: "100%",
+            height: "100%",
+            background: "#24292F",
+            border: `#D0D7DE`,
+            borderRadius: "5px",
+            textTransform: "none",
+            color: "#fff",
+            padding: "1em 2em",
+            "&:hover": {
+                background: "#24292F"
+            }
+        },
+        cancelButton: {
+            maxWidth: "149px",
+            maxHeight: "40px",
+            width: "100%",
+            height: "100%",
+            background: "#fff",
+            border: `1px solid #24292F`,
+            borderRadius: "5px",
+            textTransform: "none",
+            color: "#24292F",
+            padding: "1em 2em",
+            "&:hover": {
+                background: "#fff"
+            }
         }
     },
     typography: {
@@ -82,5 +82,11 @@ export default createTheme({
     },
     shadows: {
         25: "0px 0px 8px #D9D9D9"
+    },
+    global: {
+        basePadding: "10px"
     }
 })
+theme = responsiveFontSizes(theme);
+
+export default theme;

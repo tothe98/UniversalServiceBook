@@ -1,9 +1,10 @@
 import {
+    Button,
     Drawer,
     Grid,
     IconButton,
     List,
-    ListItem,
+    ListItem, ListItemButton,
     ListItemText,
     styled,
     Toolbar,
@@ -21,7 +22,9 @@ const MAX_WIDTH = '880px';
 const Wrapper = styled(Grid)(({theme}) => ({
     maxHeight: MAX_HEIGHT,
     height: '100%',
-    marginTop: "40px"
+    marginTop: "40px",
+    paddingLeft: theme.global.basePadding,
+    paddingRight: theme.global.basePadding
 }))
 
 const MyHr = styled('hr')(({theme}) => ({
@@ -79,13 +82,19 @@ function Footer() {
         >
             <List>
                 <ListItem>
-                    <ListItemText primary="Segítség kérés" />
+                    <ListItemButton component={Link} to="#">
+                        <ListItemText primary="Segítség kérés" />
+                    </ListItemButton>
                 </ListItem>
                 <ListItem>
-                    <ListItemText primary="Általános szerződési feltételek" />
+                    <ListItemButton component={Link} to="#">
+                        <ListItemText primary="Általános szerződési feltételek" />
+                    </ListItemButton>
                 </ListItem>
                 <ListItem>
-                    <ListItemText primary="Elérhetőségeink" />
+                    <ListItemButton component={Link} to="#">
+                        <ListItemText primary="Elérhetőségeink" />
+                    </ListItemButton>
                 </ListItem>
             </List>
         </Drawer>

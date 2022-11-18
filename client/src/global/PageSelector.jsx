@@ -9,6 +9,8 @@ const Wrapper = styled(Grid)(({theme}) => ({
     backgroundColor: theme.palette.common.gray,
     height: MAX_HEIGHT,
     alignItems: "flex-end",
+    paddingLeft: theme.global.basePadding,
+    paddingRight: theme.global.basePadding,
     [theme.breakpoints.down("md")]: {
         height: "3.375rem"
     }
