@@ -1,7 +1,8 @@
-import {Grid, styled, Tab, Tabs} from '@mui/material';
+import {Grid, styled, Tab, Tabs, useMediaQuery} from '@mui/material';
 import React, {useEffect} from 'react';
 import { useState } from 'react';
 import {Link} from "react-router-dom";
+import theme from "../themes/theme";
 
 const MAX_HEIGHT = '108px';
 
@@ -17,6 +18,8 @@ const Wrapper = styled(Grid)(({theme}) => ({
 }))
 
 function PageSelector({activePage, loggedIn, handleChangeTab}) {
+    const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
+
     const routes = [
         { name: 'Főoldal', link: '/', activeIndex: 0 },
         {
@@ -52,8 +55,8 @@ function PageSelector({activePage, loggedIn, handleChangeTab}) {
 
     return (<Wrapper container>
         <Grid container>
-            <Grid item md={loggedIn ? 3 : 1 } xs={0}></Grid>
-            <Grid item md={loggedIn ? 8 : 11} xs={12}>
+            <Grid item lg={loggedIn ? 3 : 1 } xs={0}></Grid>
+            <Grid item lg={loggedIn ? 8 : 11} xs={12}>
                 <Tabs value={activePage} onChange={handleChangeTab}>
                     {
                         routes.map((route, i) => {
@@ -62,7 +65,7 @@ function PageSelector({activePage, loggedIn, handleChangeTab}) {
                     }
                 </Tabs>
             </Grid>
-            <Grid item md={1} xs={0}></Grid>
+            <Grid item lg={1} xs={0}></Grid>
         </Grid>
     </Wrapper>)
 }
