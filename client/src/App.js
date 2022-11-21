@@ -32,7 +32,8 @@ const MyHr = styled('hr')(({theme}) => ({
 
 
 function App() {
-  const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
+  const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
+  const betweenSM_MD = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const [activePage, setActivePage] = useState(0);
   const [loggedIn, setLoggedIn] = useState(false);
 
@@ -113,14 +114,14 @@ function App() {
           <Header />
           <PageSelector activePage={activePage} loggedIn={loggedIn} handleChangeTab={handleChangeTab} />
           <Wrapper>
-              <Grid container direction={underSmall ? "column" : "row"}>
+              <Grid container direction={underLarge ? "column" : "row"}>
                   { loggedIn && <Grid item md={1} xs={0}></Grid> }
-                  <Grid item md={loggedIn ? 2 : 1} xs={loggedIn ? 2 : 1} sx={{marginTop: underSmall ? 0 : "-3.8125rem"}}>
+                  <Grid item md={loggedIn ? 2 : 1} xs={loggedIn ? 2 : 1} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}>
                       { loggedIn && <Profile /> }
                   </Grid>
 
                   <Grid item md={loggedIn ? 8 : 11} xs={loggedIn ? 10 : 11} sx={{
-                      paddingTop: underSmall ? "1rem" : "53px",
+                      paddingTop: underLarge || betweenSM_MD ? "1rem" : "53px",
                       paddingLeft: theme.global.basePadding,
                       paddingRight: theme.global.basePadding
                   }}>

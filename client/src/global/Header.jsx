@@ -24,7 +24,7 @@ function Header() {
     return (<Wrapper>
         <Grid container>
             <Grid item xs></Grid>
-            <Grid item md={10} xs={12} >
+            <Grid item lg={10} xs={12} >
                 <Title variant="h1" component={Link} to="/">
                     Univerzális Szervízkönyv
                 </Title>

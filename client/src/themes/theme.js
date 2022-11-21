@@ -1,14 +1,18 @@
 import {createTheme, responsiveFontSizes} from "@mui/material";
 
 const ROSE_RED_HEX = "#BD1E51";
+const DARK_BLACK = '#24292F';
+const GRAY = 'rgba(102, 102, 102, 0.05)';
+const LIGHTGRAY = '#D0D7DE';
+const BLUE = '#1B30F5';
 
 let theme = createTheme({
     palette: {
         common: {
-            darkblack: '#24292F',
-            gray: 'rgba(102, 102, 102, 0.05)',
-            lightgray: '#D0D7DE',
-            blue: "#1B30F5",
+            darkblack: DARK_BLACK,
+            gray: GRAY,
+            lightgray: LIGHTGRAY,
+            blue: BLUE,
             _RoseRed: ROSE_RED_HEX
         }
     },
@@ -18,14 +22,14 @@ let theme = createTheme({
             maxHeight: "40px",
             width: "100%",
             height: "100%",
-            background: "#24292F",
+            background: `${LIGHTGRAY}`, // "#24292F
             border: `#D0D7DE`,
             borderRadius: "5px",
             textTransform: "none",
-            color: "#fff",
+            color: `${DARK_BLACK}`, // #fff
             padding: "1em 2em",
             "&:hover": {
-                background: "#24292F"
+                background: `${LIGHTGRAY}`
             }
         },
         cancelButton: {
