@@ -79,6 +79,7 @@ function Footer() {
             anchor="bottom"
             open={open}
             onClose={e=>{setOpen(false)}}
+            PaperProps={{ elevation: 9 }}
         >
             <List>
                 <ListItem>

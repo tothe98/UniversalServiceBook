@@ -33,55 +33,10 @@ const MyHr = styled('hr')(({theme}) => ({
 
 function App() {
   const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
+  const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const betweenSM_MD = useMediaQuery(theme.breakpoints.between("sm", "md"));
   const [activePage, setActivePage] = useState(0);
   const [loggedIn, setLoggedIn] = useState(false);
-
-  /*theme.typography.h1 = {
-      ...theme.typography.h1,
-      [theme.breakpoints.between("lg", "xl")]: {
-          fontSize: "1.875rem"
-      },
-      [theme.breakpoints.between("md", "lg")]: {
-          fontSize: "1.5625rem"
-      },
-      [theme.breakpoints.between("sm", "md")]: {
-          fontSize: "1.25rem"
-      },
-      [theme.breakpoints.between("xs", "sm")]: {
-          fontSize: "0.9375rem"
-      }
-  }
-  theme.typography.h2 = {
-      ...theme.typography.h2,
-      [theme.breakpoints.between("lg", "xl")]: {
-          fontSize: "1.5625rem"
-      },
-      [theme.breakpoints.between("md", "lg")]: {
-          fontSize: "1.25rem"
-      },
-      [theme.breakpoints.between("sm", "md")]: {
-          fontSize: "0.9375rem"
-      },
-      [theme.breakpoints.between("xs", "sm")]: {
-          fontSize: "0.9375rem"
-      }
-  }
-  theme.typography.h3 = {
-      ...theme.typography.h3,
-      [theme.breakpoints.between("lg", "xl")]: {
-          fontSize: "1.5625rem"
-      },
-      [theme.breakpoints.between("md", "lg")]: {
-          fontSize: "1.25rem"
-      },
-      [theme.breakpoints.between("sm", "md")]: {
-          fontSize: "0.9375rem"
-      },
-      [theme.breakpoints.between("xs", "sm")]: {
-          fontSize: "0.9375rem"
-      }
-  }*/
 
   const handleChangeTab = (newValue) => {
     setActivePage(newValue)
@@ -111,13 +66,13 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
-          <Header />
-          <PageSelector activePage={activePage} loggedIn={loggedIn} handleChangeTab={handleChangeTab} />
+          <Header handleChangeTab={handleChangeTab} />
+          { !underSmall && <PageSelector activePage={activePage} loggedIn={loggedIn} handleChangeTab={handleChangeTab} /> }
           <Wrapper>
               <Grid container direction={underLarge ? "column" : "row"}>
                   { loggedIn && <Grid item md={1} xs={0}></Grid> }
                   <Grid item md={loggedIn ? 2 : 1} xs={loggedIn ? 2 : 1} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}>
-                      { loggedIn && <Profile /> }
+                      { loggedIn && <Profile handleChangeTab={handleChangeTab} /> }
                   </Grid>
 
                   <Grid item md={loggedIn ? 8 : 11} xs={loggedIn ? 10 : 11} sx={{
@@ -126,12 +81,12 @@ function App() {
                       paddingRight: theme.global.basePadding
                   }}>
                       <Routes>
-                          <Route path='/' element={loggedIn ? <Home /> : <Login />} />
-                          <Route path='/garazs' element={loggedIn ? <Garage /> : <Login />} />
-                          <Route path='/garazs/:id' element={loggedIn ? <GarageVehiclePreview /> : <Login />} />
-                          <Route path='/levelek' element={loggedIn ? <Mails /> : <Login />} />
-                          <Route path='/levelek/:id' element={loggedIn ? <MailPreview /> : <Login />} />
-                          <Route path='/beallitasok' element={loggedIn ? <Settings /> : <Login />} />
+                          <Route path='/' element={loggedIn ? <Home handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/garazs' element={loggedIn ? <Garage handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/garazs/:id' element={loggedIn ? <GarageVehiclePreview handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/levelek' element={loggedIn ? <Mails handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/levelek/:id' element={loggedIn ? <MailPreview handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/beallitasok' element={loggedIn ? <Settings handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/bejelentkezes' element={<Login />} />
                           <Route path='/regisztracio' element={<Registration />} />
                           <Route path='/*' element={loggedIn ? <Error /> : <Login />} />

@@ -17,13 +17,18 @@ const Wrapper = styled(Grid)(({theme}) => ({
     }
 }))
 
+const MyTab = styled(Tab)(({theme}) => ({
+    ...theme.typography.h3,
+    textTransform: "none"
+}))
+
 function PageSelector({activePage, loggedIn, handleChangeTab}) {
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
     const routes = [
         { name: 'Főoldal', link: '/', activeIndex: 0 },
         {
-            name: 'Garázs', link: '/garazs', activeIndex: 1
+            name: 'Műhely', link: '/garazs', activeIndex: 1
         },
         { name: 'Leveleim', link: '/levelek', activeIndex: 2 },
         { name: 'Beállítások', link: '/beallitasok', activeIndex: 3 }
@@ -57,10 +62,10 @@ function PageSelector({activePage, loggedIn, handleChangeTab}) {
         <Grid container>
             <Grid item lg={loggedIn ? 3 : 1 } xs={0}></Grid>
             <Grid item lg={loggedIn ? 8 : 11} xs={12}>
-                <Tabs value={activePage} onChange={handleChangeTab}>
+                <Tabs value={activePage} textColor="#24292F" onChange={handleChangeTab} TabIndicatorProps={{style: {backgroundColor: "#909090"}}}>
                     {
                         routes.map((route, i) => {
-                            return <Tab key={route+"-"+i} label={route.name} component={Link} to={route.link}/>
+                            return <MyTab key={route+"-"+i} label={route.name} component={Link} to={route.link} />
                         })
                     }
                 </Tabs>
