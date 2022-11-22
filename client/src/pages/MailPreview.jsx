@@ -69,7 +69,7 @@ const MailAttachmentImage = styled("img")(({theme}) => ({
     width: "100%"
 }))
 
-function GarageVehiclePreview() {
+function GarageVehiclePreview({handleChangeTab}) {
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const [mail, setMail] = useState({});
     const [isLoading, setIsLoading] = useState(true);
@@ -146,7 +146,7 @@ function GarageVehiclePreview() {
     if (isLoading)
     {
         return (<React.Fragment>
-            <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/leveleim">
+            <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/leveleim"  onClick={e=>{handleChangeTab(2)}} >
                 <SubTitle variant='h3' sx={{marginBottom: "0", marginLeft: "1em"}}>Leveleim</SubTitle>
             </BackToCarsButton>
 

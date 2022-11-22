@@ -38,7 +38,7 @@ const MyGridItem = styled(Grid)(({theme}) => ({
     width: "100%"
 }))
 
-function Settings() {
+function Settings({handleChangeTab}) {
     const [picture, setPicture] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -329,7 +329,7 @@ function Settings() {
                 <MyGridItem item>
                     <Grid container direction="row" spacing={1.5} justifyContent="flex-end">
                         <Grid item><FormActionButton type="submit">Mentés</FormActionButton></Grid>
-                        <Grid item><FormCancelButton variant="contained" component={Link} to="/">Elvetés</FormCancelButton></Grid>
+                        <Grid item><FormCancelButton variant="contained" component={Link} to="/"  onClick={e=>{handleChangeTab(0)}} >Elvetés</FormCancelButton></Grid>
                     </Grid>
                 </MyGridItem>
             </Grid>

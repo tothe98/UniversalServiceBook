@@ -40,7 +40,7 @@ const MailButton = styled(Button)(({theme}) => ({
     ...theme.mixins.button
 }))
 
-function Mails() {
+function Mails({handleChangeTab}) {
     const [mails, setMails] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -133,7 +133,7 @@ function Mails() {
                         </Grid>
 
                         <Grid item sx={{marginLeft: "auto"}}>
-                            <MailButton component={Link} to={`/levelek/${mail.id}`}>Megtekintem</MailButton>
+                            <MailButton component={Link} to={`/levelek/${mail.id}`}  onClick={e=>{handleChangeTab(2)}} >Megtekintem</MailButton>
                         </Grid>
                     </Grid>
                 </ReadedMailContentBox>)
@@ -154,7 +154,7 @@ function Mails() {
                         </Grid>
 
                         <Grid item sx={{marginLeft: "auto"}}>
-                            <MailButton component={Link} to={`/levelek/${mail.id}`}>Megtekintem</MailButton>
+                            <MailButton component={Link} to={`/levelek/${mail.id}`} onClick={e=>{handleChangeTab(2)}}>Megtekintem</MailButton>
                         </Grid>
                     </Grid>
                 </UnReadedMailContentBox>)

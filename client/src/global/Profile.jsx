@@ -2,6 +2,9 @@ import {Button, Grid, styled, Toolbar, Typography, useMediaQuery} from '@mui/mat
 import React, {Component, useEffect, useState} from 'react';
 import { Link } from 'react-router-dom';
 import theme from "../themes/theme";
+import dayjs from "dayjs";
+import {CalendarPicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 
 const AVATAR_MAX_HEIGHT = '200px';
 const AVATAR_MAX_WIDTH = '200px';
@@ -54,10 +57,20 @@ const LogOutButton = styled(Button)(({theme}) => ({
     backgroundColor: theme.palette.common._RoseRed
 }))
 
-function Profile() {
+const MyCalendar = styled(CalendarPicker)(({theme}) => ({
+    maxWidth: "260px",
+    width: "auto",
+    [theme.breakpoints.down("sm")]: {
+        maxWidth: "100%"
+    }
+}))
+
+function Profile({handleChangeTab}) {
+    const biggerExtraLarge = useMediaQuery(theme.breakpoints.up("xl"));
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
-    const underSmall = useMediaQuery(theme.breakpoints.down("xs"));
+    const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
     const [wallPaper, setWallpaper] = useState();
+    const [date, setDate] = useState(dayjs('2022-04-07'));
 
     useEffect(() => {
         setWallpaper(
@@ -111,10 +124,18 @@ function Profile() {
                 </React.Fragment>)
         }
         <MyGridItem item sx={{marginLeft: underLarge ? "auto" : 0, textAlign: "center"}}>
-            <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok">
+            <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
                 Beállítások
             </SettingsButton>
         </MyGridItem>
+
+            {
+                (biggerExtraLarge || underSmall) && <MyGridItem item xs>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <MyCalendar date={date} onChange={(newDate) => setDate(newDate)} />
+                    </LocalizationProvider>
+                </MyGridItem>
+            }
     </Container>
     {
         underLarge && <hr />

@@ -41,7 +41,7 @@ const ViewButton = styled(Button)(({theme}) => ({
     Motor number = Motorszám
     Registered services = Bejegyzett Szervízek
  */
-function Home() {
+function Home({handleChangeTab}) {
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
     const [cars, setCars] = useState([]);
@@ -153,7 +153,7 @@ function Home() {
                            </Grid>
 
                            <Grid item xs sx={{position: underS ? "block" : "absolute", bottom: "2em", right: "2em"}}>
-                               <ViewButton component={Link} to={`/garazs/${car.carId}`} >Megtekintem</ViewButton>
+                               <ViewButton component={Link} to={`/garazs/${car.carId}`} onClick={e=>{handleChangeTab(1)}} >Megtekintem</ViewButton>
                            </Grid>
                        </Grid>
                    </ContentBox>
@@ -185,7 +185,7 @@ function Home() {
                             </Grid>
 
                             <Grid item xs sx={{position: underS ? "block" : "absolute", bottom: "2em", right: "2em"}}>
-                                <ViewButton component={Link} to={`/levelek/${info.id}`} >Megtekintem</ViewButton>
+                                <ViewButton component={Link} to={`/levelek/${info.id}`} onClick={e=>{handleChangeTab(2)}}  >Megtekintem</ViewButton>
                             </Grid>
                         </Grid>
                     </ContentBox>
