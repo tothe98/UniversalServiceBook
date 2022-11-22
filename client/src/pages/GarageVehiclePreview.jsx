@@ -104,7 +104,7 @@ const MyAccordionImage = styled("img")(({theme}) => ({
     objectFit: "cover"
 }))
 
-function GarageVehiclePreview() {
+function GarageVehiclePreview({handleChangeTab}) {
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
     const [car, setCar] = useState({});
@@ -178,7 +178,7 @@ function GarageVehiclePreview() {
     if (isLoading)
     {
         return (<React.Fragment>
-            <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/garazs">
+            <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/garazs" onClick={e=>{handleChangeTab(1)}} >
                 <SubTitle variant='h3' sx={{marginBottom: "0", marginLeft: "1em"}}>Autóim</SubTitle>
             </BackToCarsButton>
 

@@ -34,7 +34,7 @@ const ViewButton = styled(Button)(({theme}) => ({
     position: "relative"
 }))
 
-function Garage() {
+function Garage({handleChangeTab}) {
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
     const [cars, setCars] = useState([]);
@@ -74,7 +74,7 @@ function Garage() {
     }, []);
 
     return (<React.Fragment>
-        <SubTitle variant='h3'>Autóim</SubTitle>
+        <SubTitle variant='h3'>Járműveim</SubTitle>
 
         {
             cars && cars.map(car => {
@@ -115,7 +115,7 @@ function Garage() {
                         </Grid>
 
                         <Grid item xs sx={{position: underS ? "block" : "absolute", bottom: "2em", right: "2em"}}>
-                            <ViewButton component={Link} to={`/garazs/${car.carId}`} >Megtekintem</ViewButton>
+                            <ViewButton component={Link} to={`/garazs/${car.carId}`}  onClick={e=>{handleChangeTab(1)}}  >Megtekintem</ViewButton>
                         </Grid>
                     </Grid>
                 </ContentBox>
