@@ -5,6 +5,11 @@ const DriveTypeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    _vehicleType: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: 'VehicleTypes'
+    },
     isActive: {
         type: Boolean,
         default: true
