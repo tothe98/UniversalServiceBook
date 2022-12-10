@@ -196,7 +196,7 @@ function GarageVehiclePreview({handleChangeTab}) {
     }
 
     return (<React.Fragment>
-        <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/garazs">
+        <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/jarmuveim">
             <SubTitle variant='h3' sx={{marginBottom: "0", marginLeft: "1em"}}>Autóim</SubTitle>
         </BackToCarsButton>
 

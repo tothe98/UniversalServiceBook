@@ -22,6 +22,7 @@ import MailPreview from "./pages/MailPreview";
 import Login from "./pages/Login";
 import axios from "axios";
 import Registration from "./pages/Registration";
+import MechanicWorkshop from "./pages/MechanicWorkshop";
 
 const Wrapper = styled('div')(({theme}) => ({
 }))
@@ -39,12 +40,12 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
 
   const handleChangeTab = (newValue) => {
-    setActivePage(newValue)
+      setActivePage(newValue)
   }
 
   const getUserDatas = async (token) => {
       const axiosInstance = axios.create({
-          baseURL: process.env.REACT_APP_URL
+          baseURL: process.env.REACT_APP_BACKEND_URL
       })
       const response = await axiosInstance.get("getUserData", {
           headers: {
@@ -62,12 +63,42 @@ function App() {
       }
   });
 
+    const routes = [
+        { name: 'Főoldal', link: '/', activeIndex: 0 },
+        { name: 'Járműveim', link: '/jarmuveim', activeIndex: 1 },
+        { name: 'Műhely', link: '/muhely', activeIndex: 2 },
+        { name: 'Beállítások', link: '/beallitasok', activeIndex: 3 },
+    ]
+
+    useEffect(() => {
+        [...routes].forEach(route => {
+            switch (window.location.pathname)
+            {
+                case `${route.link}`:
+                    if (activePage !== route.activeIndex)
+                    {
+                        setActivePage(route.activeIndex)
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (window.location.pathname.includes(route.link) && route.link !== "/")
+            {
+                if (activePage !== route.activeIndex)
+                {
+                    setActivePage(route.activeIndex)
+                }
+            }
+        })
+    }, [activePage, routes])
 
   return (
     <ThemeProvider theme={theme}>
       <BrowserRouter>
           <Header handleChangeTab={handleChangeTab} />
-          { !underSmall && <PageSelector activePage={activePage} loggedIn={loggedIn} handleChangeTab={handleChangeTab} /> }
+          { !underSmall && <PageSelector routes={routes} activePage={activePage} loggedIn={loggedIn} handleChangeTab={handleChangeTab} /> }
           <Wrapper>
               <Grid container direction={underLarge ? "column" : "row"}>
                   { loggedIn && <Grid item md={1} xs={0}></Grid> }
@@ -82,8 +113,9 @@ function App() {
                   }}>
                       <Routes>
                           <Route path='/' element={loggedIn ? <Home handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/garazs' element={loggedIn ? <Garage handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/garazs/:id' element={loggedIn ? <GarageVehiclePreview handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/muhely' element={loggedIn ? <MechanicWorkshop handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/jarmuveim' element={loggedIn ? <Garage handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/jarmuveim/:id' element={loggedIn ? <GarageVehiclePreview handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/levelek' element={loggedIn ? <Mails handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/levelek/:id' element={loggedIn ? <MailPreview handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/beallitasok' element={loggedIn ? <Settings handleChangeTab={handleChangeTab} /> : <Login />} />

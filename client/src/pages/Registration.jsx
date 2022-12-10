@@ -22,7 +22,7 @@ function Registration() {
     const sendRegistration = async (e) => {
         e.preventDefault();
         const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_URL
+            baseURL: process.env.REACT_APP_BACKEND_URL
         })
         const response = await axiosInstance.post("signup", {
             fname: firstName,
