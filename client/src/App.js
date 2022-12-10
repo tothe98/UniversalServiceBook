@@ -116,9 +116,9 @@ function App() {
                           <Route path='/muhely' element={loggedIn ? <MechanicWorkshop handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/jarmuveim' element={loggedIn ? <Garage handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/jarmuveim/:id' element={loggedIn ? <GarageVehiclePreview handleChangeTab={handleChangeTab} /> : <Login />} />
+                          <Route path='/beallitasok' element={loggedIn ? <Settings handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/levelek' element={loggedIn ? <Mails handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/levelek/:id' element={loggedIn ? <MailPreview handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/beallitasok' element={loggedIn ? <Settings handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/bejelentkezes' element={<Login />} />
                           <Route path='/regisztracio' element={<Registration />} />
                           <Route path='/*' element={loggedIn ? <Error /> : <Login />} />

@@ -19,6 +19,7 @@ import DateIcon from '@mui/icons-material/DateRangeOutlined';
 import {toast} from "react-toastify";
 import DocumentsIcon from "@mui/icons-material/FilePresentOutlined";
 import {Editor} from "@tinymce/tinymce-react";
+import {MyCardSkeleton, MyInputSkeleton, MyTextSkeleton} from "../lib/Skeletons";
 
 const ContentBox = styled('div')(({theme}) => ({
     position: "relative",
@@ -58,7 +59,7 @@ const UploadButton = styled(Button)(({theme}) => ({
 }))
 
 function MechanicWorkshop({handleChangeTab}) {
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [vehicles, setVehicles] = useState("");
     const [isFinded, setIsFinded] = useState(false);
     const [findedVehicle, setFindedVehicle] = useState({});
@@ -109,7 +110,8 @@ function MechanicWorkshop({handleChangeTab}) {
                 le: 90
             }
         ]
-        setVehicles(vehicles)
+        setVehicles(vehicles);
+        setIsLoading(false);
     }, []);
 
     const handleSearchVehicle = async (e) => {
@@ -143,6 +145,27 @@ function MechanicWorkshop({handleChangeTab}) {
     const handleNewServiceMessage = async () => {
         /* it is a plain html text */
         let textEditorContent = serviceMessageHTML.current.getContent();
+    }
+
+    if (isLoading) {
+        return <>
+            <SubTitle variant='h3'>Jármű kiválasztása</SubTitle>
+            <MyTextSkeleton />
+
+
+            <Grid container direction="column" alignItems="flex-start" justifyContent="center" sx={{marginBottom: "1.5rem"}}>
+                <Grid item sx={{width: "100%"}}>
+                    <MyTextSkeleton />
+                    <MyInputSkeleton />
+
+                    <SubTitle2 variant='h3'>Új szervízbejegyzés hozzáadása!</SubTitle2>
+                    <MyCardSkeleton />
+                </Grid>
+                <Grid item>
+                    <MyInputSkeleton />
+                </Grid>
+            </Grid>
+        </>
     }
 
     return <>
