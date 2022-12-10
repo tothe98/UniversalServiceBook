@@ -22,6 +22,7 @@ import theme from "../themes/theme";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DoNotDisturbOnOutlinedIcon from "@mui/icons-material/DoNotDisturbOnOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
+import {MyCardSkeleton, MyTextSkeleton} from "../lib/Skeletons";
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 
@@ -112,6 +113,9 @@ const CarDialogText = styled(DialogContentText)(({theme}) => ({
 }))
 
 function Home({handleChangeTab}) {
+    /* loading screen variables */
+    const [isLoading, setIsLoading] = useState(true);
+
     const [openCarOptions, changeCarOptions] = useState(false);
     const [carAnchorEl, setCarAnchorEL] = useState(null);
     const [carModal, setCarModal] = useState(false);
@@ -201,7 +205,24 @@ function Home({handleChangeTab}) {
 
         setVehicles(vehicles);
         setServiceInformations(serviceInformations);
+        setIsLoading(false);
     }, []);
+
+    if (isLoading) {
+        return (
+            <>
+                <div>
+                    <MyTextSkeleton />
+                    <MyCardSkeleton />
+                </div>
+
+                <div>
+                    <MyTextSkeleton />
+                    <MyCardSkeleton />
+                </div>
+            </>
+        )
+    }
 
     return (
         <>
