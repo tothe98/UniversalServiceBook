@@ -8,6 +8,7 @@ const BLUE = '#1B30F5';
 
 let theme = createTheme({
     palette: {
+        mode: "light",
         common: {
             darkblack: DARK_BLACK,
             gray: GRAY,
@@ -84,13 +85,38 @@ let theme = createTheme({
             textDecoration: 'none'
         }
     },
-    shadows: {
-        25: "0px 0px 8px #D9D9D9"
-    },
+    shadows: [
+        /* solving fucking The elevation provided <Paper elevation={1}> is not available in the theme. Please make sure that `theme.shadows[1]` is defined. error !!! */
+        "none",
+        "0px 15px 60px rgba(0, 0, 0, 0.25)",
+        "0px 35px 60px rgba(0, 0, 0, 0.25)",
+        "20px 55px 60px rgba(0, 0, 0, 0.25)",
+        "10px 15px 60px rgba(0, 0, 0, 0.25)",
+        ...Array(19).fill('none'),
+        "0px 0px 0px #D9D9D9"
+    ],
     global: {
         basePadding: "10px"
+    },
+    components: {
+        // Name of the component
+        MuiButton: {
+            styleOverrides: {
+                // Name of the slot
+                root: {
+                    // Some CSS
+                    textTransform: "none",
+                    boxShadow: "0px 0px 0px rgb(0 0 0 / 25%)",
+                    "&:hover": {
+                        boxShadow: "0px 0px 0px rgb(0 0 0 / 25%)"
+                    }
+                },
+            },
+        },
     }
 })
+theme.shadows[24] = theme.shadows[4];
+theme.shadows[1] = theme.shadows[5];
 theme = responsiveFontSizes(theme);
 
 export default theme;

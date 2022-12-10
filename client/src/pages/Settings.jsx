@@ -88,7 +88,7 @@ function Settings({handleChangeTab}) {
 
     const getUserDatas = async (token) => {
         const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_URL
+            baseURL: process.env.REACT_APP_BACKEND_URL
         })
         const response = await axiosInstance.get("getUserData", {
             headers: {
@@ -174,7 +174,7 @@ function Settings({handleChangeTab}) {
             console.log(body)
 
             const axiosInstance = axios.create({
-                baseURL: process.env.REACT_APP_URL
+                baseURL: process.env.REACT_APP_BACKEND_URL
             })
             const response = await axiosInstance.put("updateUser", body,
                 {headers: {"x-access-token": localStorage.getItem("token")}});
@@ -208,7 +208,8 @@ function Settings({handleChangeTab}) {
                             <SubTitle variant='h3'>Profilkép beállítások</SubTitle>
 
                             <Grid container direction="column" sx={{marginTop: "auto"}}>
-                                <TextField inputProps={{ accept: 'image/*' }} fullWidth name="wallpaper" placeholder="Kép kiválasztása..." type="file" onChange={e=>handleProfileImageChange(e)} />
+                                <TextField inputProps={{ accept: 'image/*' }} fullWidth name="wallpaper" placeholder="Kép kiválasztása..."
+                                           type="file" onChange={e=>handleProfileImageChange(e)} />
                             </Grid>
                         </Grid>
                     </Grid>

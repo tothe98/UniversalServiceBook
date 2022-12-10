@@ -70,9 +70,11 @@ function Profile({handleChangeTab}) {
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
     const [wallPaper, setWallpaper] = useState();
-    const [date, setDate] = useState(dayjs('2022-04-07'));
+    let today = new Date();
+    const [date, setDate] = useState(dayjs(today));
 
     useEffect(() => {
+        today = new Date();
         setWallpaper(
             (JSON.parse(localStorage.getItem("user")) &&
                 JSON.parse(localStorage.getItem("user")).user &&

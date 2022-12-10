@@ -22,41 +22,8 @@ const MyTab = styled(Tab)(({theme}) => ({
     textTransform: "none"
 }))
 
-function PageSelector({activePage, loggedIn, handleChangeTab}) {
+function PageSelector({activePage, loggedIn, handleChangeTab, routes}) {
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
-
-    const routes = [
-        { name: 'Főoldal', link: '/', activeIndex: 0 },
-        {
-            name: 'Műhely', link: '/garazs', activeIndex: 1
-        },
-        { name: 'Leveleim', link: '/levelek', activeIndex: 2 },
-        { name: 'Beállítások', link: '/beallitasok', activeIndex: 3 }
-    ]
-
-    useEffect(() => {
-        [...routes].forEach(route => {
-            switch (window.location.pathname)
-            {
-                case `${route.link}`:
-                    if (activePage !== route.activeIndex)
-                    {
-                        handleChangeTab(route.activeIndex)
-                    }
-                    break;
-                default:
-                    break;
-            }
-
-            if (window.location.pathname.includes(route.link) && route.link !== "/")
-            {
-                if (activePage !== route.activeIndex)
-                {
-                    handleChangeTab(route.activeIndex)
-                }
-            }
-        })
-    }, [activePage, routes])
 
     return (<Wrapper container>
         <Grid container>
@@ -64,8 +31,13 @@ function PageSelector({activePage, loggedIn, handleChangeTab}) {
             <Grid item lg={loggedIn ? 8 : 11} xs={12}>
                 <Tabs value={activePage} textColor="#24292F" onChange={handleChangeTab} TabIndicatorProps={{style: {backgroundColor: "#909090"}}}>
                     {
-                        routes.map((route, i) => {
-                            return <MyTab key={route+"-"+i} label={route.name} component={Link} to={route.link} />
+                        loggedIn && routes.map((route, i) => {
+                            if (route.name === "Leveleim") {
+
+                            }
+                            else {
+                                return <MyTab key={route+"-"+i} label={route.name} disabled={route.name==="Leveleim"} sx={{ opacity: route.name === "Leveleim" ? 0.5 : 1 }} component={Link} to={route.link} />
+                            }
                         })
                     }
                 </Tabs>
