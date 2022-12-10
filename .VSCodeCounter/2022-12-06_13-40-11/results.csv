@@ -1,0 +1,50 @@
+"filename", "language", "Properties", "Markdown", "XML", "JSON", "JavaScript", "JavaScript React", "HTML", "comment", "blank", "total"
+"d:\Web Projects\UniversalServiceBook\.idea\UniversalServiceBook.iml", "XML", 0, 0, 12, 0, 0, 0, 0, 0, 0, 12
+"d:\Web Projects\UniversalServiceBook\.idea\modules.xml", "XML", 0, 0, 8, 0, 0, 0, 0, 0, 0, 8
+"d:\Web Projects\UniversalServiceBook\.idea\vcs.xml", "XML", 0, 0, 6, 0, 0, 0, 0, 0, 0, 6
+"d:\Web Projects\UniversalServiceBook\README.md", "Markdown", 0, 9, 0, 0, 0, 0, 0, 0, 7, 16
+"d:\Web Projects\UniversalServiceBook\client\.env", "Properties", 6, 0, 0, 0, 0, 0, 0, 4, 0, 10
+"d:\Web Projects\UniversalServiceBook\client\README.md", "Markdown", 0, 1, 0, 0, 0, 0, 0, 0, 1, 2
+"d:\Web Projects\UniversalServiceBook\client\package-lock.json", "JSON", 0, 0, 0, 30466, 0, 0, 0, 0, 1, 30467
+"d:\Web Projects\UniversalServiceBook\client\package.json", "JSON", 0, 0, 0, 52, 0, 0, 0, 0, 1, 53
+"d:\Web Projects\UniversalServiceBook\client\public\index.html", "HTML", 0, 0, 0, 0, 0, 0, 30, 0, 1, 31
+"d:\Web Projects\UniversalServiceBook\client\src\App.js", "JavaScript", 0, 0, 0, 0, 82, 0, 0, 14, 10, 106
+"d:\Web Projects\UniversalServiceBook\client\src\assets\back.svg", "XML", 0, 0, 11, 0, 0, 0, 0, 0, 1, 12
+"d:\Web Projects\UniversalServiceBook\client\src\assets\mail.svg", "XML", 0, 0, 4, 0, 0, 0, 0, 0, 1, 5
+"d:\Web Projects\UniversalServiceBook\client\src\assets\serviceInformationIcon.svg", "XML", 0, 0, 7, 0, 0, 0, 0, 0, 1, 8
+"d:\Web Projects\UniversalServiceBook\client\src\global\Footer.jsx", "JavaScript React", 0, 0, 0, 0, 0, 92, 0, 0, 13, 105
+"d:\Web Projects\UniversalServiceBook\client\src\global\Header.jsx", "JavaScript React", 0, 0, 0, 0, 0, 185, 0, 0, 33, 218
+"d:\Web Projects\UniversalServiceBook\client\src\global\PageSelector.jsx", "JavaScript React", 0, 0, 0, 0, 0, 69, 0, 0, 9, 78
+"d:\Web Projects\UniversalServiceBook\client\src\global\Profile.jsx", "JavaScript React", 0, 0, 0, 0, 0, 133, 0, 0, 14, 147
+"d:\Web Projects\UniversalServiceBook\client\src\index.js", "JavaScript", 0, 0, 0, 0, 7, 0, 0, 0, 2, 9
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Error.jsx", "JavaScript React", 0, 0, 0, 0, 0, 14, 0, 0, 3, 17
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Garage.jsx", "JavaScript React", 0, 0, 0, 0, 0, 876, 0, 27, 94, 997
+"d:\Web Projects\UniversalServiceBook\client\src\pages\GarageVehiclePreview.jsx", "JavaScript React", 0, 0, 0, 0, 0, 390, 0, 2, 46, 438
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Home.jsx", "JavaScript React", 0, 0, 0, 0, 0, 344, 0, 22, 41, 407
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Login.jsx", "JavaScript React", 0, 0, 0, 0, 0, 70, 0, 3, 11, 84
+"d:\Web Projects\UniversalServiceBook\client\src\pages\MailPreview.jsx", "JavaScript React", 0, 0, 0, 0, 0, 180, 0, 1, 20, 201
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Mails.jsx", "JavaScript React", 0, 0, 0, 0, 0, 148, 0, 0, 18, 166
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Registration.jsx", "JavaScript React", 0, 0, 0, 0, 0, 95, 0, 0, 12, 107
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Settings.jsx", "JavaScript React", 0, 0, 0, 0, 0, 170, 0, 143, 28, 341
+"d:\Web Projects\UniversalServiceBook\client\src\themes\theme.js", "JavaScript", 0, 0, 0, 0, 109, 0, 0, 5, 3, 117
+"d:\Web Projects\UniversalServiceBook\server\controllers\AuthController.js", "JavaScript", 0, 0, 0, 0, 50, 0, 0, 0, 10, 60
+"d:\Web Projects\UniversalServiceBook\server\controllers\UserController.js", "JavaScript", 0, 0, 0, 0, 52, 0, 0, 0, 8, 60
+"d:\Web Projects\UniversalServiceBook\server\controllers\VehicleController.js", "JavaScript", 0, 0, 0, 0, 21, 0, 0, 20, 4, 45
+"d:\Web Projects\UniversalServiceBook\server\core\Auth.js", "JavaScript", 0, 0, 0, 0, 59, 0, 0, 3, 4, 66
+"d:\Web Projects\UniversalServiceBook\server\models\DesignTypeModel.js", "JavaScript", 0, 0, 0, 0, 15, 0, 0, 0, 3, 18
+"d:\Web Projects\UniversalServiceBook\server\models\DriveTypeModel.js", "JavaScript", 0, 0, 0, 0, 15, 0, 0, 0, 3, 18
+"d:\Web Projects\UniversalServiceBook\server\models\FuelModel.js", "JavaScript", 0, 0, 0, 0, 15, 0, 0, 0, 2, 17
+"d:\Web Projects\UniversalServiceBook\server\models\ManufactureModel.js", "JavaScript", 0, 0, 0, 0, 20, 0, 0, 0, 3, 23
+"d:\Web Projects\UniversalServiceBook\server\models\ModelModel.js", "JavaScript", 0, 0, 0, 0, 20, 0, 0, 0, 3, 23
+"d:\Web Projects\UniversalServiceBook\server\models\PictureModel.js", "JavaScript", 0, 0, 0, 0, 25, 0, 0, 0, 3, 28
+"d:\Web Projects\UniversalServiceBook\server\models\ServiceEntryModel.js", "JavaScript", 0, 0, 0, 0, 43, 0, 0, 0, 4, 47
+"d:\Web Projects\UniversalServiceBook\server\models\TransmissionModel.js", "JavaScript", 0, 0, 0, 0, 15, 0, 0, 0, 3, 18
+"d:\Web Projects\UniversalServiceBook\server\models\UserModel.js", "JavaScript", 0, 0, 0, 0, 68, 0, 0, 0, 5, 73
+"d:\Web Projects\UniversalServiceBook\server\models\VehicleModel.js", "JavaScript", 0, 0, 0, 0, 93, 0, 0, 0, 3, 96
+"d:\Web Projects\UniversalServiceBook\server\models\VehicleTypeModel.js", "JavaScript", 0, 0, 0, 0, 15, 0, 0, 0, 3, 18
+"d:\Web Projects\UniversalServiceBook\server\models\WorkShopModel.js", "JavaScript", 0, 0, 0, 0, 42, 0, 0, 0, 3, 45
+"d:\Web Projects\UniversalServiceBook\server\package-lock.json", "JSON", 0, 0, 0, 3841, 0, 0, 0, 0, 1, 3842
+"d:\Web Projects\UniversalServiceBook\server\package.json", "JSON", 0, 0, 0, 26, 0, 0, 0, 0, 1, 27
+"d:\Web Projects\UniversalServiceBook\server\routes\routes.js", "JavaScript", 0, 0, 0, 0, 13, 0, 0, 98, 5, 116
+"d:\Web Projects\UniversalServiceBook\server\server.js", "JavaScript", 0, 0, 0, 0, 70, 0, 0, 11, 6, 87
+"Total", "-", 6, 10, 48, 34385, 849, 2766, 30, 353, 448, 38895
