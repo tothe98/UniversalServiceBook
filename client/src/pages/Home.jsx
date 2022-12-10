@@ -372,7 +372,7 @@ function Home({handleChangeTab}) {
                             </Grid>
 
                             <Grid item xs sx={{position: underS ? "block" : "absolute", bottom: "2em", right: "2em"}}>
-                                <ViewButton component={Link} to={`/levelek/${info.id}`} onClick={e=>{handleChangeTab(2)}}  >Megtekintem</ViewButton>
+                                <ViewButton component={Link} to={`/jarmuveim/2e2zbahdb2a#12`} onClick={e=>{handleChangeTab(2)}}  >Megtekintem</ViewButton>
                             </Grid>
                         </Grid>
                     </ContentBox>
