@@ -61,6 +61,7 @@ import DocumentsIcon from '@mui/icons-material/FilePresentOutlined';
 import ValidityIcon from '@mui/icons-material/VerifiedOutlined';
 import axios from "axios";
 import {toast} from "react-toastify";
+import {MyCardSkeleton, MyInputSkeleton} from "../lib/Skeletons";
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 
@@ -617,7 +618,21 @@ function Garage({handleChangeTab}) {
 
     /* loading screen */
     if (isLoading) {
-        return "Betöltés..."
+        return (<React.Fragment>
+            <Grid container direction="row" alignItems="center" justifyContent="flex-end">
+                <Grid item>
+                    <MyInputSkeleton />
+                </Grid>
+
+                <Grid item>
+                    <MyInputSkeleton />
+                </Grid>
+            </Grid>
+
+            <MyCardSkeleton />
+            <MyCardSkeleton />
+            <MyCardSkeleton />
+        </React.Fragment>)
     }
 
     /* original screen */

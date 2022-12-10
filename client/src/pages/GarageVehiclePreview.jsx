@@ -15,6 +15,7 @@ import {LoadingButton} from "@mui/lab";
 import SaveIcon from '@mui/icons-material/Save';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DOMPurify from "isomorphic-dompurify";
+import {MyFullWidthInputSkeleton, MyInputSkeleton, MyTextSkeleton, MyWallpaperSkeleton} from "../lib/Skeletons";
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 const CAR_NAME_BOX_MAX_HEIGHT = "80px";
@@ -105,11 +106,11 @@ const MyAccordionImage = styled("img")(({theme}) => ({
 }))
 
 function GarageVehiclePreview({handleChangeTab}) {
+    const [isLoading, setIsLoading] = useState(true);
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
     const [car, setCar] = useState({});
     const [expanded, setExpanded] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
     const { id } = useParams();
 
     const handleAccordionChange = (panel) => (event, isExpanded) => {
@@ -117,7 +118,6 @@ function GarageVehiclePreview({handleChangeTab}) {
     };
 
     useEffect(() => {
-        // TODO: axios request to the api (getting the specified car)
         const car = {
             carId: "2e2zbahdb2a#",
             imageUrl: "https://hasznaltauto.medija.hu/2202975/18830119_1.jpg?v=1668441109", // https://hasznaltauto.medija.hu/2700439/18711995_1.jpg?v=1665186628
@@ -178,18 +178,215 @@ function GarageVehiclePreview({handleChangeTab}) {
     if (isLoading)
     {
         return (<React.Fragment>
-            <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/garazs" onClick={e=>{handleChangeTab(1)}} >
+            <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/jarmuveim">
                 <SubTitle variant='h3' sx={{marginBottom: "0", marginLeft: "1em"}}>Autóim</SubTitle>
             </BackToCarsButton>
 
             <NameBox>
-                <Typography variant="h3" sx={{fontWeight: 900}}>{car.carName}</Typography>
-                <Typography variant="h4" sx={{ color: "rgba(17, 17, 17, 0.74)", fontWeight: 900 }}>{car.chassisNumber}</Typography>
+                <MyTextSkeleton />
+                <MyTextSkeleton />
             </NameBox>
 
-            <Grid container direction="row">
-                <Grid item>
-                    <LoadingButton loading loadingPosition="start" startIcon={<SaveIcon />}>Betöltés...</LoadingButton>
+            <Grid container direction="column" alignItems="flex-start">
+                { /* Car Image Gallery */ }
+                <Grid item >
+                    <Grid container direction={"column"} spacing={CAR_DETAiL_SPACING}>
+                        <Grid item xs={7}>
+                            <Grid container direction="column" alignItems="flex-start" justifyContent="center">
+                                <Grid item>
+                                    <MyWallpaperSkeleton />
+
+                                    <Grid container direction="row" spacing={0.4}>
+                                        <MyInputSkeleton />
+                                        <MyInputSkeleton />
+                                        <MyInputSkeleton />
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+
+                        {/* Car Details */}
+                        <Grid item xs={5}>
+                            <Grid container direction="column" alignItems="flex-start" justifyContent="flex-start">
+
+                                { /* car detail */ }
+                                <CarDetailGridItem item>
+                                    <CarDetailsTitle>Általános Adatok</CarDetailsTitle>
+
+                                    <Grid container direction="column" alignItems="flex-start" justifyContent="flex-start" sx={{paddingLeft: "2.5em"}}>
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </CarDetailGridItem>
+                                { /* end of car detail */ }
+
+                                { /* car detail */ }
+                                <CarDetailGridItem item>
+                                    <CarDetailsTitle>Jármű adatok</CarDetailsTitle>
+
+                                    <Grid container direction="column" alignItems="flex-start" justifyContent="flex-start" sx={{paddingLeft: "2.5em"}}>
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </CarDetailGridItem>
+                                { /* end of car detail */ }
+
+                                { /* car detail */ }
+                                <CarDetailGridItem item>
+                                    <CarDetailsTitle>Motor adatok</CarDetailsTitle>
+
+                                    <Grid container direction="column" alignItems="flex-start" justifyContent="flex-start" sx={{paddingLeft: "2.5em"}}>
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </CarDetailGridItem>
+                                { /* end of car detail */ }
+
+                                { /* car detail */ }
+                                <CarDetailGridItem item>
+                                    <CarDetailsTitle>Okmányok</CarDetailsTitle>
+
+                                    <Grid container direction="column" alignItems="flex-start" justifyContent="flex-start" sx={{paddingLeft: "2.5em"}}>
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography><MyInputSkeleton /></Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue><MyInputSkeleton /></CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    </Grid>
+                                </CarDetailGridItem>
+                                { /* end of car detail */ }
+
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+
+                { /* Service information(s) */ }
+                <Grid item sx={{width: "100%"}}>
+                    <NameBox> <Typography>Szervíz Előélet</Typography> </NameBox>
+                    <Grid container direction="column">
+                        <MyFullWidthInputSkeleton />
+                        <MyFullWidthInputSkeleton />
+                        <MyFullWidthInputSkeleton />
+                        <MyFullWidthInputSkeleton />
+                    </Grid>
                 </Grid>
             </Grid>
         </React.Fragment>)

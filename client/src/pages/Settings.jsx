@@ -4,6 +4,7 @@ import {Link} from "react-router-dom";
 import {toast} from "react-toastify";
 import axios from "axios";
 import {Password} from "@mui/icons-material";
+import {MyCircularSkeleton, MyFullWidthInputSkeleton, MyInputSkeleton} from "../lib/Skeletons";
 
 const AVATAR_MAX_HEIGHT = '200px';
 const AVATAR_MAX_WIDTH = '200px';
@@ -39,6 +40,9 @@ const MyGridItem = styled(Grid)(({theme}) => ({
 }))
 
 function Settings({handleChangeTab}) {
+    /* loading screen variables */
+    const [isLoading, setIsLoading] = useState(true);
+
     const [picture, setPicture] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -48,7 +52,6 @@ function Settings({handleChangeTab}) {
     const [password, setPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [reNewPassword, setReNewPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(true);
     const [changePasswordError, setChangePasswordError] = useState(null);
     const [oldPasswordError, setOldPasswordError] = useState(null);
     const [formUnderProcessing, setIsProcessing] = useState(false)
@@ -195,7 +198,58 @@ function Settings({handleChangeTab}) {
         }
     }
 
-    return !isLoading && (<React.Fragment>
+    if (isLoading) {
+        return (<React.Fragment>
+            <form onSubmit={handleUpdateUser}>
+                <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start">
+                    <MyGridItem item>
+                        <Grid container direction="row" spacing={1.5}>
+                            <Grid item id="WallpaperItem">
+                                <MyCircularSkeleton variant="circular" />
+                            </Grid>
+
+                            <Grid item>
+                                <SubTitle variant='h3'>Profilkép beállítások</SubTitle>
+
+                                <Grid container direction="column" sx={{marginTop: "auto"}}>
+                                    <MyFullWidthInputSkeleton />
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </MyGridItem>
+
+                    <MyGridItem item>
+                        <SubTitle variant='h3'>Felhasználói adatok</SubTitle>
+
+                        <Grid container direction="column" spacing={1.5}>
+                            <Grid item><MyFullWidthInputSkeleton /></Grid>
+                            <Grid item><MyFullWidthInputSkeleton /></Grid>
+                            <Grid item><MyFullWidthInputSkeleton /></Grid>
+                        </Grid>
+                    </MyGridItem>
+
+                    <MyGridItem item>
+                        <SubTitle variant='h3'>Jelszó beállítások</SubTitle>
+
+                        <Grid container direction="column" spacing={1.5}>
+                            <Grid item><MyFullWidthInputSkeleton /></Grid>
+                            <Grid item><MyFullWidthInputSkeleton /></Grid>
+                            <Grid item><MyFullWidthInputSkeleton /></Grid>
+                        </Grid>
+                    </MyGridItem>
+
+                    <MyGridItem item>
+                        <Grid container direction="row" spacing={1.5} justifyContent="flex-end">
+                            <MyInputSkeleton />
+                            <MyInputSkeleton />
+                        </Grid>
+                    </MyGridItem>
+                </Grid>
+            </form>
+        </React.Fragment>)
+    }
+
+    return (<React.Fragment>
         <form onSubmit={handleUpdateUser}>
             <Grid container direction="column" justifyContent="flex-start" alignItems="flex-start">
                 <MyGridItem item>
