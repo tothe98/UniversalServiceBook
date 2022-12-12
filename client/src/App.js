@@ -102,12 +102,14 @@ function App() {
           { !underSmall && <PageSelector routes={routes} activePage={activePage} loggedIn={loggedIn} handleChangeTab={handleChangeTab} /> }
           <Wrapper>
               <Grid container direction={underLarge ? "column" : "row"}>
-                  { loggedIn && <Grid item md={1} xs={0}></Grid> }
-                  <Grid item md={loggedIn ? 2 : 1} xs={loggedIn ? 2 : 1} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}>
-                      { loggedIn && <Profile handleChangeTab={handleChangeTab} /> }
+                  <Grid item md={1} xs={0}></Grid>
+                  { /*<Grid item md={loggedIn ? 2 : 1} xs={loggedIn ? 2 : 1} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}> */}
+                  <Grid item xs={2} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}>
+                      <Profile handleChangeTab={handleChangeTab} loggedIn={loggedIn} />
                   </Grid>
 
-                  <Grid item md={loggedIn ? 8 : 11} xs={loggedIn ? 10 : 11} sx={{
+                  { /* <Grid item md={loggedIn ? 8 : 11} xs={loggedIn ? 10 : 11} sx={{ */ }
+                  <Grid item md={8} xs={10} sx={{
                       paddingTop: underLarge || betweenSM_MD ? "1rem" : "53px",
                       paddingLeft: theme.global.basePadding,
                       paddingRight: theme.global.basePadding
