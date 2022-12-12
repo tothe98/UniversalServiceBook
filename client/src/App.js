@@ -23,6 +23,7 @@ import Login from "./pages/Login";
 import axios from "axios";
 import Registration from "./pages/Registration";
 import MechanicWorkshop from "./pages/MechanicWorkshop";
+import EmailVerification from "./pages/EmailVerification";
 
 const Wrapper = styled('div')(({theme}) => ({
 }))
@@ -121,6 +122,7 @@ function App() {
                           <Route path='/levelek/:id' element={loggedIn ? <MailPreview handleChangeTab={handleChangeTab} /> : <Login />} />
                           <Route path='/bejelentkezes' element={<Login />} />
                           <Route path='/regisztracio' element={<Registration />} />
+                          <Route path='/aktivalas/:id' element={<EmailVerification />} />
                           <Route path='/*' element={loggedIn ? <Error /> : <Login />} />
                       </Routes>
                   </Grid>
