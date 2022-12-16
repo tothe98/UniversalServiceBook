@@ -29,7 +29,7 @@ exports.updateUser = async (req, res) => {
             _uploadFrom: req.userId
         }).then((e) => {
             uploadImg = e['_id'].toString()
-        }).catch((e) => {
+        }).catch((err) => {
             return res.status(400).json({ message: 'error', data: { error: err } })
         })
     }

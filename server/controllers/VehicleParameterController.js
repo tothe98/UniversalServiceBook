@@ -59,7 +59,7 @@ exports.getManufactures = async (req, res) => {
         const Manufacture = mongoose.model('Manufactures')
         const responseFromDB = await Manufacture.find({ _vehicleType: category, isActive: true })
             .then((response) => {
-                return res.status(200).json({ message: '', data: { manufacture: response } });
+                return res.status(200).json({ message: '', data: { manufacture: response } })
             })
             .catch((err) => {
                 return res.status(404).json({ message: 'NotFound', data: { err } })
