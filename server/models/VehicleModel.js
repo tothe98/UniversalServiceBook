@@ -118,12 +118,41 @@ VehiclesSchema.virtual("getVehicleData").get(function () {
         "mot": (this.mot ? this.mot : undefined),
         "mileage": this.mileage,
         "pictures": picturesToArray(this.pictures.picture),
-        "preview": (this.preview.picture ? this.preview.picture : undefined),
+        "preview": this.preview.picture
+    }
+})
+VehiclesSchema.virtual("getVehicleDataById").get(function () {
+    return {
+        "id": this._id.toString(),
+        "manufacture": this._manufacture.manufacture,
+        "model": this._model.model,
+        "fuel": this._fuel.fuel,
+        "driveType": this._driveType.driveType,
+        "designType": this._designType.designType,
+        "transmission": this._transmission.transmission,
+        "licenseNumber": (this.licenseNumber ? this.licenseNumber : undefined),
+        "vin": this.vin,
+        "vintage": this.vintage,
+        "ownMass": this.ownMass,
+        "fullMass": this.fullMass,
+        "cylinderCapacity": this.cylinderCapacity,
+        "performanceLE": this.performance,
+        "performanceKW": Math.round(this.performance / 1.36),
+        "nod": this.nod,
+        "mot": (this.mot ? this.mot : undefined),
+        "mileage": this.mileage,
+        "pictures": picturesToArray(this.pictures.picture, this.preview.picture),
     }
 })
 
-function picturesToArray(pictures) {
-    return pictures.split("@")
+function picturesToArray(pictures, prev = null) {
+    if (prev === null) {
+        return pictures.split("@")
+    }
+    returnPictureArray = []
+    returnPictureArray[0] = prev
+    pictures.split("@").map((s) => { returnPictureArray.push(s) })
+    return returnPictureArray
 }
 
 mongoose.model('Vehicles', VehiclesSchema)

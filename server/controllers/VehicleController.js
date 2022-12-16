@@ -142,6 +142,11 @@ exports.addVehicle = (req, res) => {
         const Transmissions = mongoose.model('Transmissions')
 
         try {
+            const isExistVin = await Vehicles.findOne({ vin: vin })
+            if (isExistVin) {
+                return res.status(409).json({ message: "VinIsExists", data: {} })
+            }
+
             let uploadedImg = undefined
             let previewImg = undefined
             await Pictures.create({
@@ -165,10 +170,6 @@ exports.addVehicle = (req, res) => {
                 return res.status(400).json({ message: 'error', data: {} })
             }
 
-            const isExistVin = await Vehicles.findOne({ vin: vin })
-            if (isExistVin) {
-                return res.status(409).json({ message: "VinIsExists", data: {} })
-            }
             const isExistManufacture = await Manufactures.findOne({ _id: manufacture })
             if (!isExistManufacture) {
                 return res.status(409).json({ message: "ManufactureIsNotExists", data: {} })
@@ -268,6 +269,7 @@ exports.getVehicle = async (req, res) => {
             .populate('_designType')
             .populate('_transmission')
             .populate('pictures')
+            .populate('preview')
 
 
 
@@ -278,7 +280,7 @@ exports.getVehicle = async (req, res) => {
             .populate('_mechanicer')
             .getServices
 
-        return res.status(200).json({ message: '', data: { vehicle: resFromDB.getVehicleData, serviceEntries: resFromDBServices || [] } })
+        return res.status(200).json({ message: '', data: { vehicle: resFromDB.getVehicleDataById, serviceEntries: resFromDBServices || [] } })
     } catch (err) {
         return res.status(400).json({ message: 'error', data: { error: err } })
     }
@@ -315,7 +317,11 @@ exports.updateVehicle = async (req, res) => {
         return res.status(422).json({ message: 'NodIsEmpty', data: {} })
     }
 
+    //TODO
+
 
 
 }
+
+
 
