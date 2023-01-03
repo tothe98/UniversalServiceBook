@@ -6,7 +6,7 @@ const VehiclesSchema = new mongoose.Schema({
         required: true,
         ref: 'UserInfo'
     },
-    _manufacturer: {
+    _manufacture: {
         type: mongoose.Types.ObjectId,
         required: true,
         ref: 'Manufactures',
@@ -39,7 +39,6 @@ const VehiclesSchema = new mongoose.Schema({
     licenseNumber: {
         type: String,
         required: false,
-        unique: true
     },
     vin: {
         type: String,
@@ -66,23 +65,28 @@ const VehiclesSchema = new mongoose.Schema({
         type: Number,
         required: false
     },
-    nod: {
+    nod: {//okmányok jellege
         type: String,
         required: false
     },
-    validityTechnicalExam: {
+    mot: {
         type: Date,
-        required: true
+        required: false
     },
     mileage: {
         type: Number,
         required: false
     },
-    pictures: [{
+    pictures: {
         type: mongoose.Types.ObjectId,
-        required: false,
+        required: true,
         ref: 'Pictures'
-    }],
+    },
+    preview: {
+        type: mongoose.Types.ObjectId,
+        required: true,
+        ref: 'Pictures'
+    },
     isActive: {
         type: Boolean,
         default: true
@@ -90,7 +94,65 @@ const VehiclesSchema = new mongoose.Schema({
 
 },
     {
-        collection: 'Vehicles'
+        collection: 'Vehicles',
     })
+
+VehiclesSchema.virtual("getVehicleData").get(function () {
+    return {
+        "id": this._id.toString(),
+        "manufacture": this._manufacture.manufacture,
+        "model": this._model.model,
+        "fuel": this._fuel.fuel,
+        "driveType": this._driveType.driveType,
+        "designType": this._designType.designType,
+        "transmission": this._transmission.transmission,
+        "licenseNumber": (this.licenseNumber ? this.licenseNumber : undefined),
+        "vin": this.vin,
+        "vintage": this.vintage,
+        "ownMass": this.ownMass,
+        "fullMass": this.fullMass,
+        "cylinderCapacity": this.cylinderCapacity,
+        "performanceLE": this.performance,
+        "performanceKW": Math.round(this.performance / 1.36),
+        "nod": this.nod,
+        "mot": (this.mot ? this.mot : undefined),
+        "mileage": this.mileage,
+        "pictures": picturesToArray(this.pictures.picture),
+        "preview": this.preview.picture
+    }
+})
+VehiclesSchema.virtual("getVehicleDataById").get(function () {
+    return {
+        "id": this._id.toString(),
+        "manufacture": this._manufacture.manufacture,
+        "model": this._model.model,
+        "fuel": this._fuel.fuel,
+        "driveType": this._driveType.driveType,
+        "designType": this._designType.designType,
+        "transmission": this._transmission.transmission,
+        "licenseNumber": (this.licenseNumber ? this.licenseNumber : undefined),
+        "vin": this.vin,
+        "vintage": this.vintage,
+        "ownMass": this.ownMass,
+        "fullMass": this.fullMass,
+        "cylinderCapacity": this.cylinderCapacity,
+        "performanceLE": this.performance,
+        "performanceKW": Math.round(this.performance / 1.36),
+        "nod": this.nod,
+        "mot": (this.mot ? this.mot : undefined),
+        "mileage": this.mileage,
+        "pictures": picturesToArray(this.pictures.picture, this.preview.picture),
+    }
+})
+
+function picturesToArray(pictures, prev = null) {
+    if (prev === null) {
+        return pictures.split("@")
+    }
+    returnPictureArray = []
+    returnPictureArray[0] = prev
+    pictures.split("@").map((s) => { returnPictureArray.push(s) })
+    return returnPictureArray
+}
 
 mongoose.model('Vehicles', VehiclesSchema)

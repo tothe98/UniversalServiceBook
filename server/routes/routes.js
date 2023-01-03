@@ -1,9 +1,10 @@
 const express = require('express')
 const router = express.Router()
 
-const { signup, signin } = require('../controllers/AuthController')
-const { addNewVehicle } = require('../controllers/VehicleController')
-const { getUser, updateUser } = require('../controllers/UserController')
+
+const { signup, signin, confirmEmail, isValidToken } = require('../controllers/AuthController')
+const { addVehicle, getVehicles, getVehicle, updateVehicle } = require('../controllers/VehicleController')
+const { getUser, updateUser, forgotPassword, newPassword } = require('../controllers/UserController')
 const { authenticateToken, authenticateAdmin, authenticateWorkshop } = require('../core/Auth')
 const {
     getManufactures,
@@ -25,12 +26,15 @@ const {
 //AuthController
 router.post('/signup', signup)
 router.post('/signin', signin)
+router.get('/emailConfirmation/:token', confirmEmail)
+router.get('/isValidToken/:token', isValidToken)
 router.get('/isLoggedIn', authenticateToken, (req, res) => { res.status(200).json({ message: 'ok', data: {} }) })
 
 //UserController
 router.get('/getUserData', authenticateToken, getUser)
 router.put('/updateUser', authenticateToken, updateUser)
-router.post('/addNewVehicle', authenticateToken, addNewVehicle)
+router.post('/forgotPassword', forgotPassword)
+router.post('/newPassword', newPassword)
 
 //VehicleParameterController
 router.post('/getManufactures', authenticateToken, getManufactures)
@@ -47,6 +51,17 @@ router.post('/addFuel', authenticateAdmin, addFuel)
 router.post('/addDesignType', authenticateAdmin, addDesignType)
 router.post('/addDriveType', authenticateAdmin, addDriveType)
 router.post('/addTransmission', authenticateAdmin, addTransmission)
+
+//VehicleController
+router.post('/addVehicle', authenticateToken, addVehicle)
+router.get('/getVehicles', authenticateToken, getVehicles)
+router.get('/getVehicle/:id', authenticateToken, getVehicle)
+router.put('/updateVehicle', authenticateToken, updateVehicle)
+
+//404 API Request
+router.get('*', (req, res) => {
+    res.status(404).json({ message: "Not Found" })
+})
 
 
 module.exports = router

@@ -1,11 +1,12 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const sendEmail = require("../core/Mailer")
+const confirmationEmail = require('../core/MailViews')
 require('../models/UserModel')
 
 
 exports.signup = async (req, res) => {
-    const User = mongoose.model('UserInfo')
     const { fname, lname, email, password, phone } = req.body
 
     if (!password) {
@@ -16,21 +17,30 @@ exports.signup = async (req, res) => {
     const encryptedPassword = bcrypt.hashSync(password, salt);
 
     try {
+        const User = mongoose.model('UserInfo')
         const isExistEmail = await User.findOne({ email: email })
 
         if (isExistEmail) {
             return res.status(409).json({ message: 'exist', data: {} })
         }
-        await User.create({
+        let createdUser = await User.create({
             fName: fname,
             lName: lname,
             email: email,
             phone: phone,
             password: encryptedPassword
         })
-        res.status(201).json({ message: 'success', data: {} })
+        createdUser = createdUser.toJSON()
+
+        const token = jwt.sign({ userId: createdUser["_id"], email: createdUser["email"] }, process.env.JWT_SECRET, { expiresIn: '7d' })
+
+        await sendEmail(createdUser["email"], "Email megerősítés",
+            confirmationEmail(`http://127.0.0.1:8080/api/v1/emailConfirmation/${token}`)
+        )
+        return res.status(201).json({ message: 'success', data: {} })
+
     } catch (error) {
-        res.status(400).json({ message: 'error', data: { error } })
+        return res.status(400).json({ message: 'error', data: { error } })
     }
 }
 
@@ -46,7 +56,7 @@ exports.signin = async (req, res) => {
         return res.status(403).json({ message: 'notActive', data: {} })
     }
     if (await bcrypt.compare(password, emailIsExist.password)) {
-        const token = jwt.sign({ userId: emailIsExist.id, email: emailIsExist.email, isAdmin: emailIsExist.isAdmin, workShop:emailIsExist._workshop}, process.env.JWT_SECRET)
+        const token = jwt.sign({ userId: emailIsExist.id, email: emailIsExist.email, isAdmin: emailIsExist.isAdmin, workShop: emailIsExist._workshop }, process.env.JWT_SECRET)
 
         if (res.status(200)) {
             return res.status(200).json({ message: 'success', data: { token: token } })
@@ -57,4 +67,49 @@ exports.signin = async (req, res) => {
         res.status(400).json({ message: 'error', data: {} })
     }
 
+}
+
+exports.confirmEmail = async (req, res) => {
+    const { token } = req.params
+    if (!token) {
+        res.status(404).json({ message: 'TokenIsNotFound', data: [] })
+    } else {
+        jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+            if (err) {
+                return res.status(409).json({ message: 'TokenIsExpired', data: [] })
+            } else {
+                try {
+                    const User = mongoose.model('UserInfo')
+                    const findUser = await User.findOne({ _id: decoded.userId, email: decoded.email })
+                    if (findUser) {
+                        findUser.isActive = true
+                        await findUser.save()
+                        return res.status(202).json({ message: "success", data: [] })
+                    } else {
+                        return res.status(404).json({ message: 'UserIsNotFound', data: [] })
+                    }
+                } catch (error) {
+                    return res.status(500).json({ message: '', data: [] })
+                }
+            }
+        })
+    }
+}
+
+exports.isValidToken = async (req, res) => {
+    const { token } = req.params
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(409).json({ message: "TokenIsExpired", data: {} })
+            } else {
+                if (decoded.exp * 1000 < Date.now()) {
+                    return res.status(409).json({ message: "TokenIsExpired", data: {} })
+                }
+            }
+            return res.status(200).json({ message: "Valid", data: {} })
+        })
+    } else {
+        return res.status(404).json({ message: "NotFound", data: {} })
+    }
 }
