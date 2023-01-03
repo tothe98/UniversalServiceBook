@@ -69,6 +69,7 @@ function App() {
         { name: 'Járműveim', link: '/jarmuveim', activeIndex: 1 },
         { name: 'Műhely', link: '/muhely', activeIndex: 2 },
         { name: 'Beállítások', link: '/beallitasok', activeIndex: 3 },
+        { name: 'Adminisztráció', link: '/adminisztracio', activeIndex: 4 }
     ]
 
     useEffect(() => {
