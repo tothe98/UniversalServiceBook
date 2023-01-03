@@ -198,11 +198,11 @@ function Profile({handleChangeTab, loggedIn}) {
         </MyGridItem>
 
             {
-                loggedIn && (biggerExtraLarge || underSmall) && <MyGridItem item xs>
+                /*loggedIn && (biggerExtraLarge || underSmall) && <MyGridItem item xs>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MyCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                     </LocalizationProvider>
-                </MyGridItem>
+                </MyGridItem> */
             }
     </Container>
     {
