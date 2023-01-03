@@ -65,7 +65,7 @@ const MyCalendar = styled(CalendarPicker)(({theme}) => ({
     }
 }))
 
-function Profile({handleChangeTab}) {
+function Profile({handleChangeTab, loggedIn}) {
     const [isLoading, setIsLoading] = useState(true);
     const biggerExtraLarge = useMediaQuery(theme.breakpoints.up("xl"));
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
@@ -124,9 +124,17 @@ function Profile({handleChangeTab}) {
                         </React.Fragment>)
                 }
                 <MyGridItem item sx={{marginLeft: underLarge ? "auto" : 0, textAlign: "center"}}>
-                    <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
-                        Beállítások
-                    </SettingsButton>
+                    {
+                        loggedIn
+                        ?
+                        <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
+                            Beállítások
+                        </SettingsButton>
+                        :
+                        <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/bejelentkezes" onClick={e=>{handleChangeTab(3)}}>
+                            Belépés
+                        </SettingsButton>
+                    }
                 </MyGridItem>
 
             </Container>
@@ -176,13 +184,21 @@ function Profile({handleChangeTab}) {
                 </React.Fragment>)
         }
         <MyGridItem item sx={{marginLeft: underLarge ? "auto" : 0, textAlign: "center"}}>
-            <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
-                Beállítások
-            </SettingsButton>
+            {
+                loggedIn
+                    ?
+                    <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
+                        Beállítások
+                    </SettingsButton>
+                    :
+                    <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/bejelentkezes" onClick={e=>{handleChangeTab(3)}}>
+                        Belépés
+                    </SettingsButton>
+            }
         </MyGridItem>
 
             {
-                (biggerExtraLarge || underSmall) && <MyGridItem item xs>
+                loggedIn && (biggerExtraLarge || underSmall) && <MyGridItem item xs>
                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                         <MyCalendar date={date} onChange={(newDate) => setDate(newDate)} />
                     </LocalizationProvider>
