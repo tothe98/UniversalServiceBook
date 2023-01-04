@@ -9,7 +9,7 @@ const WorkShopSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    town: {
+    city: {
         type: String,
         required: true
     },
@@ -22,11 +22,11 @@ const WorkShopSchema = new mongoose.Schema({
         required: true,
         ref: 'UserInfo'
     },
-    employees: {
-        type: [mongoose.Types.ObjectId],
+    employees: [{
+        type: mongoose.Types.ObjectId,
         required: false,
-        default: [""]
-    },
+        ref: 'UserInfo'
+    }],
     isActive: {
         type: Boolean,
         default: false
@@ -41,5 +41,22 @@ const WorkShopSchema = new mongoose.Schema({
     {
         collection: 'WorkShops'
     })
+
+WorkShopSchema.virtual("getWorkshop").get(function () {
+    return {
+        "_id": this._id,
+        "name": this.name,
+        "country": this.country,
+        "city": this.city,
+        "address": this.address,
+        "owner": this._owner.lName + " " + this._owner.fName,
+    }
+})
+
+WorkShopSchema.virtual("getEmployees").get(function () {
+    return {
+        "employees": this.employees.map((employee) => employee.lName + " " + employee.fName)
+    }
+})
 
 mongoose.model('WorkShops', WorkShopSchema)

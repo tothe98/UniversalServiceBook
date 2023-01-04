@@ -23,6 +23,7 @@ const {
     getTransmissions
 } = require('../controllers/VehicleParameterController')
 const ROLES = require('../core/Role')
+const { getWorkshops } = require('../controllers/WorkshopController')
 
 //AuthController
 router.post('/signup', signup)
@@ -58,6 +59,9 @@ router.post('/addVehicle', authorize(ROLES.User), addVehicle)
 router.get('/getVehicles', authorize(ROLES.User), getVehicles)
 router.get('/getVehicle/:id', authorize(ROLES.User), getVehicle)
 router.put('/updateVehicle', authorize(ROLES.User), updateVehicle)
+
+//WorkshopController
+router.get('/getWorkshops', authorize(ROLES.Admin), getWorkshops)
 
 //404 API Request
 router.get('*', (req, res) => {
