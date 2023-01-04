@@ -5,7 +5,7 @@ const router = express.Router()
 const { signup, signin, confirmEmail, isValidToken } = require('../controllers/AuthController')
 const { addVehicle, getVehicles, getVehicle, updateVehicle } = require('../controllers/VehicleController')
 const { getUser, updateUser, forgotPassword, newPassword } = require('../controllers/UserController')
-const { authenticateToken, authenticateAdmin, authenticateWorkshop } = require('../core/Auth')
+const { authorize } = require('../core/Auth')
 const {
     getManufactures,
     getCategories,
@@ -22,41 +22,42 @@ const {
     addTransmission,
     getTransmissions
 } = require('../controllers/VehicleParameterController')
+const ROLES = require('../core/Role')
 
 //AuthController
 router.post('/signup', signup)
 router.post('/signin', signin)
 router.get('/emailConfirmation/:token', confirmEmail)
 router.get('/isValidToken/:token', isValidToken)
-router.get('/isLoggedIn', authenticateToken, (req, res) => { res.status(200).json({ message: 'ok', data: {} }) })
+router.get('/isLoggedIn', authorize(ROLES.User), (req, res) => { res.status(200).json({ message: 'ok', data: {} }) })
 
 //UserController
-router.get('/getUserData', authenticateToken, getUser)
-router.put('/updateUser', authenticateToken, updateUser)
+router.get('/getUserData', authorize(ROLES.User), getUser)
+router.put('/updateUser', authorize(ROLES.User), updateUser)
 router.post('/forgotPassword', forgotPassword)
 router.post('/newPassword', newPassword)
 
 //VehicleParameterController
-router.post('/getManufactures', authenticateToken, getManufactures)
-router.post('/getCategories', authenticateToken, getCategories)
-router.post('/getModels', authenticateToken, getModels)
-router.post('/getFuels', authenticateToken, getFuels)
-router.post('/getDesignTypes', authenticateToken, getDesignTypes)
-router.post('/getDriveTypes', authenticateToken, getDriveType)
-router.post('/getTransmissions', authenticateToken, getTransmissions)
-router.post('/addCategory', authenticateAdmin, addCategory)
-router.post('/addManufacture', authenticateAdmin, addManufacture)
-router.post('/addModel', authenticateAdmin, addModel)
-router.post('/addFuel', authenticateAdmin, addFuel)
-router.post('/addDesignType', authenticateAdmin, addDesignType)
-router.post('/addDriveType', authenticateAdmin, addDriveType)
-router.post('/addTransmission', authenticateAdmin, addTransmission)
+router.post('/getManufactures', authorize(ROLES.User), getManufactures)
+router.post('/getCategories', authorize(ROLES.User), getCategories)
+router.post('/getModels', authorize(ROLES.User), getModels)
+router.post('/getFuels', authorize(ROLES.User), getFuels)
+router.post('/getDesignTypes', authorize(ROLES.User), getDesignTypes)
+router.post('/getDriveTypes', authorize(ROLES.User), getDriveType)
+router.post('/getTransmissions', authorize(ROLES.User), getTransmissions)
+router.post('/addCategory', authorize(ROLES.Admin), addCategory)
+router.post('/addManufacture', authorize(ROLES.Admin), addManufacture)
+router.post('/addModel', authorize(ROLES.Admin), addModel)
+router.post('/addFuel', authorize(ROLES.Admin), addFuel)
+router.post('/addDesignType', authorize(ROLES.Admin), addDesignType)
+router.post('/addDriveType', authorize(ROLES.Admin), addDriveType)
+router.post('/addTransmission', authorize(ROLES.Admin), addTransmission)
 
 //VehicleController
-router.post('/addVehicle', authenticateToken, addVehicle)
-router.get('/getVehicles', authenticateToken, getVehicles)
-router.get('/getVehicle/:id', authenticateToken, getVehicle)
-router.put('/updateVehicle', authenticateToken, updateVehicle)
+router.post('/addVehicle', authorize(ROLES.User), addVehicle)
+router.get('/getVehicles', authorize(ROLES.User), getVehicles)
+router.get('/getVehicle/:id', authorize(ROLES.User), getVehicle)
+router.put('/updateVehicle', authorize(ROLES.User), updateVehicle)
 
 //404 API Request
 router.get('*', (req, res) => {
