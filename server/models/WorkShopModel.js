@@ -29,7 +29,7 @@ const WorkShopSchema = new mongoose.Schema({
     }],
     isActive: {
         type: Boolean,
-        default: false
+        default: true
     },
     createdAt: {
         type: Date,
@@ -49,14 +49,15 @@ WorkShopSchema.virtual("getWorkshop").get(function () {
         "country": this.country,
         "city": this.city,
         "address": this.address,
-        "owner": this._owner.lName + " " + this._owner.fName,
+        "owner": this._owner && this._owner.lName + " " + this._owner.fName,
+        "employees": this.employees && listEmployees(this.employees)
     }
 })
 
-WorkShopSchema.virtual("getEmployees").get(function () {
-    return {
-        "employees": this.employees.map((employee) => employee.lName + " " + employee.fName)
-    }
-})
+function listEmployees(employees) {
+    let employeesArray = []
+    employees.map((employee) => employeesArray.push({ 'id': employee._id, 'name': employee.lName + " " + employee.fName }))
+    return employeesArray
+}
 
 mongoose.model('WorkShops', WorkShopSchema)
