@@ -13,7 +13,7 @@ exports.getUser = async (req, res) => {
         req.email = resUser.getUserData.email
         res.status(200).json({ message: '', data: { user: resUser.getUserData } });
     } catch (err) {
-        res.stats(400).json({ message: 'error', data: { error: err } })
+        res.status(400).json({ message: 'error', data: { error: err } })
     }
 }
 
