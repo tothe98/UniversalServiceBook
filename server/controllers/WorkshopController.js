@@ -41,9 +41,9 @@ exports.addWorkshop = async (req, res) => {
             address: address,
             _owner: isExistUser._id,
         })
-        isExistUser.roles += !(isExistUser.roles.map((role) => role === ROLES.Owner)) && parseInt(ROLES.Owner)
+        isExistUser.roles.push(!isExistUser.roles.includes(ROLES.Owner) ? ROLES.Owner : '')
         await isExistUser.save()
-        return res.status(200).json({ message: '', data: { workshop: newWorkshop } })
+        return res.status(201).json({ message: '', data: { workshop: newWorkshop } })
     } catch (err) {
         return res.status(400).json({ message: 'error', data: { error: err } })
     }
@@ -92,6 +92,20 @@ exports.deleteWorkshop = async (req, res) => {
         await workshopById.save()
         return res.status(204).json({ message: '', data: { workshop: workshopById, owner: owner } })
 
+
+    } catch (err) {
+        return res.status(400).json({ message: 'error', data: { error: err } })
+    }
+}
+
+exports.getMyWorkshop = async (req, res) => {
+    try {
+        const Workshops = mongoose.model("WorkShops")
+        const workshop = await Workshops.findOne({ _owner: req.userId }).populate("_owner").populate("employees")
+        if (!workshop) {
+            return res.status(404).json({ message: "NotFoundYourWorkshop", data: {} })
+        }
+        return res.status(200).json({ message: '', data: { workshop: workshop.getWorkshop } })
 
     } catch (err) {
         return res.status(400).json({ message: 'error', data: { error: err } })
