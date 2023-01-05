@@ -17,6 +17,14 @@ const WorkShopSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    phone: {
+        type: String,
+        required: false,
+    },
+    email: {
+        type: String,
+        required: false
+    },
     _owner: {
         type: mongoose.Types.ObjectId,
         required: true,
@@ -49,6 +57,8 @@ WorkShopSchema.virtual("getWorkshop").get(function () {
         "country": this.country,
         "city": this.city,
         "address": this.address,
+        "phone": this.phone ? this.phone : undefined,
+        "email": this.email ? this.email : undefined,
         "owner": this._owner && this._owner.lName + " " + this._owner.fName,
         "employees": this.employees && listEmployees(this.employees)
     }

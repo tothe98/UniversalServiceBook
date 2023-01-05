@@ -25,7 +25,7 @@ exports.addWorkshop = async (req, res) => {
     try {
         const Workshops = mongoose.model("WorkShops")
         const Users = mongoose.model("UserInfo")
-        const { name, country, city, address, owner } = req.body
+        const { name, country, city, address, owner, phone, email } = req.body
         if (!name || !country || !city || !address || !owner) {
             return res.status(422).json({ message: 'AllFieldsMustBeFill', data: {} })
         }
@@ -39,6 +39,8 @@ exports.addWorkshop = async (req, res) => {
             country: country,
             city: city,
             address: address,
+            phone: phone,
+            email: email,
             _owner: isExistUser._id,
         })
         isExistUser.roles.push(!isExistUser.roles.includes(ROLES.Owner) ? ROLES.Owner : '')
@@ -106,6 +108,37 @@ exports.getMyWorkshop = async (req, res) => {
             return res.status(404).json({ message: "NotFoundYourWorkshop", data: {} })
         }
         return res.status(200).json({ message: '', data: { workshop: workshop.getWorkshop } })
+
+    } catch (err) {
+        return res.status(400).json({ message: 'error', data: { error: err } })
+    }
+}
+
+exports.editWorkshop = async (req, res) => {
+    try {
+        const { name, country, city, address, email, phone } = req.body
+        if (!name || !country || !city || !address) {
+            return res.status(422).json({ message: 'AllFieldsMustBeFill', data: {} })
+        }
+        const Workshops = mongoose.model("WorkShops")
+        const workshop = await Workshops.findOne({ _owner: req.userId })
+        if (!workshop) {
+            return res.status(404).json({ message: "NotFoundYourWorkshop", data: {} })
+        }
+        workshop.name = name
+        workshop.country = country
+        workshop.city = city
+        workshop.address = address
+        workshop.email = email ? email : undefined
+        workshop.phone = phone ? phone : undefined
+
+        await workshop.save(function (err, result) {
+            if (err) {
+                return res.status(400).json({ message: 'error', data: { error: err } })
+            } else {
+                return res.status(200).json({ message: '', data: { workshop: workshop } })
+            }
+        })
 
     } catch (err) {
         return res.status(400).json({ message: 'error', data: { error: err } })
