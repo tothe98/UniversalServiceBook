@@ -144,3 +144,83 @@ exports.editWorkshop = async (req, res) => {
         return res.status(400).json({ message: 'error', data: { error: err } })
     }
 }
+
+exports.getEmployees = async (req, res) => {
+    try {
+        const Workshops = mongoose.model('WorkShops')
+        const workshop = await Workshops.findOne({ _owner: req.userId }).populate('employees')
+        if (!workshop) {
+            return res.status(404).json({ message: "NotFoundYourWorkshop", data: {} })
+        }
+        return res.status(200).json({ message: '', data: { employees: workshop.employees } })
+    } catch (err) {
+        return res.status(400).json({ message: 'error', data: { error: err } })
+    }
+}
+
+exports.addEmployee = async (req, res) => {
+    try {
+        const { email } = req.body
+        if (!email) {
+            return res.status(422).json({ message: "EmailIsEmpty", data: {} })
+        }
+        const Workshops = mongoose.model('WorkShops')
+        const Users = mongoose.model('UserInfo')
+        const user = await Users.findOne({ email: email })
+        if (!user) {
+            return res.status(404).json({ message: "UserNotFound", data: {} })
+        }
+        const isAlreadyEmployee = await Workshops.findOne({ employees: user._id })
+        if (isAlreadyEmployee) {
+            return res.status(409).json({ message: "EmailAlreadyEmployee", data: {} })
+        }
+        const workshop = await Workshops.findOne({ _owner: req.userId })
+        if (!workshop) {
+            return res.status(404).json({ message: "WorkshopNotFound", data: {} })
+        }
+        workshop.employees.push(user._id)
+        await workshop.save()
+        user.roles.push(!user.roles.includes(ROLES.Employee) ? ROLES.Employee : '')
+        await user.save()
+
+        return res.status(202).json({ message: '', data: { workshop: workshop, employee: user } })
+
+    } catch (err) {
+        return res.status(400).json({ message: 'error', data: { error: err } })
+    }
+}
+
+exports.deleteEmployee = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id) {
+            res.status(422).json({ message: "IdIsEmpty", data: {} })
+        }
+        const Workshops = mongoose.model('WorkShops')
+        const Users = mongoose.model('UserInfo')
+        const workshop = await Workshops.findOne({ _owner: req.userId, employees: id })
+        if (!workshop) {
+            return res.status(404).json({ message: 'WorkshopNotFound', data: {} })
+        }
+        const employee = await Users.findOne({ _id: id })
+        if (!employee) {
+            return res.status(404).json({ message: 'EmployeeNotFound', data: {} })
+        }
+        const indexEmployee = workshop.employees.indexOf(id)
+        if (indexEmployee !== -1) {
+            workshop.employees.splice(indexEmployee, 1)
+        }
+        await workshop.save()
+
+        const indexRole = employee.roles.indexOf(ROLES.Employee)
+        if (indexRole !== -1) {
+            employee.roles.splice(indexRole, 1)
+        }
+        await employee.save()
+
+        return res.status(204).json({ message: '', data: { workshop: workshop, employee: employee } })
+
+    } catch (err) {
+        return res.status(400).json({ message: 'error', data: { error: err } })
+    }
+}

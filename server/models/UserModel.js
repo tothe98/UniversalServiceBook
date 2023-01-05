@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const ROLES = require('../core/Role')
 
 const UserSchema = new mongoose.Schema({
     fName: {
@@ -26,10 +27,11 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'Workshops'
     },
-    roles: {
-        type: Array,
-        default: []
-    },
+    roles: [{
+        type: Number,
+        default: ROLES.User,
+        required: true
+    }],
     phone: {
         type: String,
         required: true
