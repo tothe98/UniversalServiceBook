@@ -6,6 +6,46 @@ const confirmationEmail = require('../core/MailViews')
 require('../models/UserModel')
 require('../models/PictureModel')
 
+const fs = require("fs")
+const multer = require('multer')
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if (!fs.existsSync('uploads/' + req.userId + '/avatar/')) {
+            fs.mkdirSync('uploads/' + req.userId + '/avatar/')
+        }
+        cb(null, 'uploads/' + req.userId + '/avatar/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, require('crypto').createHash('md5').update(new Date().toISOString() + file.originalname).digest("hex") + "." + file.mimetype.split("/")[1]);
+    },
+    onError: function (err, next) {
+        console.log('error', err);
+        next(err);
+    }
+})
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png") {
+        cb(null, true)
+    } else {
+        cb(null, false)
+    }
+}
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+}).fields([
+    {
+        name: "picture",
+        maxCount: 1
+    }
+])
+
 exports.getUser = async (req, res) => {
     try {
         const User = mongoose.model('UserInfo')
@@ -18,10 +58,14 @@ exports.getUser = async (req, res) => {
 }
 
 exports.updateUser = async (req, res) => {
-    const User = mongoose.model('UserInfo')
-    const { lname, fname, picture, phone, home, oldPassword, newPassword } = req.body
-
-    const updateUser = await User.findOne({ _id: req.userId })
+    upload(req, res, async function (err) {
+        const User = mongoose.model('UserInfo')
+        const { lname, fname, phone, home, oldPassword, newPassword } = req.body
+        if (req.files) {
+            req.send(req.files)
+        }
+    })
+    /*const updateUser = await User.findOne({ _id: req.userId })
 
     let uploadImg = undefined
 
@@ -59,7 +103,7 @@ exports.updateUser = async (req, res) => {
     } catch (err) {
         return res.status(400).json({ message: 'error', data: { error: err } })
     }
-    res.status(200).json({ message: 'OK', data: {} })
+    res.status(200).json({ message: 'OK', data: {} })*/
 }
 
 exports.forgotPassword = async (req, res) => {
