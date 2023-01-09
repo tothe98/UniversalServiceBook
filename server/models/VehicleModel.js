@@ -144,7 +144,23 @@ VehiclesSchema.virtual("getVehicleDataById").get(function () {
         "pictures": picturesToArray(this.pictures.picture, this.preview.picture),
     }
 })
-
+VehiclesSchema.virtual("getVehicleByVin").get(function () {
+    return {
+        "id": this._id.toString(),
+        "manufacture": this._manufacture.manufacture,
+        "model": this._model.model,
+        "fullName": this._userId.lName + " " + this._userId.fName,
+        "licenseNumber": (this.licenseNumber ? this.licenseNumber : undefined),
+        "vin": this.vin,
+        "vintage": this.vintage,
+        "cylinderCapacity": this.cylinderCapacity,
+        "performanceLE": this.performance,
+        "performanceKW": Math.round(this.performance / 1.36),
+        "mot": (this.mot ? this.mot : undefined),
+        "mileage": this.mileage,
+        "preview": this.preview.picture,
+    }
+})
 function picturesToArray(pictures, prev = null) {
     if (prev === null) {
         return pictures.split("@")

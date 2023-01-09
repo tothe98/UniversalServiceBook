@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const ROLES = require('../core/Role')
 require('../models/WorkShopModel')
 require('../models/UserModel')
+require('../models/ServiceEntryModel')
 
 
 exports.getWorkshops = async (req, res) => {
@@ -11,7 +12,6 @@ exports.getWorkshops = async (req, res) => {
         let responseData = []
         resFromDB.forEach((workshop) => {
             let worksp = workshop.getWorkshop
-            //worksp.owner = workshop.owner?.lName + " " + workshop.owner?.fName
             responseData.push(worksp)
         })
 
@@ -220,6 +220,42 @@ exports.deleteEmployee = async (req, res) => {
 
         return res.status(204).json({ message: '', data: { workshop: workshop, employee: employee } })
 
+    } catch (err) {
+        return res.status(400).json({ message: 'error', data: { error: err } })
+    }
+}
+
+
+exports.getVehicleByVin = async (req, res) => {
+    try {
+        const { vin } = req.params
+        if (!vin) {
+            return res.status(409).json({ message: 'VinIsEmpty', data: {} })
+        }
+        require('../models/VehicleModel')
+        const Vehicles = mongoose.model('Vehicles')
+        const ServiceEntires = mongoose.model('ServiceEntries')
+
+        const vehicle = await Vehicles.findOne({ vin: vin })
+            .populate('_manufacture')
+            .populate('_model')
+            .populate('_userId')
+            .populate('preview')
+
+        if (vehicle) {
+            const serviceEntries = await ServiceEntires.find({ _vehicle: vehicle.id })
+            let serviceEntryMileage = 0
+            let serviceEntryCount = 0
+            if (serviceEntries.length > 0) {
+                serviceEntryMileage = Math.max(...serviceEntries.map(e => e.mileage))
+                serviceEntryCount = serviceEntries.length
+                vehicle.mileage = serviceEntryMileage
+            }
+
+            return res.status(200).json({ message: '', date: { vehicle: vehicle.getVehicleByVin, serviceEntriesCount: serviceEntryCount } })
+        }
+        return res.status(404).json({ message: 'VehicleNotFound', data: {} })
+        
     } catch (err) {
         return res.status(400).json({ message: 'error', data: { error: err } })
     }
