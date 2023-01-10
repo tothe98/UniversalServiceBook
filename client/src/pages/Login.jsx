@@ -2,7 +2,9 @@ import React, {useState} from "react";
 import {Button, Grid, styled, TextField, Typography} from "@mui/material";
 import axios from "axios";
 import {toast} from "react-toastify";
-import {Link} from "react-router-dom";
+import {Link, useNavigate, useLocation} from "react-router-dom";
+import AuthContext from "../context/AuthProvider";
+import useAuth from "../hooks/useAuth";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     marginBottom: "2rem"
@@ -13,6 +15,12 @@ const SendButton = styled(Button)(({theme}) => ({
 }))
 
 function Login() {
+    const { setAuth } = useAuth();
+
+    const Navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
+
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -21,17 +29,38 @@ function Login() {
         const axiosInstance = axios.create({
             baseURL: process.env.REACT_APP_BACKEND_URL
         })
-        const response = await axiosInstance.post("signin", {
+        
+        await axiosInstance.post("signin", {
             email: email,
             password: password
             })
-            .then(response => {
+            .then((response) => {
                 const data = response.data;
-                // ok
-                console.log(data)
-                localStorage.setItem("token", data.data.token);
-                toast.success("Sikeresen bejelentkeztél!")
-                global.location.href = "/"
+                // token validation
+                const token = data.data.token;
+                if (!token) {
+                    throw new Error("A token űres!");
+                }
+
+                /* collect the token and send a request to the server */
+                axiosInstance.get("getUserData", {
+                    headers: {
+                        "x-access-token": token
+                    }
+                })
+                .then((response) => {
+                    if (response.status == 200) {
+                        const user = response.data;
+                        toast.success("Sikeresen bejelentkeztél!")
+
+                        setAuth({ user, token });
+                        Navigate(from, { replace: true });
+                    }
+                })
+                .catch((e) => {
+                    setEmail('')
+                    setPassword('')
+                });
             })
             .catch(e => {
                 if (e.response.status === 400)

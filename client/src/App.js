@@ -8,6 +8,7 @@ import React, {Component, useEffect, useState} from 'react';
 import theme from './themes/theme'
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
+import RequireAuth from "./components/RequireAuth";
 import Home from './pages/Home';
 import Header from "./global/Header";
 import PageSelector from "./global/PageSelector";
@@ -24,45 +25,23 @@ import axios from "axios";
 import Registration from "./pages/Registration";
 import MechanicWorkshop from "./pages/MechanicWorkshop";
 import EmailVerification from "./pages/EmailVerification";
+import AdminPage from "./pages/AdminPage";
+import { AuthProvider } from './context/AuthProvider';
+import Layout from './components/Layout';
+import OwnerPage from './pages/OwnerPage';
+import Unauthorized from './pages/Unauthorized';
 
-const Wrapper = styled('div')(({theme}) => ({
-}))
-
-const MyHr = styled('hr')(({theme}) => ({
-    backgroundColor: theme.palette.common.lightgray
-}))
-
+const ROLES = {
+    'User': 2001,
+    'Admin': 2002,
+    'Owner': 2003
+}
 
 function App() {
-  const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
-  const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
-  const betweenSM_MD = useMediaQuery(theme.breakpoints.between("sm", "md"));
-  const [activePage, setActivePage] = useState(0);
-  const [loggedIn, setLoggedIn] = useState(false);
-
-  const handleChangeTab = (newValue) => {
-      setActivePage(newValue)
-  }
-
-  const getUserDatas = async (token) => {
-      const axiosInstance = axios.create({
-          baseURL: process.env.REACT_APP_BACKEND_URL
-      })
-      const response = await axiosInstance.get("getUserData", {
-          headers: {
-              "x-access-token": token
-          }
-      });
-      const data = await response.data;
-      localStorage.setItem("user", JSON.stringify(data.data));
-  }
-
-  useEffect(() => {
-      if (localStorage.getItem("token"))
-      {
-          getUserDatas(localStorage.getItem("token")).then(r => setLoggedIn(true));
-      }
-  });
+    const [activePage, setActivePage] = useState(0);
+    const handleChangeTab = (newValue) => {
+        setActivePage(newValue)
+    }
 
     const routes = [
         { name: 'Főoldal', link: '/', activeIndex: 0 },
@@ -96,44 +75,43 @@ function App() {
         })
     }, [activePage, routes])
 
-  return (
+    return (
     <ThemeProvider theme={theme}>
-      <BrowserRouter>
-          <Header handleChangeTab={handleChangeTab} />
-          { !underSmall && <PageSelector routes={routes} activePage={activePage} loggedIn={loggedIn} handleChangeTab={handleChangeTab} /> }
-          <Wrapper>
-              <Grid container direction={underLarge ? "column" : "row"}>
-                  <Grid item md={1} xs={0}></Grid>
-                  { /*<Grid item md={loggedIn ? 2 : 1} xs={loggedIn ? 2 : 1} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}> */}
-                  <Grid item xs={2} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}>
-                      <Profile handleChangeTab={handleChangeTab} loggedIn={loggedIn} />
-                  </Grid>
+        <Routes>
+        <Route path="/" element={<Layout activePage={activePage} routes={routes} 
+                                            handleChangeTab={handleChangeTab} />}>
+            { /*Public routes*/ }
+            <Route path='/bejelentkezes' element={<Login />} />
+            <Route path='/regisztracio' element={<Registration />} />
+            <Route path='/aktivalas/:id' element={<EmailVerification />} />   
 
-                  { /* <Grid item md={loggedIn ? 8 : 11} xs={loggedIn ? 10 : 11} sx={{ */ }
-                  <Grid item md={8} xs={10} sx={{
-                      paddingTop: underLarge || betweenSM_MD ? "1rem" : "53px",
-                      paddingLeft: theme.global.basePadding,
-                      paddingRight: theme.global.basePadding
-                  }}>
-                      <Routes>
-                          <Route path='/' element={loggedIn ? <Home handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/muhely' element={loggedIn ? <MechanicWorkshop handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/jarmuveim' element={loggedIn ? <Garage handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/jarmuveim/:id' element={loggedIn ? <GarageVehiclePreview handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/beallitasok' element={loggedIn ? <Settings handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/levelek' element={loggedIn ? <Mails handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/levelek/:id' element={loggedIn ? <MailPreview handleChangeTab={handleChangeTab} /> : <Login />} />
-                          <Route path='/bejelentkezes' element={<Login />} />
-                          <Route path='/regisztracio' element={<Registration />} />
-                          <Route path='/aktivalas/:id' element={<EmailVerification />} />
-                          <Route path='/*' element={loggedIn ? <Error /> : <Login />} />
-                      </Routes>
-                  </Grid>
-                  { loggedIn && <Grid item md={1} xs={0}></Grid> }
-              </Grid>
-          </Wrapper>
-        <Footer />
-      </BrowserRouter>
+            { /*Protected routes*/ }
+            { /*2001 = user*/ }
+            <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin, ROLES.Owner]} />}>
+                <Route path='/' element={<Home handleChangeTab={handleChangeTab} /> } />
+                <Route path='/muhely' element={<MechanicWorkshop handleChangeTab={handleChangeTab} /> } />
+                <Route path='/jarmuveim' element={<Garage handleChangeTab={handleChangeTab} /> } />
+                <Route path='/jarmuveim/:id' element={<GarageVehiclePreview handleChangeTab={handleChangeTab} /> } />
+                <Route path='/beallitasok' element={<Settings handleChangeTab={handleChangeTab} /> } />
+            </Route>   
+
+            { /*2002 = admin*/ }
+            <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+                <Route path='/adminisztracio' element={<AdminPage handleChangeTab={handleChangeTab} /> } />
+            </Route>
+
+            { /*2003 = owner*/ }
+            <Route element={<RequireAuth allowedRoles={[ROLES.Owner]} />}>
+                <Route path='/adminisztracio' element={<OwnerPage handleChangeTab={handleChangeTab} /> } />
+            </Route>
+            
+            { /* Forbidden requests */ }
+            <Route path='/megtagadva' element={<Unauthorized />} />
+
+            { /* Caching missings */ }
+            <Route path='*' element={<Error />} />
+        </Route>
+        </Routes>
       <ToastContainer />
     </ThemeProvider>
   );
