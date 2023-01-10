@@ -51,9 +51,11 @@ function Login() {
                 .then((response) => {
                     if (response.status == 200) {
                         const user = response.data;
+                        const roles = response.data.roles;
                         toast.success("Sikeresen bejelentkeztél!")
+                        localStorage.setItem("token", ""+token);
 
-                        setAuth({ user, token });
+                        setAuth({ user, token, roles });
                         Navigate(from, { replace: true });
                     }
                 })

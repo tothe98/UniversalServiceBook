@@ -67,12 +67,10 @@ const MyCalendar = styled(CalendarPicker)(({theme}) => ({
 
 function Profile({handleChangeTab, loggedIn}) {
     const [isLoading, setIsLoading] = useState(true);
-    const biggerExtraLarge = useMediaQuery(theme.breakpoints.up("xl"));
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
     const [wallPaper, setWallpaper] = useState();
     let today = new Date();
-    const [date, setDate] = useState(dayjs(today));
 
     useEffect(() => {
         setIsLoading(true);

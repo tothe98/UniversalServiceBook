@@ -30,12 +30,7 @@ import { AuthProvider } from './context/AuthProvider';
 import Layout from './components/Layout';
 import OwnerPage from './pages/OwnerPage';
 import Unauthorized from './pages/Unauthorized';
-
-const ROLES = {
-    'User': 2001,
-    'Admin': 2002,
-    'Owner': 2003
-}
+import Roles from '../src/components/Roles'
 
 function App() {
     const [activePage, setActivePage] = useState(0);
@@ -86,8 +81,7 @@ function App() {
             <Route path='/aktivalas/:id' element={<EmailVerification />} />   
 
             { /*Protected routes*/ }
-            { /*2001 = user*/ }
-            <Route element={<RequireAuth allowedRoles={[ROLES.User, ROLES.Admin, ROLES.Owner]} />}>
+            <Route element={<RequireAuth allowedRoles={[Roles.User, Roles.Employee, Roles.Admin, Roles.Owner]} />}>
                 <Route path='/' element={<Home handleChangeTab={handleChangeTab} /> } />
                 <Route path='/muhely' element={<MechanicWorkshop handleChangeTab={handleChangeTab} /> } />
                 <Route path='/jarmuveim' element={<Garage handleChangeTab={handleChangeTab} /> } />
@@ -95,13 +89,13 @@ function App() {
                 <Route path='/beallitasok' element={<Settings handleChangeTab={handleChangeTab} /> } />
             </Route>   
 
-            { /*2002 = admin*/ }
-            <Route element={<RequireAuth allowedRoles={[ROLES.Admin]} />}>
+            { /* admin */ }
+            <Route element={<RequireAuth allowedRoles={[Roles.Admin]} />}>
                 <Route path='/adminisztracio' element={<AdminPage handleChangeTab={handleChangeTab} /> } />
             </Route>
 
-            { /*2003 = owner*/ }
-            <Route element={<RequireAuth allowedRoles={[ROLES.Owner]} />}>
+            { /* owner */ }
+            <Route element={<RequireAuth allowedRoles={[Roles.Owner]} />}>
                 <Route path='/adminisztracio' element={<OwnerPage handleChangeTab={handleChangeTab} /> } />
             </Route>
             
