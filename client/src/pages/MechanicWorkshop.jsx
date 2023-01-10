@@ -227,6 +227,10 @@ function MechanicWorkshop({handleChangeTab}) {
                             }}
                         />
                     </Grid>
+
+                    {
+                        /* TODO: KM óra állás input */
+                    }
                 </Grid>
 
                 <Editor
