@@ -2,6 +2,7 @@ import {Grid, styled, Tab, Tabs, useMediaQuery} from '@mui/material';
 import React, {useEffect} from 'react';
 import { useState } from 'react';
 import {Link} from "react-router-dom";
+import useAuth from '../hooks/useAuth';
 import theme from "../themes/theme";
 
 const MAX_HEIGHT = '108px';
@@ -22,21 +23,25 @@ const MyTab = styled(Tab)(({theme}) => ({
     textTransform: "none"
 }))
 
-function PageSelector({activePage, loggedIn, handleChangeTab, routes}) {
+function PageSelector({activePage, handleChangeTab, routes}) {
+    const { auth } = useAuth();
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
 
     return (<Wrapper container>
         <Grid container>
-            <Grid item lg={loggedIn ? 3 : 1 } xs={0}></Grid>
-            <Grid item lg={loggedIn ? 8 : 11} xs={12}>
+            <Grid item lg={auth?.user ? 3 : 1 } xs={0}></Grid>
+            <Grid item lg={auth?.user ? 8 : 11} xs={12}>
                 <Tabs value={activePage} textColor="#24292F" onChange={handleChangeTab} TabIndicatorProps={{style: {backgroundColor: "#909090"}}}>
                     {
-                        loggedIn && routes.map((route, i) => {
+                        auth?.user && routes.map((route, i) => {
                             if (route.name === "Leveleim") {
 
                             }
                             else {
-                                return <MyTab key={route+"-"+i} label={route.name} disabled={route.name==="Leveleim"} sx={{ opacity: route.name === "Leveleim" ? 0.5 : 1 }} component={Link} to={route.link} />
+                                return <MyTab key={route+"-"+i} label={route.name} 
+                                disabled={route.name==="Leveleim"} 
+                                sx={{ opacity: route.name === "Leveleim" ? 0.5 : 1 }} 
+                                component={Link} to={route.link} />
                             }
                         })
                     }
