@@ -317,8 +317,27 @@ exports.updateVehicle = async (req, res) => {
     }
 
     //TODO
+}
 
+exports.deleteVehicle = async (req, res) => {
+    const { id } = req.params
 
+    if (!id) {
+        return res.status(422).json({ message: "IDIsEmpty", data: {} })
+    }
+
+    try {
+        const Vehicles = mongoose.model('Vehicles')
+        const vehicle = await Vehicles.findOne({ _id: id })
+        if (!vehicle) {
+            return res.status(404).json({ message: "VehicleNotFound", data: {} })
+        }
+        vehicle.isActive = false
+        await vehicle.save()
+        return res.status(202).json({ message: '', data: { vehicle: vehicle } })
+    } catch (err) {
+        return res.status(400).json({ message: 'error', data: { error: err } })
+    }
 
 }
 
