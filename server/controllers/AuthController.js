@@ -35,7 +35,7 @@ exports.signup = async (req, res) => {
         const token = jwt.sign({ userId: createdUser["_id"], email: createdUser["email"] }, process.env.JWT_SECRET, { expiresIn: '7d' })
 
         await sendEmail(createdUser["email"], "Email megerősítés",
-            confirmationEmail(`http://127.0.0.1:8080/api/v1/emailConfirmation/${token}`)
+            confirmationEmail(`http://127.0.0.1:3000/aktivalas/${token}`)
         )
         return res.status(201).json({ message: 'success', data: {} })
 
