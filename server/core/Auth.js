@@ -13,7 +13,6 @@ const authorization = (...allowedRoles) => {
                 } else {
                     req.userId = decoded.userId
                     req.roles = decoded.roles
-                    req.wid = decoded.workShop
                     const rolesArray = [...allowedRoles]
                     const result = decoded.roles.map(role => rolesArray.includes(role)).find(val => val === true)
                     if (!result) {

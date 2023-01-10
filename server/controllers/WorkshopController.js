@@ -1,9 +1,52 @@
 const mongoose = require('mongoose')
 const ROLES = require('../core/Role')
+const moment = require('moment')
 require('../models/WorkShopModel')
 require('../models/UserModel')
 require('../models/ServiceEntryModel')
+require('../models/PictureModel')
 
+const fs = require("fs")
+const multer = require('multer')
+
+const storage = multer.diskStorage({
+    destination: async function (req, file, cb) {
+        const Workshops = mongoose.model('WorkShops')
+        const workshop = await Workshops.findOne({ employees: req.userId })
+        if (!fs.existsSync('uploads/serviceEntries/' + workshop.id + '/')) {
+            fs.mkdirSync('uploads/serviceEntries/' + req.userId + '/')
+        }
+        cb(null, 'uploads/' + req.userId + '/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, require('crypto').createHash('md5').update(new Date().toISOString() + file.originalname).digest("hex") + "." + file.mimetype.split("/")[1]);
+    },
+    onError: function (err, next) {
+        console.log('error', err);
+        next(err);
+    }
+})
+
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype == "image/jpeg" || file.mimetype == "image/jpg" || file.mimetype == "image/png") {
+        cb(null, true)
+    } else {
+        cb(null, false)
+    }
+}
+
+const upload = multer({
+    storage: storage,
+    limits: {
+        fileSize: 1024 * 1024 * 5
+    },
+    fileFilter: fileFilter
+}).fields([
+    {
+        name: "pictures",
+        maxCount: 10
+    },
+])
 
 exports.getWorkshops = async (req, res) => {
     try {
@@ -255,8 +298,12 @@ exports.getVehicleByVin = async (req, res) => {
             return res.status(200).json({ message: '', date: { vehicle: vehicle.getVehicleByVin, serviceEntriesCount: serviceEntryCount } })
         }
         return res.status(404).json({ message: 'VehicleNotFound', data: {} })
-        
+
     } catch (err) {
         return res.status(400).json({ message: 'error', data: { error: err } })
     }
+}
+
+exports.addServiceEntry = async (req, res) => {
+    res.send(moment().format('YYYY-MM-DD'))
 }

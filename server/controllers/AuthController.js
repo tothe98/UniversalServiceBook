@@ -57,7 +57,7 @@ exports.signin = async (req, res) => {
         return res.status(403).json({ message: 'notActive', data: {} })
     }
     if (await bcrypt.compare(password, emailIsExist.password)) {
-        const token = jwt.sign({ userId: emailIsExist.id, email: emailIsExist.email, roles: emailIsExist.roles, workShop: emailIsExist._workshop }, process.env.JWT_SECRET)
+        const token = jwt.sign({ userId: emailIsExist.id, email: emailIsExist.email, roles: emailIsExist.roles }, process.env.JWT_SECRET)
 
         if (res.status(200)) {
             return res.status(200).json({ message: 'success', data: { token: token } })

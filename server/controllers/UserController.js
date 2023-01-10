@@ -60,7 +60,6 @@ const rmDir = async function (dirPath, removeSelf) {
         for (var i = 0; i < files.length; i++) {
             var filePath = dirPath + '/' + files[i];
             if (fs.statSync(filePath).isFile()) {
-                console.log(filePath);
                 const pictureOnDB = await Pictures.findOneAndUpdate({ picture: filePath.replaceAll('//', '/').replaceAll('\\', '/') }, { isDelete: true });
                 console.log(pictureOnDB);
                 fs.unlinkSync(filePath);
@@ -113,7 +112,7 @@ exports.updateUser = async (req, res) => {
                 const salt = bcrypt.genSaltSync(10)
                 updatePsw = bcrypt.hashSync(newPassword, salt)
             } else {
-                return res.status(40).json({ message: 'passwordNotCorrect', data: {} })
+                return res.status(400).json({ message: 'passwordNotCorrect', data: {} })
             }
         }
 

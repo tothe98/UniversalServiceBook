@@ -23,7 +23,7 @@ const {
     addTransmission,
     getTransmissions
 } = require('../controllers/VehicleParameterController')
-const { getWorkshops, addWorkshop, deleteWorkshop, getMyWorkshop, editWorkshop, getEmployees, addEmployee, deleteEmployee, getVehicleByVin } = require('../controllers/WorkshopController')
+const { getWorkshops, addWorkshop, deleteWorkshop, getMyWorkshop, editWorkshop, getEmployees, addEmployee, deleteEmployee, getVehicleByVin, addServiceEntry } = require('../controllers/WorkshopController')
 
 
 //AuthController
@@ -71,6 +71,7 @@ router.get('/getEmployees', authorize(ROLES.Owner), getEmployees)
 router.post('/addEmployee', authorize(ROLES.Owner), addEmployee)
 router.delete('/deleteEmployee/:id', authorize(ROLES.Owner), deleteEmployee)
 router.get('/getVehicleByVin/:vin', authorize(ROLES.Owner, ROLES.Employee), getVehicleByVin)
+router.post('/addServiceEntry', authorize(ROLES.Owner, ROLES.Employee), addServiceEntry)
 
 //404 API Request
 router.get('*', (req, res) => {
