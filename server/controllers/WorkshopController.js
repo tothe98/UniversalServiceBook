@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const ROLES = require('../core/Role')
 const moment = require('moment')
+const jwt = require('jsonwebtoken')
 require('../models/WorkShopModel')
 require('../models/UserModel')
 require('../models/ServiceEntryModel')
@@ -12,11 +13,11 @@ const multer = require('multer')
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
         const Workshops = mongoose.model('WorkShops')
-        const workshop = await Workshops.findOne({ employees: req.userId })
-        if (!fs.existsSync('uploads/serviceEntries/' + workshop.id + '/')) {
-            fs.mkdirSync('uploads/serviceEntries/' + req.userId + '/')
+        const workshop = await Workshops.findOne({ $or: [{ employees: req.userId }, { _owner: req.userId }] })
+        if (!fs.existsSync('uploads/serviceEntries/' + workshop._id + '/' + moment().format('YYYYMMDD') + '/')) {
+            fs.mkdirSync('uploads/serviceEntries/' + workshop._id + '/' + moment().format('YYYYMMDD') + '/', { recursive: true })
         }
-        cb(null, 'uploads/' + req.userId + '/')
+        cb(null, 'uploads/serviceEntries/' + (workshop._id.toString()) + '/' + moment().format('YYYYMMDD') + '/')
     },
     filename: function (req, file, cb) {
         cb(null, require('crypto').createHash('md5').update(new Date().toISOString() + file.originalname).digest("hex") + "." + file.mimetype.split("/")[1]);
@@ -305,5 +306,19 @@ exports.getVehicleByVin = async (req, res) => {
 }
 
 exports.addServiceEntry = async (req, res) => {
-    res.send(moment().format('YYYY-MM-DD'))
+    //const token = jwt.sign({ userId: '63bd5f51e6862786ee82113d', email: 'abdul.ali@gmail.com' }, process.env.JWT_SECRET, { expiresIn: '7d' })
+    upload(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(400).json({ message: 'LimitFileCount', data: { error: err } })
+        }
+
+        if (req.files?.pictures) {
+            return res.send(req.files)
+        }
+    })
+
+
+
+
+
 }
