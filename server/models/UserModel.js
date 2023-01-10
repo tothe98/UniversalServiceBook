@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const ROLES = require('../core/Role')
 
 const UserSchema = new mongoose.Schema({
     fName: {
@@ -26,6 +27,11 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'Workshops'
     },
+    roles: [{
+        type: Number,
+        default: ROLES.User,
+        required: true
+    }],
     phone: {
         type: String,
         required: true
@@ -47,11 +53,6 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    isAdmin: {
-        type: Boolean,
-        default: false
-    }
-
 },
     {
         collection: 'UserInfo'
@@ -60,7 +61,8 @@ const UserSchema = new mongoose.Schema({
 UserSchema.virtual("getUserData").get(function () {
     return {
         "fName": this.fName, "lName": this.lName, "email": this.email,
-        "phone": this.phone, "home": this.home, "isAdmin": this.isAdmin,
+        "phone": this.phone, "home": this.home,
+        "roles": this.roles,
         "picture": (this._profilImg ? this._profilImg.picture : undefined)
     }
 })

@@ -9,7 +9,7 @@ const WorkShopSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    town: {
+    city: {
         type: String,
         required: true
     },
@@ -17,19 +17,27 @@ const WorkShopSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    phone: {
+        type: String,
+        required: false,
+    },
+    email: {
+        type: String,
+        required: false
+    },
     _owner: {
         type: mongoose.Types.ObjectId,
         required: true,
         ref: 'UserInfo'
     },
-    employees: {
-        type: [mongoose.Types.ObjectId],
+    employees: [{
+        type: mongoose.Types.ObjectId,
         required: false,
-        default: [""]
-    },
+        ref: 'UserInfo'
+    }],
     isActive: {
         type: Boolean,
-        default: false
+        default: true
     },
     createdAt: {
         type: Date,
@@ -41,5 +49,25 @@ const WorkShopSchema = new mongoose.Schema({
     {
         collection: 'WorkShops'
     })
+
+WorkShopSchema.virtual("getWorkshop").get(function () {
+    return {
+        "_id": this._id,
+        "name": this.name,
+        "country": this.country,
+        "city": this.city,
+        "address": this.address,
+        "phone": this.phone ? this.phone : undefined,
+        "email": this.email ? this.email : undefined,
+        "owner": this._owner && this._owner.lName + " " + this._owner.fName,
+        "employees": this.employees && listEmployees(this.employees)
+    }
+})
+
+function listEmployees(employees) {
+    let employeesArray = []
+    employees.map((employee) => employeesArray.push({ 'id': employee._id, 'name': employee.lName + " " + employee.fName }))
+    return employeesArray
+}
 
 mongoose.model('WorkShops', WorkShopSchema)

@@ -10,7 +10,6 @@ require('../models/VehicleModel')
 require('../models/ServiceEntryModel')
 
 const fs = require("fs")
-
 const multer = require('multer')
 
 const storage = multer.diskStorage({
