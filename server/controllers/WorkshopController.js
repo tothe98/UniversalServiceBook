@@ -305,20 +305,58 @@ exports.getVehicleByVin = async (req, res) => {
     }
 }
 
-exports.addServiceEntry = async (req, res) => {
-    //const token = jwt.sign({ userId: '63bd5f51e6862786ee82113d', email: 'abdul.ali@gmail.com' }, process.env.JWT_SECRET, { expiresIn: '7d' })
+
+exports.addServiceEntry = (req, res) => {
     upload(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
             return res.status(400).json({ message: 'LimitFileCount', data: { error: err } })
         }
-
+        let files = undefined
         if (req.files?.pictures) {
-            return res.send(req.files)
+            files = req.files.pictures
+        }
+        const { vehicleID, date, mileage, description } = req.body
+        if (!vehicleID || !date || !mileage || !description) {
+            deleteFiles(files)
+            return res.status(422).json({ message: 'AllFieldsMustBeFill', data: {} })
+        }
+
+        // if (vehicleID.length !== 12 || vehicleID.length !== 24) {
+        //     deleteFiles(files)
+        //     return res.status(422).json({ message: 'IDIsNotValid', data: {} })
+        // }
+
+        const Vehicles = mongoose.model('Vehicles')
+        const vehicle = await Vehicles.findOne({ _id: vehicleID })
+        if (!vehicle) {
+            deleteFiles(files)
+            return res.status(404).json({ message: 'VehicleNotFound', data: {} })
+        }
+
+        let uploadImg = undefined
+        if (req.files?.pictures) {
+            const picturesJoin = req.files.pictures.map(picture => picture.path.replaceAll('\\', '/')).join('@')
+            const Pictures = mongoose.model('Pictures')
+            await Pictures.create({
+                picture: picturesJoin,
+                _uploadFrom: req.userId
+            }).then((e) => {
+                uploadImg = e["_id"].toString()
+            }).catch((err) => {
+                return res.status(400).json({ message: 'error', data: { error: err } })
+            })
         }
     })
+}
 
-
-
-
-
+const deleteFiles = (array) => {
+    if (array != undefined) {
+        array.forEach(file => {
+            try {
+                fs.unlinkSync((file.path.replaceAll('\\', '/')))
+            } catch (err) {
+                console.log(err);
+            }
+        })
+    }
 }
