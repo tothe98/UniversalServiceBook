@@ -270,16 +270,17 @@ exports.getVehicle = async (req, res) => {
             .populate('pictures')
             .populate('preview')
 
-
-
         const resFromDBServices = await ServiceEntires.find({ _vehicle: id, isDelete: false })
-            .populate("_vehicle")
             .populate("_workshop")
             .populate("pictures")
             .populate('_mechanicer')
-            .getServices
 
-        return res.status(200).json({ message: '', data: { vehicle: resFromDB.getVehicleDataById, serviceEntries: resFromDBServices || [] } })
+        let responseData = []
+        resFromDBServices.forEach((service) => {
+            responseData.push(service.getServices)
+        })
+
+        return res.status(200).json({ message: '', data: { vehicle: resFromDB.getVehicleDataById, serviceEntries: responseData || [] } })
     } catch (err) {
         return res.status(400).json({ message: 'error', data: { error: err } })
     }
