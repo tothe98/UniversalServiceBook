@@ -9,6 +9,7 @@ require('../models/PictureModel')
 
 const fs = require("fs")
 const multer = require('multer')
+const { request } = require('http')
 
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
@@ -320,43 +321,79 @@ exports.addServiceEntry = (req, res) => {
             deleteFiles(files)
             return res.status(422).json({ message: 'AllFieldsMustBeFill', data: {} })
         }
+        try {
 
-        // if (vehicleID.length !== 12 || vehicleID.length !== 24) {
-        //     deleteFiles(files)
-        //     return res.status(422).json({ message: 'IDIsNotValid', data: {} })
-        // }
+            // if (vehicleID.length !== 12 || vehicleID.length !== 24) {
+            //     deleteFiles(files)
+            //     return res.status(422).json({ message: 'IDIsNotValid', data: {} })
+            // }
 
-        const Vehicles = mongoose.model('Vehicles')
-        const vehicle = await Vehicles.findOne({ _id: vehicleID })
-        if (!vehicle) {
-            deleteFiles(files)
-            return res.status(404).json({ message: 'VehicleNotFound', data: {} })
-        }
+            const Vehicles = mongoose.model('Vehicles')
+            const vehicle = await Vehicles.findOne({ _id: vehicleID })
+            if (!vehicle) {
+                deleteFiles(files)
+                return res.status(404).json({ message: 'VehicleNotFound', data: {} })
+            }
+            let currentMaxMileage = vehicle.mileage ? vehicle.mileage : 0
 
-        let uploadImg = undefined
-        if (req.files?.pictures) {
-            const picturesJoin = req.files.pictures.map(picture => picture.path.replaceAll('\\', '/')).join('@')
-            const Pictures = mongoose.model('Pictures')
-            await Pictures.create({
-                picture: picturesJoin,
-                _uploadFrom: req.userId
-            }).then((e) => {
-                uploadImg = e["_id"].toString()
-            }).catch((err) => {
-                return res.status(400).json({ message: 'error', data: { error: err } })
+            const ServiceEntires = mongoose.model('ServiceEntries')
+            const serviceEntries = await ServiceEntires.find({ _vehicle: vehicleID })
+            if (serviceEntries.length > 0) {
+                currentMaxMileage = Math.max(...serviceEntries.map(e => e.mileage))
+            }
+            if (currentMaxMileage > mileage) {
+                deleteFiles(files)
+                return res.status(409).json({ message: "MileageIsLowerThanOldMileage", data: {} })
+            }
+
+
+            let uploadImg = undefined
+            if (req.files?.pictures) {
+                const picturesJoin = req.files.pictures.map(picture => picture.path.replaceAll('\\', '/')).join('@')
+                const Pictures = mongoose.model('Pictures')
+                await Pictures.create({
+                    picture: picturesJoin,
+                    _uploadFrom: req.userId
+                }).then((e) => {
+                    uploadImg = e["_id"].toString()
+                }).catch((err) => {
+                    return res.status(400).json({ message: 'error', data: { error: err } })
+                })
+            }
+            const Workshops = mongoose.model('WorkShops')
+            const workshop = await Workshops.findOne({ $or: [{ employees: req.userId }, { _owner: req.userId }] })
+
+            const newServcieEntry = await ServiceEntires.create({
+                _vehicle: vehicleID,
+                _workshop: workshop._id,
+                _mechanicer: req.userId,
+                description: description,
+                mileage: mileage,
+                pictures: uploadImg,
+                createdAt: date
             })
+
+            return res.status(201).json({ message: "", date: { serviceEntry: newServcieEntry } })
+
+        } catch (err) {
+            deleteFiles(files)
+            return res.status(400).json({ message: "error", data: { err } })
         }
+
+
     })
 }
 
 const deleteFiles = (array) => {
     if (array != undefined) {
         array.forEach(file => {
+            if (fs.existsSync(array)) { }
             try {
                 fs.unlinkSync((file.path.replaceAll('\\', '/')))
             } catch (err) {
-                console.log(err);
+                return;
             }
+
         })
     }
 }

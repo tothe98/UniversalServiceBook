@@ -29,7 +29,8 @@ exports.signup = async (req, res) => {
             lName: lname,
             email: email,
             phone: phone,
-            password: encryptedPassword
+            password: encryptedPassword,
+            roles: [ROLES.User]
         })
         createdUser = createdUser.toJSON()
 
