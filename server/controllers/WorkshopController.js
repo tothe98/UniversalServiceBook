@@ -9,7 +9,6 @@ require('../models/PictureModel')
 
 const fs = require("fs")
 const multer = require('multer')
-const { request } = require('http')
 
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {

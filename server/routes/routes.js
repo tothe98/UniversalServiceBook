@@ -59,7 +59,7 @@ router.post('/addTransmission', authorize(ROLES.Admin), addTransmission)
 router.post('/addVehicle', authorize(ROLES.User), addVehicle)
 router.get('/getVehicles', authorize(ROLES.User), getVehicles)
 router.get('/getVehicle/:id', authorize(ROLES.User), getVehicle)
-router.put('/updateVehicle', authorize(ROLES.User), updateVehicle)
+router.put('/updateVehicle/:id', authorize(ROLES.User), updateVehicle)
 router.delete('/deleteVehicle/:id', authorize(ROLES.User), deleteVehicle)
 
 //WorkshopController
