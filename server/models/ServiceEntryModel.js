@@ -9,7 +9,7 @@ const ServiceEntrySchema = new mongoose.Schema({
     _workshop: {
         type: mongoose.Types.ObjectId,
         required: true,
-        ref: 'Workshops'
+        ref: 'WorkShops'
     },
     _mechanicer: {
         type: mongoose.Types.ObjectId,
@@ -56,7 +56,7 @@ ServiceEntrySchema.virtual("getServices").get(function () {
         "description": this.description,
         "mileage": this.mileage,
         "pictures": picturesToArray(this.pictures.picture),
-        "mechanicer": (this.mechanicer.fName + " " + this.mechanicer.lName),
+        "mechanicer": (this._mechanicer.lName + " " + this._mechanicer.fName),
         "workshop": this._workshop.name
     }
 })

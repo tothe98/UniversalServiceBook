@@ -32,13 +32,13 @@ function Registration() {
             phone: phoneNumber ? phoneNumber : ""
         }, { headers: { "x-access-token": localStorage.getItem("token") }});
         const data = await response.data;
-        if (response.status === 200)
+        if (response.status == 200)
         {
             toast.success("Sikeres regisztráció!")
         }
         else
         {
-            toast.success("Opss! Valami hiba történt a regisztráció során!")
+            toast.error("Opss! Valami hiba történt a regisztráció során!")
         }
     }
 

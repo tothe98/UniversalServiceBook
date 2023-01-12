@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sendEmail = require("../core/Mailer")
 const confirmationEmail = require('../core/MailViews')
+const ROLES = require('../core/Role')
 require('../models/UserModel')
 
 
@@ -28,14 +29,15 @@ exports.signup = async (req, res) => {
             lName: lname,
             email: email,
             phone: phone,
-            password: encryptedPassword
+            password: encryptedPassword,
+            roles: [ROLES.User]
         })
         createdUser = createdUser.toJSON()
 
         const token = jwt.sign({ userId: createdUser["_id"], email: createdUser["email"] }, process.env.JWT_SECRET, { expiresIn: '7d' })
 
         await sendEmail(createdUser["email"], "Email megerősítés",
-            confirmationEmail(`http://127.0.0.1:8080/api/v1/emailConfirmation/${token}`)
+            confirmationEmail(`http://127.0.0.1:3000/aktivalas/${token}`)
         )
         return res.status(201).json({ message: 'success', data: {} })
 
@@ -56,7 +58,7 @@ exports.signin = async (req, res) => {
         return res.status(403).json({ message: 'notActive', data: {} })
     }
     if (await bcrypt.compare(password, emailIsExist.password)) {
-        const token = jwt.sign({ userId: emailIsExist.id, email: emailIsExist.email, isAdmin: emailIsExist.isAdmin, workShop: emailIsExist._workshop }, process.env.JWT_SECRET)
+        const token = jwt.sign({ userId: emailIsExist.id, email: emailIsExist.email, roles: emailIsExist.roles }, process.env.JWT_SECRET)
 
         if (res.status(200)) {
             return res.status(200).json({ message: 'success', data: { token: token } })

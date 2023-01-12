@@ -7,17 +7,18 @@ const RequireAuth = ({ allowedRoles }) => {
     const { auth } = useAuth();
     const location = useLocation();
 
-   return (
-        /*Outlet = all children of this class*/
-        auth?.roles?.find(role => 
-          allowedRoles.includes(role)) 
-               ? <Outlet /> 
-               /* if we try to access a protected route and we do not have permission then we move to the login page 
-               but afterwards if we wants to go back, we can't and that's why we need to put the replace property. */
-               : auth?.user 
-                    ? <Navigate to="/megtagadva" state={{ from: location }} replace />
-                    : <Navigate to="/bejelentkezes" state={{ from: location }} replace />
-   )
+    if (!localStorage.getItem("token")) {
+     return <Navigate to="/bejelentkezes" state={{ from: location }} replace />
+    }
+
+    if (!allowedRoles.includes(auth.role)) {
+     if (auth?.user) {
+          return <Navigate to="/megtagadva" state={{ from: location }} replace />
+     }
+     return <Navigate to="/bejelentkezes" state={{ from: location }} replace />
+    }
+
+    return <Outlet />
 }
 
 export default RequireAuth;
