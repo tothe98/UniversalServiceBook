@@ -115,7 +115,6 @@ exports.addVehicle = (req, res) => {
                 _uploadFrom: req.userId
             }
 
-            console.log("sad")
             const createPicture = new Pictures(pictures)
             const createPreview = new Pictures(preview)
             await createPicture.save()

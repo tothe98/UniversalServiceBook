@@ -62,9 +62,8 @@ function App() {
         ADMIN: [
             { name: 'Főoldal', link: '/', activeIndex: 1 },    
             { name: 'Járműveim', link: '/jarmuveim', activeIndex: 2 },    
-            { name: 'Műhely', link: '/muhely', activeIndex: 3 },    
-            { name: 'Adminisztráció', link: '/adminisztracio', activeIndex: 4 },    
-            { name: 'Beállítások', link: '/beallitasok', activeIndex: 5 }    
+            { name: 'Adminisztráció', link: '/adminisztracio', activeIndex: 3 },    
+            { name: 'Beállítások', link: '/beallitasok', activeIndex: 4 }    
         ]
     }
 
@@ -210,14 +209,14 @@ function App() {
                 <Route path='/beallitasok' element={<Settings handleChangeTab={handleChangeTab} /> } />
             </Route>   
 
-            { /* admin */ }
-            <Route element={<RequireAuth allowedRoles={[Roles.Admin]} />}>
-                <Route path='/adminisztracio' element={<AdminPage handleChangeTab={handleChangeTab} /> } />
-            </Route>
-
             { /* owner */ }
             <Route element={<RequireAuth allowedRoles={[Roles.Owner]} />}>
                 <Route path='/adminisztracio' element={<OwnerPage handleChangeTab={handleChangeTab} /> } />
+            </Route>
+
+            { /* admin */ }
+            <Route element={<RequireAuth allowedRoles={[Roles.Admin]} />}>
+                <Route path='/adminisztracio' element={<AdminPage handleChangeTab={handleChangeTab} /> } />
             </Route>
             
             { /* Forbidden requests */ }

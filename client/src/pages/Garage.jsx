@@ -62,6 +62,8 @@ import ValidityIcon from '@mui/icons-material/VerifiedOutlined';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {MyCardSkeleton, MyInputSkeleton} from "../lib/Skeletons";
+import moment from "moment";
+import useAuth from "../hooks/useAuth";
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 
@@ -230,6 +232,8 @@ const MenuProps = {
 };
 
 function Garage({handleChangeTab}) {
+    const { auth } = useAuth();
+
     /* variables that used for cars */
     const [openCarOptions, changeCarOptions] = useState(false);
     const [carAnchorEl, setCarAnchorEL] = useState(null);
@@ -283,7 +287,7 @@ function Garage({handleChangeTab}) {
     const [newVehicleDriveType, setNewVehicleDriveType] = useState("");
     const [newVehicleTransmission, setNewVehicleTransmission] = useState("");
     const [newVehicleDocument, setNewVehicleDocument] = useState("");
-    const [newVehicleDocumentValidity, setNewVehicleDocumentValidity] = useState(new Date().toLocaleDateString("en-CA"));
+    const [newVehicleDocumentValidity, setNewVehicleDocumentValidity] = useState(moment().format("YYYY-MM-DD"));
     const [newVehicleGalleryInBase64, setNewVehicleGalleryInBase64] = useState([]);
     const [newVehicleGallery, setNewVehicleGallery] = useState([]);
 
@@ -327,7 +331,7 @@ function Garage({handleChangeTab}) {
             fullMass: newVehicleMaxWeight,
             cylinderCapacity: newVehicleCylinderCapacity,
             performance: newVehiclePerformance,
-            mot: `${newVehicleDocumentValidity.getFullYear()}-${newVehicleDocumentValidity.getMonth()}-${newVehicleDocumentValidity.getDay()}`,
+            mot: `${newVehicleDocumentValidity}`,
             nod: newVehicleDocument,
             mileage: newVehicleKm
         }
@@ -362,11 +366,10 @@ function Garage({handleChangeTab}) {
             'x-access-token': localStorage.getItem("token")
         }
         const response = await axiosInstance.post("/addVehicle", formData, { headers });
-        const data = await response.data();
 
         if (response.status == 200) {
             toast.success("Sikeresen hozzáadtál egy új járművet!");
-            // clear state values
+            setIsAdding(false);
         }
     }
 
@@ -548,8 +551,10 @@ function Garage({handleChangeTab}) {
     /* handle searching... */
     useEffect(() => {
         let filteredVehicles = [];
+        let carName = "";
         vehicles.forEach(vehicle => {
-            if ((vehicle.carName.toLowerCase()).startsWith(searchText.toLowerCase())) {
+            carName = vehicle.manufacture+" "+vehicle.model;
+            if ((carName.toLowerCase()).startsWith(searchText.toLowerCase())) {
                 filteredVehicles.push(vehicle)
             }
         })
@@ -586,45 +591,6 @@ function Garage({handleChangeTab}) {
         /* method execution order is very important! First is always the getvehicletypes */
         getVehicleFuelTypes(token);
         getVehicleTypes(token);
-
-        /*const vehicles = [
-            {
-                carId: "2e2zbahdb2a#",
-                imageUrl: "https://img.jofogas.hu/620x620aspect/Honda_Accord_Tourer_2_0_Elegance__Automata__Xen____659692224244378.jpg",
-                carName: "Honda Accord",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "AA AA 001",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 10,
-                year: 2004,
-                km: 200_422,
-                le: 232
-            },
-            {
-                carId: "2e2zbasdhdb2a#",
-                imageUrl: "https://autosoldalak.hu/auto_kepek/10403/6799b9ecbfd2d79af5820fdadb30d4f6.jpg",
-                carName: "SEAT Alhambra",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "CA AA 021",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 43,
-                year: 2010,
-                km: 130_422,
-                le: 130
-            },
-            {
-                carId: "2e2zbahdveeeb2a#",
-                imageUrl: "https://file.joautok.hu/car-for-sale-images/500x375/auto/img-20210614-140459_7rac40yw.jpg",
-                carName: "Honda Civic",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "AA AB 101",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 212,
-                year: 1998,
-                km: 400_001,
-                le: 90
-            }
-        ]*/
         getVehicles(token);
 
         /* end loading screen */
@@ -906,7 +872,7 @@ function Garage({handleChangeTab}) {
                                                     {vehicleDesignTypes.map((x, i) => {
                                                         return <MenuItem
                                                             key={x + i}
-                                                            value={x.type}
+                                                            value={x.id}
                                                         >
                                                             {x.type}
                                                         </MenuItem>
@@ -1269,8 +1235,7 @@ function Garage({handleChangeTab}) {
                                                 value={newVehicleDocumentValidity}
                                                 type="date"
                                                 onChange={e=>{
-                                                    let input = new Date(e.target.value);
-                                                    setNewVehicleDocumentValidity(input)
+                                                    setNewVehicleDocumentValidity(moment(e.target.value).format("YYYY-MM-DD"))
                                                 }}
                                             />
                                         </Grid>
@@ -1349,7 +1314,7 @@ function Garage({handleChangeTab}) {
         { /* end of create new car */ }
 
         {
-            visibleVehicles.length == 0 && <Typography variant="h4">Jelenleg nincs járműved!</Typography>
+            visibleVehicles.length == 0 && !isSearchEmpty && <Typography variant="h4">Jelenleg nincs járműved!</Typography>
         }
 
         {
@@ -1359,7 +1324,7 @@ function Garage({handleChangeTab}) {
                         <Grid item>
                             <CarCard>
                                 <CarCardHeader
-                                    title={vehicle.carName}
+                                    title={`${vehicle.manufacture} ${vehicle.model}`}
                                     action={
                                         <IconButton aria-label="settings" onClick={e => {
                                             changeCarOptions(true);
@@ -1379,8 +1344,8 @@ function Garage({handleChangeTab}) {
                                     <Grid item>
                                         <CarCardMedia
                                             component="img"
-                                            image={vehicle.imageUrl}
-                                            alt={vehicle.carName}
+                                            image={`${vehicle['pictures'][0]}`}
+                                            alt={vehicle.manufacture+" "+vehicle.model}
                                         />
                                     </Grid>
 
@@ -1390,27 +1355,21 @@ function Garage({handleChangeTab}) {
                                                 <Grid container direction="row" spacing={2}>
                                                     <Grid item><Typography variant="h4">Alvázszám:</Typography></Grid>
                                                     <Grid item><Typography
-                                                        variant="h4">{vehicle.chassisNumber}</Typography></Grid>
+                                                        variant="h4">{vehicle.vin}</Typography></Grid>
                                                 </Grid>
 
                                                 <Grid container direction="row" spacing={2}>
                                                     <Grid item><Typography variant="h4">Rendszám:</Typography></Grid>
                                                     <Grid item><Typography
-                                                        variant="h4">{vehicle.licensePlateNumber}</Typography></Grid>
+                                                        variant="h4">{vehicle.licenseNumber}</Typography></Grid>
                                                 </Grid>
 
-                                                <Grid container direction="row" spacing={2}>
-                                                    <Grid item><Typography variant="h4">Motorszám:</Typography></Grid>
-                                                    <Grid item><Typography
-                                                        variant="h4">{vehicle.motorNumber}</Typography></Grid>
-                                                </Grid>
-
-                                                <Grid container direction="row" spacing={2}>
+                                                { vehicle.serviceEntries && <Grid container direction="row" spacing={2}>
                                                     <Grid item><Typography variant="h4">Bejegyzett
                                                         szervízek:</Typography></Grid>
                                                     <Grid item><Typography
-                                                        variant="h4">{vehicle.registeredServices}</Typography></Grid>
-                                                </Grid>
+                                                        variant="h4">{vehicle.serviceEntries.length}</Typography></Grid>
+                                                </Grid> }
                                             </Grid>
                                         </CarCardContent>
                                     </Grid>
@@ -1420,14 +1379,14 @@ function Garage({handleChangeTab}) {
                                     {
                                         underMD
                                             ?
-                                            <Chip label={vehicle.year} variant="outlined"/>
+                                            <Chip label={moment(vehicle.vintage).format("YYYY-MM-DD")} variant="outlined"/>
                                             :
-                                            <><Chip label={vehicle.year} variant="outlined"/>
-                                                <Chip label={`${vehicle.km} km`} variant="outlined"/>
-                                                <Chip label={`${vehicle.le} LE`} variant="outlined"/></>
+                                            <><Chip label={moment(vehicle.vintage).format("YYYY-MM-DD")} variant="outlined"/>
+                                                <Chip label={`${vehicle.mileage} km`} variant="outlined"/>
+                                                <Chip label={`${vehicle.performanceLE} LE`} variant="outlined"/></>
                                     }
                                     <ViewButton sx={{marginLeft: "auto"}} component={Link}
-                                                to={`/jarmuveim/${vehicle.carId}`} onClick={e => {
+                                                to={`/jarmuveim/${vehicle.id}`} onClick={e => {
                                         handleChangeTab(1)
                                     }}>Megtekintem</ViewButton>
                                 </CarCardActions>
