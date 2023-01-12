@@ -47,6 +47,16 @@ const deleteFiles = (files) => {
     }
 }
 
+const deleteFile = (file) => {
+    if (file != undefined) {
+        try {
+            fs.unlinkSync(file)
+        } catch (err) {
+            return;
+        }
+    }
+}
+
 const mkDir = (path) => {
     fs.mkdirSync(path, {recursive: true})
 }
@@ -88,7 +98,7 @@ const storageServiceEntry = multer.diskStorage({
 
 const storageVehicle = multer.diskStorage({
     destination: function (req, file, cb) {
-        const path = 'uploads/' + req.userId + '/cars/'
+        const path = 'uploads/' + req.userId + '/vehicles/'
         isExistsAndMake(path)
         cb(null, path)
     }, filename: fileName
@@ -145,6 +155,7 @@ const uploadServiceEntry = multer({
 
 module.exports = {
     deleteFiles,
+    deleteFile,
     rmDir,
     mkDir,
     uploadVehicle,

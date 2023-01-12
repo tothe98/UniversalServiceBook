@@ -1,16 +1,15 @@
-const mongoose = require('mongoose')
-const {uploadVehicle, deleteFiles} = require("../core/FilesManagment");
+const {uploadVehicle, deleteFiles, deleteFile} = require("../core/FilesManagment");
 const multer = require('multer')
-require('../models/DesignTypeModel')
-require('../models/DriveTypeModel')
-require('../models/FuelModel')
-require('../models/ManufactureModel')
-require('../models/ModelModel')
-require('../models/TransmissionModel')
-require('../models/VehicleTypeModel')
-require('../models/VehicleModel')
-require('../models/ServiceEntryModel')
-require('../models/PictureModel')
+const {ServiceEntries, Vehicles, Manufactures, Models, Fuels, DriveTypes, DesignTypes, Transmissions, Pictures} = require("../core/DatabaseInitialization");
+
+const getMileageFromServices = async (vehicleID) => {
+    let currentMaxMileage = false
+    const serviceEntries = await ServiceEntries.find({_vehicle: vehicleID})
+    if (serviceEntries.length > 0) {
+        currentMaxMileage = Math.max(...serviceEntries.map(e => e.mileage))
+    }
+    return currentMaxMileage
+}
 
 exports.addVehicle = (req, res) => {
     uploadVehicle(req, res, async function (err) {
@@ -45,25 +44,19 @@ exports.addVehicle = (req, res) => {
         if (!manufacture || !model || !fuel || !driveType ||
             !designType || !transmission || !vin || !vintage ||
             !ownMass || !fullMass || !cylinderCapacity || !performance || !nod || !mileage) {
+            deleteFiles(filesArray)
+            deleteFiles(req.files?.preview)
             return res.status(422).json({message: 'AllFieldsMustBeFill', data: {}})
         }
 
         try {
             const fileName = req.files.picture.map(picture => picture.path.replaceAll('\\', '/')).join('@')
             const previewName = req.files.preview[0].path.replaceAll('\\', '/')
-            const Vehicles = mongoose.model('Vehicles')
-            const Pictures = mongoose.model('Pictures')
-            const Manufactures = mongoose.model('Manufactures')
-            const Models = mongoose.model('Models')
-            const Fuels = mongoose.model('Fuels')
-            const DriveTypes = mongoose.model('DriveTypes')
-            const DesignTypes = mongoose.model('DesignTypes')
-            const Transmissions = mongoose.model('Transmissions')
 
             const isExistVin = await Vehicles.findOne({vin: vin})
             if (isExistVin) {
-                deleteFiles(filesArray)
                 deleteFiles(req.files?.preview)
+                deleteFiles(filesArray)
                 return res.status(409).json({message: "VinIsExists", data: {}})
             }
 
@@ -115,7 +108,6 @@ exports.addVehicle = (req, res) => {
                 _uploadFrom: req.userId
             }
 
-            console.log("sad")
             const createPicture = new Pictures(pictures)
             const createPreview = new Pictures(preview)
             await createPicture.save()
@@ -163,7 +155,6 @@ exports.addVehicle = (req, res) => {
 
 exports.getVehicles = async (req, res) => {
     try {
-        const Vehicles = mongoose.model("Vehicles")
         const resFromDB = await Vehicles.find({_userId: req.userId, isActive: true})
             .populate('_manufacture')
             .populate('_model')
@@ -174,9 +165,12 @@ exports.getVehicles = async (req, res) => {
             .populate('pictures')
             .populate('preview')
         let responseData = []
-        resFromDB.forEach((vehicle) => {
+
+        for (const vehicle of resFromDB) {
+            const currentMaxMileage = await getMileageFromServices(vehicle._id)
+            vehicle.mileage = currentMaxMileage ? currentMaxMileage : vehicle.mileage
             responseData.push(vehicle.getVehicleData)
-        })
+        }
 
         return res.status(200).json({message: '', data: {vehicles: responseData}})
     } catch (err) {
@@ -190,8 +184,6 @@ exports.getVehicle = async (req, res) => {
         if (!id) {
             return res.status(409).json({message: "IdIsNotExists", data: {}})
         }
-        const Vehicles = mongoose.model("Vehicles")
-        const ServiceEntires = mongoose.model("ServiceEntries")
 
         const isExist = Vehicles.findOne({_id: id, _userId: req.userId})
         if (!isExist) {
@@ -208,7 +200,7 @@ exports.getVehicle = async (req, res) => {
             .populate('pictures')
             .populate('preview')
 
-        const resFromDBServices = await ServiceEntires.find({_vehicle: id, isDelete: false})
+        const resFromDBServices = await ServiceEntries.find({_vehicle: id, isDelete: false})
             .populate("_workshop")
             .populate("pictures")
             .populate('_mechanicer')
@@ -217,6 +209,9 @@ exports.getVehicle = async (req, res) => {
         resFromDBServices.forEach((service) => {
             responseData.push(service.getServices)
         })
+
+        const currentMaxMileage = await getMileageFromServices(resFromDB._id)
+        resFromDB.mileage = currentMaxMileage ? currentMaxMileage : resFromDB.mileage
 
         return res.status(200).json({
             message: '', data: {vehicle: resFromDB.getVehicleDataById, serviceEntries: responseData || []}
@@ -247,7 +242,6 @@ exports.updateVehicle = async (req, res) => {
             if (!id) {
                 return res.status(422).json({message: 'IdIsEmpty', data: {}})
             }
-            const Vehicles = mongoose.model('Vehicles')
             const vehicle = await Vehicles.findOne({
                 _id: id,
                 _userId: req.userId
@@ -261,7 +255,10 @@ exports.updateVehicle = async (req, res) => {
             if (deletedPictures) {
                 deletedPictures.split('@').forEach(deletedPicture => {
                     const indexAtCurrentPictures = currentPictures.indexOf(deletedPicture);
+                    console.log(currentPictures)
                     if (indexAtCurrentPictures > -1) {
+                        console.log(deletedPicture)
+                        deleteFile(deletedPicture)
                         currentPictures.splice(indexAtCurrentPictures, 1);
                     }
                     if (deletedPicture == currentPreview && req.files.preview) {
@@ -279,7 +276,10 @@ exports.updateVehicle = async (req, res) => {
                 }
             }
 
-            const Pictures = mongoose.model('Pictures')
+            currentPictures = currentPictures.filter((p) => {
+                return p != ""
+            })
+
             await Pictures.findOneAndUpdate({_id: vehicle.pictures._id.toString()}, {picture: currentPictures.join('@')})
             await Pictures.findOneAndUpdate({_id: vehicle.preview._id.toString()}, {picture: currentPreview})
             vehicle.cylinderCapacity = cylinderCapacity ? cylinderCapacity : vehicle.cylinderCapacity
@@ -307,7 +307,6 @@ exports.deleteVehicle = async (req, res) => {
     }
 
     try {
-        const Vehicles = mongoose.model('Vehicles')
         const vehicle = await Vehicles.findOne({_id: id, _userId: req.userId})
         if (!vehicle) {
             return res.status(404).json({message: "VehicleNotFound", data: {}})
