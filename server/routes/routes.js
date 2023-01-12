@@ -5,7 +5,7 @@ const ROLES = require('../core/Role')
 
 
 const { signup, signin, confirmEmail, isValidToken } = require('../controllers/AuthController')
-const { addVehicle, getVehicles, getVehicle, updateVehicle } = require('../controllers/VehicleController')
+const { addVehicle, getVehicles, getVehicle, updateVehicle, deleteVehicle } = require('../controllers/VehicleController')
 const { getUser, updateUser, forgotPassword, newPassword } = require('../controllers/UserController')
 const {
     getManufactures,
@@ -59,7 +59,8 @@ router.post('/addTransmission', authorize(ROLES.Admin), addTransmission)
 router.post('/addVehicle', authorize(ROLES.User), addVehicle)
 router.get('/getVehicles', authorize(ROLES.User), getVehicles)
 router.get('/getVehicle/:id', authorize(ROLES.User), getVehicle)
-router.put('/updateVehicle', authorize(ROLES.User), updateVehicle)
+router.put('/updateVehicle/:id', authorize(ROLES.User), updateVehicle)
+router.delete('/deleteVehicle/:id', authorize(ROLES.User), deleteVehicle)
 
 //WorkshopController
 router.get('/getWorkshops', authorize(ROLES.Admin), getWorkshops)

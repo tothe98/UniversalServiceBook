@@ -29,7 +29,8 @@ exports.signup = async (req, res) => {
             lName: lname,
             email: email,
             phone: phone,
-            password: encryptedPassword
+            password: encryptedPassword,
+            roles: [ROLES.User]
         })
         createdUser = createdUser.toJSON()
 
@@ -65,7 +66,7 @@ exports.signin = async (req, res) => {
             return res.status(400).json({ message: 'error', data: { token: null } })
         }
     } else {
-        res.status(400).json({ message: 'error (pwd)', data: {} })
+        res.status(400).json({ message: 'error', data: {} })
     }
 
 }

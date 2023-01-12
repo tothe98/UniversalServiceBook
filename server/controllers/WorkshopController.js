@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const ROLES = require('../core/Role')
 const moment = require('moment')
+const jwt = require('jsonwebtoken')
 require('../models/WorkShopModel')
 require('../models/UserModel')
 require('../models/ServiceEntryModel')
@@ -12,11 +13,11 @@ const multer = require('multer')
 const storage = multer.diskStorage({
     destination: async function (req, file, cb) {
         const Workshops = mongoose.model('WorkShops')
-        const workshop = await Workshops.findOne({ employees: req.userId })
-        if (!fs.existsSync('uploads/serviceEntries/' + workshop.id + '/')) {
-            fs.mkdirSync('uploads/serviceEntries/' + req.userId + '/')
+        const workshop = await Workshops.findOne({ $or: [{ employees: req.userId }, { _owner: req.userId }] })
+        if (!fs.existsSync('uploads/serviceEntries/' + workshop._id + '/' + moment().format('YYYYMMDD') + '/')) {
+            fs.mkdirSync('uploads/serviceEntries/' + workshop._id + '/' + moment().format('YYYYMMDD') + '/', { recursive: true })
         }
-        cb(null, 'uploads/' + req.userId + '/')
+        cb(null, 'uploads/serviceEntries/' + (workshop._id.toString()) + '/' + moment().format('YYYYMMDD') + '/')
     },
     filename: function (req, file, cb) {
         cb(null, require('crypto').createHash('md5').update(new Date().toISOString() + file.originalname).digest("hex") + "." + file.mimetype.split("/")[1]);
@@ -304,6 +305,94 @@ exports.getVehicleByVin = async (req, res) => {
     }
 }
 
-exports.addServiceEntry = async (req, res) => {
-    res.send(moment().format('YYYY-MM-DD'))
+
+exports.addServiceEntry = (req, res) => {
+    upload(req, res, async function (err) {
+        if (err instanceof multer.MulterError) {
+            return res.status(400).json({ message: 'LimitFileCount', data: { error: err } })
+        }
+        let files = undefined
+        if (req.files?.pictures) {
+            files = req.files.pictures
+        }
+        const { vehicleID, date, mileage, description } = req.body
+        if (!vehicleID || !date || !mileage || !description) {
+            deleteFiles(files)
+            return res.status(422).json({ message: 'AllFieldsMustBeFill', data: {} })
+        }
+        try {
+
+            // if (vehicleID.length !== 12 || vehicleID.length !== 24) {
+            //     deleteFiles(files)
+            //     return res.status(422).json({ message: 'IDIsNotValid', data: {} })
+            // }
+
+            const Vehicles = mongoose.model('Vehicles')
+            const vehicle = await Vehicles.findOne({ _id: vehicleID })
+            if (!vehicle) {
+                deleteFiles(files)
+                return res.status(404).json({ message: 'VehicleNotFound', data: {} })
+            }
+            let currentMaxMileage = vehicle.mileage ? vehicle.mileage : 0
+
+            const ServiceEntires = mongoose.model('ServiceEntries')
+            const serviceEntries = await ServiceEntires.find({ _vehicle: vehicleID })
+            if (serviceEntries.length > 0) {
+                currentMaxMileage = Math.max(...serviceEntries.map(e => e.mileage))
+            }
+            if (currentMaxMileage > mileage) {
+                deleteFiles(files)
+                return res.status(409).json({ message: "MileageIsLowerThanOldMileage", data: {} })
+            }
+
+
+            let uploadImg = undefined
+            if (req.files?.pictures) {
+                const picturesJoin = req.files.pictures.map(picture => picture.path.replaceAll('\\', '/')).join('@')
+                const Pictures = mongoose.model('Pictures')
+                await Pictures.create({
+                    picture: picturesJoin,
+                    _uploadFrom: req.userId
+                }).then((e) => {
+                    uploadImg = e["_id"].toString()
+                }).catch((err) => {
+                    return res.status(400).json({ message: 'error', data: { error: err } })
+                })
+            }
+            const Workshops = mongoose.model('WorkShops')
+            const workshop = await Workshops.findOne({ $or: [{ employees: req.userId }, { _owner: req.userId }] })
+
+            const newServcieEntry = await ServiceEntires.create({
+                _vehicle: vehicleID,
+                _workshop: workshop._id,
+                _mechanicer: req.userId,
+                description: description,
+                mileage: mileage,
+                pictures: uploadImg,
+                createdAt: date
+            })
+
+            return res.status(201).json({ message: "", date: { serviceEntry: newServcieEntry } })
+
+        } catch (err) {
+            deleteFiles(files)
+            return res.status(400).json({ message: "error", data: { err } })
+        }
+
+
+    })
+}
+
+const deleteFiles = (array) => {
+    if (array != undefined) {
+        array.forEach(file => {
+            if (fs.existsSync(array)) { }
+            try {
+                fs.unlinkSync((file.path.replaceAll('\\', '/')))
+            } catch (err) {
+                return;
+            }
+
+        })
+    }
 }
