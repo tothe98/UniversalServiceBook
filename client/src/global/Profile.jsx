@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import {CalendarPicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import { MyCircularSkeleton, MyTextSkeleton } from '../lib/Skeletons'
+import useAuth from '../hooks/useAuth';
 const AVATAR_MAX_HEIGHT = '200px';
 const AVATAR_MAX_WIDTH = '200px';
 
@@ -66,6 +67,7 @@ const MyCalendar = styled(CalendarPicker)(({theme}) => ({
 }))
 
 function Profile({handleChangeTab, loggedIn}) {
+    const { auth } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -75,15 +77,8 @@ function Profile({handleChangeTab, loggedIn}) {
     useEffect(() => {
         setIsLoading(true);
         today = new Date();
-        setWallpaper(
-            (JSON.parse(localStorage.getItem("user")) &&
-                JSON.parse(localStorage.getItem("user")).user &&
-                JSON.parse(localStorage.getItem("user")).user.picture)
-                ?
-                JSON.parse(localStorage.getItem("user")).user.picture
-                :
-                'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='
-        )
+        const user = auth.user;
+        setWallpaper((user && user.picture) ? user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA=')
         setIsLoading(false);
     });
 
@@ -158,8 +153,8 @@ function Profile({handleChangeTab, loggedIn}) {
                             <Grid item>
                                 <Typography variant="h2" align="center">
                                 {
-                                    JSON.parse(localStorage.getItem("user")) && (
-                                    JSON.parse(localStorage.getItem("user")).user.fName + " " + JSON.parse(localStorage.getItem("user")).user.lName
+                                    auth.user && (
+                                    auth.user.fName + " " + auth.user.lName
                                 )}
                                 </Typography>
                             </Grid>
@@ -174,8 +169,8 @@ function Profile({handleChangeTab, loggedIn}) {
                     <Grid item>
                         <Typography align="center" variant="h2">
                             {
-                            JSON.parse(localStorage.getItem("user")) && (
-                            JSON.parse(localStorage.getItem("user")).user.fName + " " + JSON.parse(localStorage.getItem("user")).user.lName
+                            auth.user && (
+                            auth.user.fName + " " + auth.user.lName
                             )}
                         </Typography>
                     </Grid>
@@ -183,7 +178,7 @@ function Profile({handleChangeTab, loggedIn}) {
         }
         <MyGridItem item sx={{marginLeft: underLarge ? "auto" : 0, textAlign: "center"}}>
             {
-                loggedIn
+                auth.user
                     ?
                     <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
                         Beállítások

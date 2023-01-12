@@ -5,6 +5,7 @@ import {toast} from "react-toastify";
 import {Link, useNavigate, useLocation} from "react-router-dom";
 import AuthContext from "../context/AuthProvider";
 import useAuth from "../hooks/useAuth";
+import { useEffect } from "react";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     marginBottom: "2rem"
@@ -36,7 +37,7 @@ function Login() {
             })
             .then((response) => {
                 const data = response.data;
-                // token validation
+            // token validation
                 const token = data.data.token;
                 if (!token) {
                     throw new Error("A token űres!");
@@ -50,12 +51,18 @@ function Login() {
                 })
                 .then((response) => {
                     if (response.status == 200) {
-                        const user = response.data;
-                        const roles = response.data.roles;
+                        const user = response.data.data.user;
+                        let highestRole = 2001;
+                        Array.from(user.roles).forEach(role => {
+                            if (role > highestRole) {
+                                highestRole = role;
+                            }
+                        })
+                        const role = highestRole;
+                        
                         toast.success("Sikeresen bejelentkeztél!")
                         localStorage.setItem("token", ""+token);
-
-                        setAuth({ user, token, roles });
+                        setAuth({ user, token, role });
                         Navigate(from, { replace: true });
                     }
                 })
@@ -68,6 +75,7 @@ function Login() {
                 if (e.response.status === 400)
                 {
                     // sikertelen
+                    console.log(e.response);
                     toast.error("Sajnáljuk :/ Sikertelen bejelentkezés!")
                 }
                 else if (e.response.status === 403)
@@ -80,6 +88,12 @@ function Login() {
 
     const handleEmailChange = (e) => { setEmail(e.target.value) }
     const handlePasswordChange = (e) => { setPassword(e.target.value) }
+
+    useEffect(() => {
+        if (localStorage.getItem("token")) {
+            Navigate(from);
+        }
+    }, [])
 
     return <React.Fragment>
         <SubTitle variant='h3'>Bejelentkezés</SubTitle>

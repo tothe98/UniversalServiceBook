@@ -65,7 +65,7 @@ exports.signin = async (req, res) => {
             return res.status(400).json({ message: 'error', data: { token: null } })
         }
     } else {
-        res.status(400).json({ message: 'error', data: {} })
+        res.status(400).json({ message: 'error (pwd)', data: {} })
     }
 
 }

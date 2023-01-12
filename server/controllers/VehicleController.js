@@ -125,12 +125,8 @@ exports.addVehicle = (req, res) => {
             return res.status(422).json({ message: 'MilageIsEmpty', data: {} })
         }
 
-        let fileName = ""
-        req.files.picture.forEach(file => {
-            fileName += file.path + "@"//Elérési útvonal elválasztva
-        });
-        fileName = fileName.slice(0, -1)
-
+        const fileName = req.files['picture'].map(picture => picture.filename + "@")
+        
         const Vehicles = mongoose.model('Vehicles')
         const Pictures = mongoose.model('Pictures')
         const Manufactures = mongoose.model('Manufactures')
