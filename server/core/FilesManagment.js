@@ -1,12 +1,9 @@
 const fs = require("fs")
 const multer = require('multer')
-const mongoose = require("mongoose");
 const moment = require("moment/moment");
-require('../models/WorkShopModel')
-require('../models/PictureModel')
+const {Pictures, Workshops} = require("./DatabaseInitialization");
 
 const rmDir = async (dirPath, removeSelf) => {
-    const Pictures = mongoose.model('Pictures')
     if (removeSelf === undefined)
         removeSelf = true;
     try {
@@ -86,7 +83,6 @@ const errorHandle = (err, next) => {
 
 const storageServiceEntry = multer.diskStorage({
     destination: async function (req, file, cb) {
-        const Workshops = mongoose.model('WorkShops')
         const workshop = await Workshops.findOne({$or: [{employees: req.userId}, {_owner: req.userId}]})
         const path = 'uploads/serviceEntries/' + workshop._id + '/' + moment().format('YYYYMMDD') + '/'
         isExistsAndMake(path)
@@ -98,7 +94,7 @@ const storageServiceEntry = multer.diskStorage({
 
 const storageVehicle = multer.diskStorage({
     destination: function (req, file, cb) {
-        const path = 'uploads/' + req.userId + '/vehicles/'
+        const path = 'uploads/users/' + req.userId + '/vehicles/'
         isExistsAndMake(path)
         cb(null, path)
     }, filename: fileName
@@ -107,10 +103,10 @@ const storageVehicle = multer.diskStorage({
 
 const storageUser = multer.diskStorage({
     destination: function (req, file, cb) {
-        const path = 'uploads/' + req.userId + '/avatar/'
+        const path = 'uploads/users/' + req.userId + '/avatar/'
         isExistsAndMake(path)
         cb(null, path)
-        rmDir('uploads/' + req.userId + '/avatar/', false)
+        rmDir('uploads/users' + req.userId + '/avatar/', false)
     },
     filename: fileName,
     onError: errorHandle,

@@ -20,7 +20,7 @@ exports.getCategories = async (req, res) => {
             })
 
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -29,7 +29,7 @@ exports.getCategories = async (req, res) => {
 exports.addCategory = async (req, res) => {
     const {vehicleType} = req.body
     if (!vehicleType) {
-        return res.status(400).json({message: 'VehicleTypeIsEmpty', data: {}})
+        return res.status(422).json({message: 'VehicleTypeIsEmpty', data: {}})
     }
     try {
         const isExist = await VehicleTypes.findOne({vehicleType: vehicleType})
@@ -37,13 +37,13 @@ exports.addCategory = async (req, res) => {
             const response = await VehicleTypes.create({
                 vehicleType: vehicleType
             })
-            return res.status(200).json({message: "Successful", data: {response}})
+            return res.status(201).json({message: "Successful", data: {response}})
         } else {
             return res.status(409).json({message: 'Exist', data: {}})
         }
 
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -52,7 +52,7 @@ exports.addCategory = async (req, res) => {
 exports.getManufactures = async (req, res) => {
     const {category} = req.body
     if (!category) {
-        return res.status(400).json({message: 'CategoryIsEmpty', data: {}})
+        return res.status(422).json({message: 'CategoryIsEmpty', data: {}})
     }
     try {
         const responseFromDB = await Manufactures.find({_vehicleType: category, isActive: true})
@@ -64,7 +64,7 @@ exports.getManufactures = async (req, res) => {
             })
 
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -73,7 +73,7 @@ exports.getManufactures = async (req, res) => {
 exports.addManufacture = async (req, res) => {
     const {vehicleType, manufacture} = req.body
     if (!vehicleType || !manufacture) {
-        return res.status(400).json({message: 'VehicleTypeOrManufactureIsEmpty', data: {}})
+        return res.status(422).json({message: 'VehicleTypeOrManufactureIsEmpty', data: {}})
     }
     try {
         const isExistCategory = await VehicleTypes.findOne({_id: vehicleType})
@@ -84,7 +84,7 @@ exports.addManufacture = async (req, res) => {
                     _vehicleType: vehicleType,
                     manufacture: manufacture
                 })
-                return res.status(200).json({message: "Successful", data: {response}})
+                return res.status(201).json({message: "Successful", data: {response}})
             } else {
                 return res.status(409).json({message: 'Exist', data: {}})
             }
@@ -92,7 +92,7 @@ exports.addManufacture = async (req, res) => {
             return res.status(404).json({message: 'NotExistCategory', data: {}})
         }
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -101,7 +101,7 @@ exports.addManufacture = async (req, res) => {
 exports.getModels = async (req, res) => {
     const {manufacture} = req.body
     if (!manufacture) {
-        return res.status(400).json({message: 'ManufactureIsEmpty', data: {}})
+        return res.status(422).json({message: 'ManufactureIsEmpty', data: {}})
     }
     try {
         const responseFromDB = await Models.find({_manufacture: manufacture, isActive: true})
@@ -112,7 +112,7 @@ exports.getModels = async (req, res) => {
                 return res.status(404).json({message: 'NotFound', data: {err}})
             })
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -121,7 +121,7 @@ exports.getModels = async (req, res) => {
 exports.addModel = async (req, res) => {
     const {manufacture, model} = req.body
     if (!manufacture || !model) {
-        return res.status(400).json({message: 'ModelOrManufactureIsEmpty', data: {}})
+        return res.status(422).json({message: 'ModelOrManufactureIsEmpty', data: {}})
     }
     try {
         const isExistManufacture = await Manufactures.findOne({_id: manufacture})
@@ -133,7 +133,7 @@ exports.addModel = async (req, res) => {
                     model: model,
                     _manufacture: manufacture
                 })
-                return res.status(200).json({message: "Successful", data: {response}})
+                return res.status(201).json({message: "Successful", data: {response}})
             } else {
                 return res.status(409).json({message: 'Exist', data: {}})
             }
@@ -141,7 +141,7 @@ exports.addModel = async (req, res) => {
             return res.status(404).json({message: 'NotExistManufacture', data: {}})
         }
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -153,10 +153,10 @@ exports.getFuels = async (req, res) => {
                 return res.status(200).json({message: '', data: {fuels: response}});
             })
             .catch((err) => {
-                return res.status(400).json({message: 'Error', data: {err}})
+                return res.status(404).json({message: 'Error', data: {err}})
             })
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -164,7 +164,7 @@ exports.getFuels = async (req, res) => {
 exports.addFuel = async (req, res) => {
     const {fuel} = req.body
     if (!fuel) {
-        return res.status(400).json({message: 'FuelIsEmpty', data: {}})
+        return res.status(422).json({message: 'FuelIsEmpty', data: {}})
     }
     try {
         const isExist = await Fuels.findOne({fuel: fuel})
@@ -172,12 +172,12 @@ exports.addFuel = async (req, res) => {
             const response = await Fuels.create({
                 fuel: fuel
             })
-            return res.status(200).json({message: "Successful", data: {response}})
+            return res.status(201).json({message: "Successful", data: {response}})
         } else {
             return res.status(409).json({message: 'Exist', data: {}})
         }
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -185,7 +185,7 @@ exports.addFuel = async (req, res) => {
 exports.getDesignTypes = async (req, res) => {
     const {vehicleType} = req.body
     if (!vehicleType) {
-        return res.status(400).json({message: 'VehicleTypeIsEmpty', data: {}})
+        return res.status(422).json({message: 'VehicleTypeIsEmpty', data: {}})
     }
     try {
         const responseFromDB = await DesignTypes.find({_vehicleType: vehicleType, isActive: true})
@@ -193,10 +193,10 @@ exports.getDesignTypes = async (req, res) => {
                 return res.status(200).json({message: '', data: {designTypes: response}});
             })
             .catch((err) => {
-                return res.status(400).json({message: 'Error', data: {err}})
+                return res.status(404).json({message: 'Error', data: {err}})
             })
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -204,7 +204,7 @@ exports.getDesignTypes = async (req, res) => {
 exports.addDesignType = async (req, res) => {
     const {vehicleType, designType} = req.body
     if (!vehicleType || !designType) {
-        return res.status(400).json({message: 'VehicleTypeOrDesignTypeIsEmpty', data: {}})
+        return res.status(422).json({message: 'VehicleTypeOrDesignTypeIsEmpty', data: {}})
     }
     try {
         const isExist = await DesignTypes.findOne({designType: designType, _vehicleType: vehicleType})
@@ -213,12 +213,12 @@ exports.addDesignType = async (req, res) => {
                 designType: designType,
                 _vehicleType: vehicleType
             })
-            return res.status(200).json({message: "Successful", data: {response}})
+            return res.status(201).json({message: "Successful", data: {response}})
         } else {
             return res.status(409).json({message: 'Exist', data: {}})
         }
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -226,7 +226,7 @@ exports.addDesignType = async (req, res) => {
 exports.getDriveType = async (req, res) => {
     const {vehicleType} = req.body
     if (!vehicleType) {
-        return res.status(400).json({message: 'VehicleTypeIsEmpty', data: {}})
+        return res.status(422).json({message: 'VehicleTypeIsEmpty', data: {}})
     }
     try {
         const responseFromDB = await DriveTypes.find({_vehicleType: vehicleType, isActive: true})
@@ -234,10 +234,10 @@ exports.getDriveType = async (req, res) => {
                 return res.status(200).json({message: '', data: {driveTypes: response}});
             })
             .catch((err) => {
-                return res.status(400).json({message: 'Error', data: {err}})
+                return res.status(404).json({message: 'Error', data: {err}})
             })
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -245,7 +245,7 @@ exports.getDriveType = async (req, res) => {
 exports.addDriveType = async (req, res) => {
     const {vehicleType, driveType} = req.body
     if (!vehicleType || !driveType) {
-        return res.status(400).json({message: 'VehicleTypeOrDriveTypeIsEmpty', data: {}})
+        return res.status(422).json({message: 'VehicleTypeOrDriveTypeIsEmpty', data: {}})
     }
     try {
         const isExist = await DriveTypes.findOne({driveType: driveType, _vehicleType: vehicleType})
@@ -254,12 +254,12 @@ exports.addDriveType = async (req, res) => {
                 driveType: driveType,
                 _vehicleType: vehicleType
             })
-            return res.status(200).json({message: "Successful", data: {response}})
+            return res.status(201).json({message: "Successful", data: {response}})
         } else {
             return res.status(409).json({message: 'Exist', data: {}})
         }
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -267,7 +267,7 @@ exports.addDriveType = async (req, res) => {
 exports.getTransmissions = async (req, res) => {
     const {vehicleType} = req.body
     if (!vehicleType) {
-        return res.status(400).json({message: 'VehicleTypeIsEmpty', data: {}})
+        return res.status(422).json({message: 'VehicleTypeIsEmpty', data: {}})
     }
     try {
         const responseFromDB = await Transmissions.find({_vehicleType: vehicleType, isActive: true})
@@ -275,10 +275,10 @@ exports.getTransmissions = async (req, res) => {
                 return res.status(200).json({message: '', data: {transmissions: response}});
             })
             .catch((err) => {
-                return res.status(400).json({message: 'Error', data: {err}})
+                return res.status(404).json({message: 'Error', data: {err}})
             })
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }
 
@@ -286,7 +286,7 @@ exports.getTransmissions = async (req, res) => {
 exports.addTransmission = async (req, res) => {
     const {vehicleType, transmission} = req.body
     if (!vehicleType || !transmission) {
-        return res.status(400).json({message: 'VehicleTypeOrTransmissionsIsEmpty', data: {}})
+        return res.status(422).json({message: 'VehicleTypeOrTransmissionsIsEmpty', data: {}})
     }
     try {
         const isExist = await Transmissions.findOne({transmission: transmission, _vehicleType: vehicleType})
@@ -295,11 +295,11 @@ exports.addTransmission = async (req, res) => {
                 transmission: transmission,
                 _vehicleType: vehicleType
             })
-            return res.status(200).json({message: "Successful", data: {response}})
+            return res.status(201).json({message: "Successful", data: {response}})
         } else {
             return res.status(409).json({message: 'Exist', data: {}})
         }
     } catch (err) {
-        return res.status(400).json({message: 'Error', data: {err}})
+        return res.status(500).json({message: 'Error', data: {err}})
     }
 }

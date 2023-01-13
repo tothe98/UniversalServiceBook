@@ -5,7 +5,7 @@ const confirmationEmail = require('../core/MailViews')
 const {uploadUser} = require("../core/FilesManagment");
 const multer = require('multer')
 const {Users, Pictures} = require("../core/DatabaseInitialization");
-
+const {newPasswordValidate} = require("../models/ValidationSchema");
 
 
 exports.getUser = async (req, res) => {
@@ -14,7 +14,7 @@ exports.getUser = async (req, res) => {
         req.email = resUser.getUserData.email
         res.status(200).json({message: '', data: {user: resUser.getUserData}});
     } catch (err) {
-        res.status(400).json({message: 'error', data: {error: err}})
+        res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -23,7 +23,7 @@ exports.updateUser = async (req, res) => {
         const {lName, fName, phone, home, oldPassword, newPassword} = req.body
         try {
             if (err instanceof multer.MulterError) {
-                return res.status(400).json({message: 'LimitFileCount', data: {error: err}})
+                return res.status(422).json({message: 'LimitFileCount', data: {error: err}})
             }
 
             let uploadImg = undefined
@@ -35,7 +35,7 @@ exports.updateUser = async (req, res) => {
                 }).then((e) => {
                     uploadImg = e['_id'].toString()
                 }).catch((err) => {
-                    return res.status(400).json({message: 'error', data: {error: err}})
+                    return res.status(500).json({message: 'error', data: {error: err}})
                 })
             }
 
@@ -46,7 +46,7 @@ exports.updateUser = async (req, res) => {
                     const salt = bcrypt.genSaltSync(10)
                     updatePsw = bcrypt.hashSync(newPassword, salt)
                 } else {
-                    return res.status(400).json({message: 'passwordNotCorrect', data: {}})
+                    return res.status(422).json({message: 'passwordNotCorrect', data: {}})
                 }
             }
 
@@ -61,7 +61,7 @@ exports.updateUser = async (req, res) => {
             return res.status(202).json({message: 'OK', data: {user: updateUser}})
 
         } catch (err) {
-            return res.status(400).json({message: 'error', data: {error: err}})
+            return res.status(500).json({message: 'error', data: {error: err}})
         }
     })
 
@@ -94,25 +94,26 @@ exports.forgotPassword = async (req, res) => {
 }
 
 exports.newPassword = async (req, res) => {
-    const {token, password, cpassword} = req.body
+    const {value, error} = newPasswordValidate(req.body)
 
-    if (!token || !password || !cpassword) {
-        return res.status(422).json({message: 'FieldsMustBeField', data: {}})
+    if (error) {
+        return res.status(422).json({message: error.details[0].message, data: {}})
     }
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+
+    jwt.verify(value.token, process.env.JWT_SECRET, async (err, decoded) => {
         if (err) {
             return res.status(409).json({message: 'TokenIsExpired', data: []})
         }
         try {
-            if (password === cpassword) {
+            if (value.password === value.cpassword) {
                 const updateUser = await Users.findOne({_id: decoded.userId, email: decoded.email})
                 const salt = bcrypt.genSaltSync(10)
-                const updatePsw = bcrypt.hashSync(password, salt)
+                const updatePsw = bcrypt.hashSync(value.password, salt)
                 updateUser.password = updatePsw
                 await updateUser.save()
                 return res.status(201).json({message: 'success', data: {}})
             } else {
-                return res.status(409).json({message: 'PasswordIsNotEqual', data: []})
+                return res.status(422).json({message: 'PasswordIsNotEqual', data: []})
             }
         } catch (error) {
             return res.status(500).json({message: 'error', data: {error}})

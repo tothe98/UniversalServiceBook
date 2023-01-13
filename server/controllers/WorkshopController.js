@@ -2,6 +2,7 @@ const ROLES = require('../core/Role')
 const multer = require('multer')
 const {uploadServiceEntry, deleteFiles} = require("../core/FilesManagment");
 const {Workshops, Users, Vehicles, ServiceEntries, Pictures} = require("../core/DatabaseInitialization");
+const {addWorkshopValidate, addServiceEntryValidate} = require("../models/ValidationSchema");
 
 exports.getWorkshops = async (req, res) => {
     try {
@@ -13,34 +14,41 @@ exports.getWorkshops = async (req, res) => {
         })
         return res.status(200).json({message: '', data: {workshops: responseData}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
 exports.addWorkshop = async (req, res) => {
     try {
-        const {name, country, city, address, owner, phone, email} = req.body
-        if (!name || !country || !city || !address || !owner) {
-            return res.status(422).json({message: 'AllFieldsMustBeFill', data: {}})
+        const {value, error} = addWorkshopValidate(req.body)
+
+        if (error) {
+            return res.status(422).json({message: error.details[0].message, data: {}})
         }
-        const isExistUser = await Users.findOne({email: owner})
+
+        const isExistUser = await Users.findOne({email: value.owner})
         if (!isExistUser) {
             return res.status(422).json({message: 'EmailIsNotExists', data: {}})
         }
+        const isAlreadyEmployeeOrOwner = await Workshops.findOne({$or: [{employees: isExistUser._id}, {_owner: isExistUser._id}]})
+        if (isAlreadyEmployeeOrOwner) {
+            return res.status(409).json({message: 'EmailIsAlreadyOwnerOrEmployee', data: {}})
+        }
+
         const newWorkshop = await Workshops.create({
-            name: name,
-            country: country,
-            city: city,
-            address: address,
-            phone: phone,
-            email: email,
+            name: value.name,
+            country: value.country,
+            city: value.city,
+            address: value.address,
+            phone: value.phone,
+            email: value.email,
             _owner: isExistUser._id,
         })
         isExistUser.roles.push(!isExistUser.roles.includes(ROLES.Owner) ? ROLES.Owner : '')
         await isExistUser.save()
         return res.status(201).json({message: '', data: {workshop: newWorkshop}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -70,7 +78,7 @@ exports.deleteWorkshop = async (req, res) => {
         workshopById.oldOwner = workshopById._owner
         workshopById._owner = req.userId
 
-        workshopById.employees.forEach(async (employee) => {
+        for (const employee of workshopById.employees) {
             const e = await Users.findOne({_id: employee})
             if (!e) {
                 return
@@ -79,15 +87,15 @@ exports.deleteWorkshop = async (req, res) => {
             if (index !== -1) {
                 e.roles.splice(index, 1)
             }
-            e.save();
-        })
+            await e.save();
+        }
 
         workshopById.employees = []
         workshopById.isActive = false
         await workshopById.save()
         return res.status(204).json({message: '', data: {workshop: workshopById, owner: owner}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -99,7 +107,7 @@ exports.getMyWorkshop = async (req, res) => {
         }
         return res.status(200).json({message: '', data: {workshop: workshop.getWorkshop}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -113,22 +121,22 @@ exports.editWorkshop = async (req, res) => {
         if (!workshop) {
             return res.status(404).json({message: "NotFoundYourWorkshop", data: {}})
         }
-        workshop.name = name
-        workshop.country = country
-        workshop.city = city
-        workshop.address = address
-        workshop.email = email ? email : undefined
-        workshop.phone = phone ? phone : undefined
+        workshop.name = name ? name : workshop.name
+        workshop.country = country ? country : workshop.country
+        workshop.city = city ? city : workshop.city
+        workshop.address = address ? address : workshop.address
+        workshop.email = email ? email : workshop.email || undefined
+        workshop.phone = phone ? phone : workshop.phone || undefined
 
         await workshop.save(function (err, result) {
             if (err) {
                 return res.status(400).json({message: 'error', data: {error: err}})
             } else {
-                return res.status(200).json({message: '', data: {workshop: workshop}})
+                return res.status(202).json({message: '', data: {workshop: workshop}})
             }
         })
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -140,7 +148,7 @@ exports.getEmployees = async (req, res) => {
         }
         return res.status(200).json({message: '', data: {employees: workshop.employees}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -169,7 +177,7 @@ exports.addEmployee = async (req, res) => {
 
         return res.status(202).json({message: '', data: {workshop: workshop, employee: user}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -202,7 +210,7 @@ exports.deleteEmployee = async (req, res) => {
 
         return res.status(204).json({message: '', data: {workshop: workshop, employee: employee}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -211,7 +219,7 @@ exports.getVehicleByVin = async (req, res) => {
     try {
         const {vin} = req.params
         if (!vin) {
-            return res.status(409).json({message: 'VinIsEmpty', data: {}})
+            return res.status(422).json({message: 'VinIsEmpty', data: {}})
         }
 
         const vehicle = await Vehicles.findOne({vin: vin})
@@ -237,7 +245,7 @@ exports.getVehicleByVin = async (req, res) => {
         }
         return res.status(404).json({message: 'VehicleNotFound', data: {}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -251,25 +259,25 @@ exports.addServiceEntry = (req, res) => {
         if (req.files?.pictures) {
             files = req.files.pictures
         }
-        
-        const {vehicleID, date, mileage, description} = req.body
-        if (!vehicleID || !date || !mileage || !description) {
+        const {value, error} = addServiceEntryValidate(req.body)
+        if (error) {
             deleteFiles(files)
-            return res.status(422).json({message: 'AllFieldsMustBeFill', data: {}})
+            return res.status(422).json({message: error.details[0].message, data: {}})
+
         }
         try {
-            const vehicle = await Vehicles.findOne({_id: vehicleID})
+            const vehicle = await Vehicles.findOne({_id: value.vehicleID})
             if (!vehicle) {
                 deleteFiles(files)
                 return res.status(404).json({message: 'VehicleNotFound', data: {}})
             }
             let currentMaxMileage = vehicle.mileage ? vehicle.mileage : 0
 
-            const serviceEntries = await ServiceEntries.find({_vehicle: vehicleID})
+            const serviceEntries = await ServiceEntries.find({_vehicle: value.vehicleID})
             if (serviceEntries.length > 0) {
                 currentMaxMileage = Math.max(...serviceEntries.map(e => e.mileage))
             }
-            if (currentMaxMileage > mileage) {
+            if (currentMaxMileage > value.mileage) {
                 deleteFiles(files)
                 return res.status(409).json({message: "MileageIsLowerThanOldMileage", data: {}})
             }
@@ -287,24 +295,24 @@ exports.addServiceEntry = (req, res) => {
                     return res.status(400).json({message: 'error', data: {error: err}})
                 })
             }
-            
+
             const workshop = await Workshops.findOne({$or: [{employees: req.userId}, {_owner: req.userId}]})
 
-            const newServcieEntry = await ServiceEntires.create({
-                _vehicle: vehicleID,
+            const newServcieEntry = await ServiceEntries.create({
+                _vehicle: value.vehicleID,
                 _workshop: workshop._id,
                 _mechanicer: req.userId,
-                description: description,
-                mileage: mileage,
+                description: value.description,
+                mileage: value.mileage,
                 pictures: uploadImg,
-                createdAt: date
+                createdAt: value.date
             })
 
             return res.status(201).json({message: "", date: {serviceEntry: newServcieEntry}})
 
         } catch (err) {
             deleteFiles(files)
-            return res.status(400).json({message: "error", data: {err}})
+            return res.status(500).json({message: "error", data: {err}})
         }
 
 
