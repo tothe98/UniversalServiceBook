@@ -4,29 +4,29 @@ const sendEmail = require("../core/Mailer")
 const confirmationEmail = require('../core/MailViews')
 const ROLES = require('../core/Role')
 const {Users} = require('../core/DatabaseInitialization')
+const {authSignUpValidate, authSignInValidate} = require("../models/ValidationSchema");
 
 
 exports.signup = async (req, res) => {
-    const {fname, lname, email, password, phone} = req.body
-
-    if (!password) {
-        return res.status(400).json({message: 'error', data: {}})
+    const {value, error} = authSignUpValidate(req.body)
+    if (error) {
+        return res.status(422).json({message: error.details[0].message, data: {}})
     }
 
     const salt = bcrypt.genSaltSync(10);
-    const encryptedPassword = bcrypt.hashSync(password, salt);
+    const encryptedPassword = bcrypt.hashSync(value.password, salt);
 
     try {
-        const isExistEmail = await Users.findOne({email: email})
+        const isExistEmail = await Users.findOne({email: value.email})
 
         if (isExistEmail) {
-            return res.status(409).json({message: 'exist', data: {}})
+            return res.status(409).json({message: 'EmailIsExists', data: {}})
         }
-        let createdUser = await User.create({
-            fName: fname,
-            lName: lname,
-            email: email,
-            phone: phone,
+        let createdUser = await Users.create({
+            fName: value.fName,
+            lName: value.lName,
+            email: value.email,
+            phone: value.phone,
             password: encryptedPassword,
             roles: [ROLES.User]
         })
@@ -43,34 +43,37 @@ exports.signup = async (req, res) => {
         return res.status(201).json({message: 'success', data: {}})
 
     } catch (error) {
-        return res.status(400).json({message: 'error', data: {error}})
+        return res.status(500).json({message: 'error', data: {error}})
     }
 }
 
 exports.signin = async (req, res) => {
-    const {email, password} = req.body
-
-    const emailIsExist = await Users.findOne({email})
+    const {value, error} = authSignInValidate(req.body)
+    if (error) {
+        return res.status(422).json({message: error.details[0].message, data: {}})
+    }
+    const emailIsExist = await Users.findOne({email: value.email})
     if (!emailIsExist) {
-        return res.status(400).json({message: 'error', data: {}})
+        return res.status(422).json({message: 'error', data: {}})
     }
     if (!emailIsExist.isActive) {
-        return res.status(403).json({message: 'notActive', data: {}})
+        return res.status(403).json({message: 'Forbidden', data: {}})
     }
-    if (await bcrypt.compare(password, emailIsExist.password)) {
-        const token = jwt.sign({
-            userId: emailIsExist.id,
-            email: emailIsExist.email,
-            roles: emailIsExist.roles
-        }, process.env.JWT_SECRET)
+    if (await bcrypt.compare(value.password, emailIsExist.password)) {
+        try {
+            const token = jwt.sign({
+                userId: emailIsExist.id,
+                email: emailIsExist.email,
+                roles: emailIsExist.roles
+            }, process.env.JWT_SECRET)
 
-        if (res.status(200)) {
             return res.status(200).json({message: 'success', data: {token: token}})
-        } else {
-            return res.status(400).json({message: 'error', data: {token: null}})
+
+        } catch (err) {
+            return res.status(500).json({message: 'error', data: {err}})
         }
     } else {
-        res.status(400).json({message: 'error', data: {}})
+        res.status(422).json({message: 'error', data: {}})
     }
 
 }

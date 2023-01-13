@@ -1,6 +1,17 @@
 const {uploadVehicle, deleteFiles, deleteFile} = require("../core/FilesManagment");
 const multer = require('multer')
-const {ServiceEntries, Vehicles, Manufactures, Models, Fuels, DriveTypes, DesignTypes, Transmissions, Pictures} = require("../core/DatabaseInitialization");
+const {
+    ServiceEntries,
+    Vehicles,
+    Manufactures,
+    Models,
+    Fuels,
+    DriveTypes,
+    DesignTypes,
+    Transmissions,
+    Pictures
+} = require("../core/DatabaseInitialization");
+const {addVehicleValidate} = require("../models/ValidationSchema");
 
 const getMileageFromServices = async (vehicleID) => {
     let currentMaxMileage = false
@@ -22,75 +33,56 @@ exports.addVehicle = (req, res) => {
         }
         const filesArray = req.files.picture
 
-        const {
-            manufacture,
-            model,
-            fuel,
-            driveType,
-            designType,
-            transmission,
-            licenseNumber,
-            vin,
-            vintage,
-            ownMass,
-            fullMass,
-            cylinderCapacity,
-            performance,
-            mot,
-            nod,
-            mileage
-        } = req.body
+        const {value, error} = addVehicleValidate(req.body)
 
-        if (!manufacture || !model || !fuel || !driveType ||
-            !designType || !transmission || !vin || !vintage ||
-            !ownMass || !fullMass || !cylinderCapacity || !performance || !nod || !mileage) {
+        if (error) {
             deleteFiles(filesArray)
             deleteFiles(req.files?.preview)
-            return res.status(422).json({message: 'AllFieldsMustBeFill', data: {}})
+            return res.status(422).json({message: error.details[0].message, data: {}})
         }
 
         try {
             const fileName = req.files.picture.map(picture => picture.path.replaceAll('\\', '/')).join('@')
             const previewName = req.files.preview[0].path.replaceAll('\\', '/')
 
-            const isExistVin = await Vehicles.findOne({vin: vin})
+            const isExistVin = await Vehicles.findOne({vin: value.vin})
             if (isExistVin) {
                 deleteFiles(req.files?.preview)
                 deleteFiles(filesArray)
                 return res.status(409).json({message: "VinIsExists", data: {}})
             }
 
-            const isExistManufacture = await Manufactures.findOne({_id: manufacture})
+            const isExistManufacture = await Manufactures.findOne({_id: value.manufacture})
             if (!isExistManufacture) {
                 deleteFiles(filesArray)
                 deleteFiles(req.files?.preview)
                 return res.status(409).json({message: "ManufactureIsNotExists", data: {}})
             }
-            const isExistModel = await Models.findOne({_id: model, _manufacture: manufacture})
+            const isExistModel = await Models.findOne({_id: value.model, _manufacture: value.manufacture})
             if (!isExistModel) {
                 deleteFiles(filesArray)
                 deleteFiles(req.files?.preview)
                 return res.status(409).json({message: "ModelIsNotExists", data: {}})
             }
-            const isExistFuel = await Fuels.findOne({_id: fuel})
+            const isExistFuel = await Fuels.findOne({_id: value.fuel})
             if (!isExistFuel) {
                 deleteFiles(filesArray)
                 deleteFiles(req.files?.preview)
                 return res.status(409).json({message: "FuelIsNotExists", data: {}})
             }
-            const isExistDriveType = await DriveTypes.findOne({_id: driveType})
+            const isExistDriveType = await DriveTypes.findOne({_id: value.driveType})
             if (!isExistDriveType) {
                 deleteFiles(filesArray)
                 deleteFiles(req.files?.preview)
                 return res.status(409).json({message: "DriveTypeIsNotExists", data: {}})
             }
-            const isExistDesignType = await DesignTypes.findOne({_id: designType})
+            const isExistDesignType = await DesignTypes.findOne({_id: value.designType})
             if (!isExistDesignType) {
                 deleteFiles(filesArray)
                 deleteFiles(req.files?.preview)
                 return res.status(409).json({message: "DesignTypeIsNotExists", data: {}})
             }
-            const isExistTransmission = await Transmissions.findOne({_id: transmission})
+            const isExistTransmission = await Transmissions.findOne({_id: value.transmission})
             if (!isExistTransmission) {
                 deleteFiles(filesArray)
                 deleteFiles(req.files?.preview)
@@ -125,22 +117,22 @@ exports.addVehicle = (req, res) => {
 
             const newVehicle = await Vehicles.create({
                 _userId: req.userId,
-                _manufacture: manufacture,
-                _model: model,
-                _fuel: fuel,
-                _driveType: driveType,
-                _designType: designType,
-                _transmission: transmission,
-                licenseNumber,
-                vin: vin,
-                vintage: vintage,
-                ownMass: ownMass,
-                fullMass: fullMass,
-                cylinderCapacity: cylinderCapacity,
-                performance: performance,
-                mot,
-                nod: nod,
-                mileage: mileage,
+                _manufacture: value.manufacture,
+                _model: value.model,
+                _fuel: value.fuel,
+                _driveType: value.driveType,
+                _designType: value.designType,
+                _transmission: value.transmission,
+                licenseNumber: value.licenseNumber,
+                vin: value.vin,
+                vintage: value.vintage,
+                ownMass: value.ownMass,
+                fullMass: value.fullMass,
+                cylinderCapacity: value.cylinderCapacity,
+                performance: value.performance,
+                mot: value.mot,
+                nod: value.nod,
+                mileage: value.mileage,
                 pictures: uploadedImg,
                 preview: previewImg
             })
@@ -148,7 +140,7 @@ exports.addVehicle = (req, res) => {
         } catch (err) {
             deleteFiles(filesArray)
             deleteFiles(req.files?.preview)
-            return res.status(400).json({message: "error", data: {err}})
+            return res.status(500).json({message: "error", data: {err}})
         }
     })
 }
@@ -174,7 +166,7 @@ exports.getVehicles = async (req, res) => {
 
         return res.status(200).json({message: '', data: {vehicles: responseData}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -182,12 +174,12 @@ exports.getVehicle = async (req, res) => {
     try {
         const {id} = req.params
         if (!id) {
-            return res.status(409).json({message: "IdIsNotExists", data: {}})
+            return res.status(422).json({message: "IdIsNotExists", data: {}})
         }
 
-        const isExist = Vehicles.findOne({_id: id, _userId: req.userId})
+        const isExist = await Vehicles.findOne({_id: id, _userId: req.userId, isActive: true})
         if (!isExist) {
-            return res.status(409).json({message: "VehicleIsNotExists", data: {}})
+            return res.status(404).json({message: "VehicleIsNotExists", data: {}})
         }
 
         const resFromDB = await Vehicles.findOne({_userId: req.userId, _id: id})
@@ -217,7 +209,7 @@ exports.getVehicle = async (req, res) => {
             message: '', data: {vehicle: resFromDB.getVehicleDataById, serviceEntries: responseData || []}
         })
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 }
 
@@ -312,9 +304,9 @@ exports.deleteVehicle = async (req, res) => {
         }
         vehicle.isActive = false
         await vehicle.save()
-        return res.status(202).json({message: '', data: {vehicle: vehicle}})
+        return res.status(204).json({message: '', data: {}})
     } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(500).json({message: 'error', data: {error: err}})
     }
 
 }
