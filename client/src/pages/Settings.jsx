@@ -5,6 +5,7 @@ import {toast} from "react-toastify";
 import axios from "axios";
 import {Password} from "@mui/icons-material";
 import {MyCircularSkeleton, MyFullWidthInputSkeleton, MyInputSkeleton} from "../lib/Skeletons";
+import useAuth from "../hooks/useAuth";
 
 const AVATAR_MAX_HEIGHT = '200px';
 const AVATAR_MAX_WIDTH = '200px';
@@ -40,6 +41,9 @@ const MyGridItem = styled(Grid)(({theme}) => ({
 }))
 
 function Settings({handleChangeTab}) {
+    /* getting context data */
+    const { auth, setAuth } = useAuth();
+
     /* loading screen variables */
     const [isLoading, setIsLoading] = useState(true);
 
@@ -57,8 +61,8 @@ function Settings({handleChangeTab}) {
     const [formUnderProcessing, setIsProcessing] = useState(false)
 
     useEffect(() => {
-        const user = JSON.parse(localStorage.getItem("user")).user;
-
+        const user = auth.user;
+        
         setPicture(user.picture);
         setFirstName(user.fName);
         setLastName(user.lName);
@@ -98,8 +102,15 @@ function Settings({handleChangeTab}) {
                 "x-access-token": token
             }
         });
-        const data = await response.data;
-        localStorage.setItem("user", JSON.stringify(data.data));
+        const user = response.data.data.user;
+        let highestRole = 2001;
+        Array.from(user.roles).forEach(role => {
+            if (role > highestRole) {
+                highestRole = role;
+            } 
+        })
+        const role = highestRole;
+        setAuth({ user, token, role });
     }
 
     const handleUpdateUser = async (e) => {
@@ -174,8 +185,6 @@ function Settings({handleChangeTab}) {
         }
 
         if (changedSomething) {
-            console.log(body)
-
             const axiosInstance = axios.create({
                 baseURL: process.env.REACT_APP_BACKEND_URL
             })
@@ -184,7 +193,7 @@ function Settings({handleChangeTab}) {
             const data = await response.data;
 
             await getUserDatas(localStorage.getItem("token"));
-            const freshUser = JSON.parse(localStorage.getItem("user")).user;
+            const freshUser = auth.user;
 
             setPicture(freshUser.picture);
             setFirstName(freshUser.fName);

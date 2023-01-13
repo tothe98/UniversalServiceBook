@@ -242,6 +242,7 @@ exports.updateVehicle = async (req, res) => {
             if (!id) {
                 return res.status(422).json({message: 'IdIsEmpty', data: {}})
             }
+
             const vehicle = await Vehicles.findOne({
                 _id: id,
                 _userId: req.userId
@@ -301,11 +302,9 @@ exports.updateVehicle = async (req, res) => {
 
 exports.deleteVehicle = async (req, res) => {
     const {id} = req.params
-
     if (!id) {
         return res.status(422).json({message: "IDIsEmpty", data: {}})
     }
-
     try {
         const vehicle = await Vehicles.findOne({_id: id, _userId: req.userId})
         if (!vehicle) {

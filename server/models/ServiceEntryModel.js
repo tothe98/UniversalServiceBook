@@ -29,7 +29,6 @@ const ServiceEntrySchema = new mongoose.Schema({
             type: mongoose.Types.ObjectId,
             required: false,
             ref: 'Pictures'
-
         },
         createdAt: {
             type: Date,

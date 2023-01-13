@@ -7,6 +7,7 @@ const multer = require('multer')
 const {Users, Pictures} = require("../core/DatabaseInitialization");
 
 
+
 exports.getUser = async (req, res) => {
     try {
         const resUser = await Users.findOne({_id: req.userId}).populate("_profilImg")
@@ -73,6 +74,7 @@ exports.forgotPassword = async (req, res) => {
     }
     try {
         const findUser = await Users.findOne({email: email})
+
         if (findUser) {
             const token = jwt.sign({
                 userId: findUser._id,

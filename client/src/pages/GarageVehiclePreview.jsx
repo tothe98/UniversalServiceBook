@@ -16,6 +16,8 @@ import SaveIcon from '@mui/icons-material/Save';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DOMPurify from "isomorphic-dompurify";
 import {MyFullWidthInputSkeleton, MyInputSkeleton, MyTextSkeleton, MyWallpaperSkeleton} from "../lib/Skeletons";
+import useAuth from "../hooks/useAuth";
+import Roles from "../components/Roles";
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 const CAR_NAME_BOX_MAX_HEIGHT = "80px";
@@ -105,7 +107,8 @@ const MyAccordionImage = styled("img")(({theme}) => ({
     objectFit: "cover"
 }))
 
-function GarageVehiclePreview({handleChangeTab}) {
+function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
+    const { auth } = useAuth();
     const [isLoading, setIsLoading] = useState(true);
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
@@ -118,6 +121,102 @@ function GarageVehiclePreview({handleChangeTab}) {
     };
 
     useEffect(() => {
+        /* For Tabs */
+        switch (auth.role) {
+            case Roles.User:
+                [...routes.USER].forEach(route => {
+                    switch (window.location.pathname)
+                    {
+                        case `${route.link}`:
+                            if (activePage !== route.activeIndex)
+                            {
+                                handleChangeTab(route.activeIndex)
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (window.location.pathname.includes(route.link) && route.link !== "/")
+                    {
+                        if (activePage !== route.activeIndex)
+                        {
+                            handleChangeTab(route.activeIndex)
+                        }
+                    }
+                })
+                break;
+            case Roles.Employee:
+                [...routes.EMPLOYEE].forEach(route => {
+                    switch (window.location.pathname)
+                    {
+                        case `${route.link}`:
+                            if (activePage !== route.activeIndex)
+                            {
+                                handleChangeTab(route.activeIndex)
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (window.location.pathname.includes(route.link) && route.link !== "/")
+                    {
+                        if (activePage !== route.activeIndex)
+                        {
+                            handleChangeTab(route.activeIndex)
+                        }
+                    }
+                })
+                break;
+            case Roles.Owner:
+                [...routes.OWNER].forEach(route => {
+                    switch (window.location.pathname)
+                    {
+                        case `${route.link}`:
+                            if (activePage !== route.activeIndex)
+                            {
+                                handleChangeTab(route.activeIndex)
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (window.location.pathname.includes(route.link) && route.link !== "/")
+                    {
+                        if (activePage !== route.activeIndex)
+                        {
+                            handleChangeTab(route.activeIndex)
+                        }
+                    }
+                })
+                break;
+            case Roles.Admin:
+                [...routes.ADMIN].forEach(route => {
+                    switch (window.location.pathname)
+                    {
+                        case `${route.link}`:
+                            if (activePage !== route.activeIndex)
+                            {
+                                handleChangeTab(route.activeIndex)
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (window.location.pathname.includes(route.link) && route.link !== "/")
+                    {
+                        if (activePage !== route.activeIndex)
+                        {
+                            handleChangeTab(route.activeIndex)
+                        }
+                    }
+                })
+                break;
+        }
+
         const car = {
             carId: "2e2zbahdb2a#",
             imageUrl: "https://hasznaltauto.medija.hu/2202975/18830119_1.jpg?v=1668441109", // https://hasznaltauto.medija.hu/2700439/18711995_1.jpg?v=1665186628
@@ -413,8 +512,8 @@ function GarageVehiclePreview({handleChangeTab}) {
 
                                 <Grid container direction="row" spacing={0.4}>
                                     {
-                                        car.gallery.map(image => {
-                                            return <Grid item><CarGalleryImage src={image} /></Grid>
+                                        car.gallery.map((image, i) => {
+                                            return <Grid item key={image+""+i}><CarGalleryImage src={image} /></Grid>
                                         })
                                     }
                                 </Grid>
@@ -602,7 +701,7 @@ function GarageVehiclePreview({handleChangeTab}) {
                         {
                             Array.from(car.services).map((service, i) => {
                                 let panel = `panel${i}`
-                                return <MyAccordion expanded={expanded === panel} onChange={handleAccordionChange(panel)} TransitionProps={{ unmountOnExit: true }} >
+                                return <MyAccordion key={service+""+i} expanded={expanded === panel} onChange={handleAccordionChange(panel)} TransitionProps={{ unmountOnExit: true }} >
                                     <AccordionSummary
                                         expandIcon={<ExpandMoreIcon />}
                                         aria-controls="panel1bh-content"
@@ -619,7 +718,7 @@ function GarageVehiclePreview({handleChangeTab}) {
 
                                         <div>
                                             {
-                                                service.images.map(serviceImage => <MyAccordionImage src={serviceImage}  alt={`${service.id}`} />)
+                                                service.images.map((serviceImage, i) => <MyAccordionImage key={serviceImage+""+i} src={serviceImage}  alt={`${service.id}`} />)
                                             }
                                         </div>
                                     </AccordionDetails>

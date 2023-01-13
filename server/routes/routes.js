@@ -3,10 +3,10 @@ const router = express.Router()
 const {authorize} = require('../core/Auth')
 const ROLES = require('../core/Role')
 
-
 const {signup, signin, confirmEmail, isValidToken} = require('../controllers/AuthController')
 const {addVehicle, getVehicles, getVehicle, updateVehicle, deleteVehicle} = require('../controllers/VehicleController')
 const {getUser, updateUser, forgotPassword, newPassword} = require('../controllers/UserController')
+
 const {
     getManufactures,
     getCategories,

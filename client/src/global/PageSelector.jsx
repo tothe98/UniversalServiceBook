@@ -2,6 +2,7 @@ import {Grid, styled, Tab, Tabs, useMediaQuery} from '@mui/material';
 import React, {useEffect} from 'react';
 import { useState } from 'react';
 import {Link} from "react-router-dom";
+import Roles from '../components/Roles';
 import useAuth from '../hooks/useAuth';
 import theme from "../themes/theme";
 
@@ -33,16 +34,41 @@ function PageSelector({activePage, handleChangeTab, routes}) {
             <Grid item lg={auth?.user ? 8 : 11} xs={12}>
                 <Tabs value={activePage} textColor="#24292F" onChange={handleChangeTab} TabIndicatorProps={{style: {backgroundColor: "#909090"}}}>
                     {
-                        auth?.user && routes.map((route, i) => {
-                            if (route.name === "Leveleim") {
-
-                            }
-                            else {
-                                return <MyTab key={route+"-"+i} label={route.name} 
-                                disabled={route.name==="Leveleim"} 
-                                sx={{ opacity: route.name === "Leveleim" ? 0.5 : 1 }} 
-                                component={Link} to={route.link} />
-                            }
+                        /*
+                         Documentation: Basically, when I render the tab components then It matters that the 
+                                        active tab how increase. But there are some cases when the user is
+                                        user 😄 or employee or owner or admin and that cases not every tab
+                                        showed. example: Main Page Garage Options. In this case the old solution
+                                        was not the best way to do this because It thrown error when I rendered
+                                        the tabs for users since the user has three tabs (MainPage, Garage, Options)
+                                        and the basicall the options page's active index is 4 but in this case it have to
+                                        be 3 and this is why I made the new solution. The new solution's essence is 
+                                        find the role of user and render the specific routes for the role. 
+                        */
+                    }
+                    
+                    {
+                        auth?.user && auth?.role && auth.role == Roles.User && routes.USER.map((x,i) => {
+                                    return <MyTab key={x+"-"+i} label={x.name} value={x.activeIndex}
+                                            component={Link} to={x.link} />
+                        })
+                    }
+                    {
+                        auth?.user && auth?.role && auth.role == Roles.Employee && routes.EMPLOYEE.map((x,i) => {
+                                    return <MyTab key={x+"-"+i} label={x.name} value={x.activeIndex}
+                                            component={Link} to={x.link} />
+                        })
+                    }
+                    {
+                        auth?.user && auth?.role && auth.role == Roles.Admin && routes.ADMIN.map((x,i) => {
+                                    return <MyTab key={x+"-"+i} label={x.name} value={x.activeIndex}
+                                            component={Link} to={x.link} />
+                        })
+                    }
+                    {
+                        auth?.user && auth?.role && auth.role == Roles.Owner && routes.OWNER.map((x,i) => {
+                                    return <MyTab key={x+"-"+i} label={x.name} value={x.activeIndex}
+                                            component={Link} to={x.link} />
                         })
                     }
                 </Tabs>

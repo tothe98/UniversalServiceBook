@@ -24,6 +24,7 @@ import MailsIcon from '@mui/icons-material/EmailOutlined';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmailOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import {toast} from "react-toastify";
+import useAuth from '../hooks/useAuth';
 
 const MAX_HEIGHT = '100px';
 
@@ -75,6 +76,7 @@ const SpaceInList = styled('div')(({theme}) => ({
 }))
 
 function Header({handleChangeTab}) {
+    const { auth } = useAuth();
     const underS = useMediaQuery(theme.breakpoints.down("sm"))
     const [open, setOpen] = useState(false);
     const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
@@ -198,7 +200,10 @@ function Header({handleChangeTab}) {
                             <MyAvatar>
                                 <img src="https://picsum.photos/400" alt="profilkép" />
                             </MyAvatar>
-                            <ListItemText primary="Dániel Molnár" />
+                            <ListItemText primary={`${
+                            auth.user && (
+                            auth.user.lName + " " + auth.user.fName
+                            )}`} />
                         </ListItemButton>
                     </ListItem>
 

@@ -31,44 +31,164 @@ import Layout from './components/Layout';
 import OwnerPage from './pages/OwnerPage';
 import Unauthorized from './pages/Unauthorized';
 import Roles from '../src/components/Roles'
+import useAuth from './hooks/useAuth';
 
 function App() {
-    const [activePage, setActivePage] = useState(0);
+    const { auth, setAuth } = useAuth();
+    const [activePage, setActivePage] = useState(1);
     const handleChangeTab = (newValue) => {
-        setActivePage(newValue)
+        setActivePage(newValue);
     }
 
-    const routes = [
-        { name: 'Főoldal', link: '/', activeIndex: 0 },
-        { name: 'Járműveim', link: '/jarmuveim', activeIndex: 1 },
-        { name: 'Műhely', link: '/muhely', activeIndex: 2 },
-        { name: 'Beállítások', link: '/beallitasok', activeIndex: 3 },
-        { name: 'Adminisztráció', link: '/adminisztracio', activeIndex: 4 }
-    ]
+    const routes = {
+        USER: [
+            { name: 'Főoldal', link: '/', activeIndex: 1 },    
+            { name: 'Járműveim', link: '/jarmuveim', activeIndex: 2 },   
+            { name: 'Beállítások', link: '/beallitasok', activeIndex: 3 } 
+        ],
+        EMPLOYEE: [
+            { name: 'Főoldal', link: '/', activeIndex: 1 },    
+            { name: 'Járműveim', link: '/jarmuveim', activeIndex: 2 },    
+            { name: 'Műhely', link: '/muhely', activeIndex: 3 },
+            { name: 'Beállítások', link: '/beallitasok', activeIndex: 4 }    
+        ],
+        OWNER: [
+            { name: 'Főoldal', link: '/', activeIndex: 1 },    
+            { name: 'Járműveim', link: '/jarmuveim', activeIndex: 2 },    
+            { name: 'Műhely', link: '/muhely', activeIndex: 3 },    
+            { name: 'Adminisztráció', link: '/adminisztracio', activeIndex: 4 },
+            { name: 'Beállítások', link: '/beallitasok', activeIndex: 5 }
+        ],
+        ADMIN: [
+            { name: 'Főoldal', link: '/', activeIndex: 1 },    
+            { name: 'Járműveim', link: '/jarmuveim', activeIndex: 2 },    
+            { name: 'Adminisztráció', link: '/adminisztracio', activeIndex: 3 },    
+            { name: 'Beállítások', link: '/beallitasok', activeIndex: 4 }    
+        ]
+    }
 
     useEffect(() => {
-        [...routes].forEach(route => {
-            switch (window.location.pathname)
-            {
-                case `${route.link}`:
-                    if (activePage !== route.activeIndex)
+        switch (auth.role) {
+            case Roles.User:
+                [...routes.USER].forEach(route => {
+                    switch (window.location.pathname)
                     {
-                        setActivePage(route.activeIndex)
+                        case `${route.link}`:
+                            if (activePage !== route.activeIndex)
+                            {
+                                setActivePage(route.activeIndex)
+                            }
+                            break;
+                        default:
+                            break;
                     }
-                    break;
-                default:
-                    break;
-            }
 
-            if (window.location.pathname.includes(route.link) && route.link !== "/")
-            {
-                if (activePage !== route.activeIndex)
-                {
-                    setActivePage(route.activeIndex)
-                }
+                    if (window.location.pathname.includes(route.link) && route.link !== "/")
+                    {
+                        if (activePage !== route.activeIndex)
+                        {
+                            setActivePage(route.activeIndex)
+                        }
+                    }
+                })
+                break;
+            case Roles.Employee:
+                [...routes.EMPLOYEE].forEach(route => {
+                    switch (window.location.pathname)
+                    {
+                        case `${route.link}`:
+                            if (activePage !== route.activeIndex)
+                            {
+                                setActivePage(route.activeIndex)
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (window.location.pathname.includes(route.link) && route.link !== "/")
+                    {
+                        if (activePage !== route.activeIndex)
+                        {
+                            setActivePage(route.activeIndex)
+                        }
+                    }
+                })
+                break;
+            case Roles.Owner:
+                [...routes.OWNER].forEach(route => {
+                    switch (window.location.pathname)
+                    {
+                        case `${route.link}`:
+                            if (activePage !== route.activeIndex)
+                            {
+                                setActivePage(route.activeIndex)
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (window.location.pathname.includes(route.link) && route.link !== "/")
+                    {
+                        if (activePage !== route.activeIndex)
+                        {
+                            setActivePage(route.activeIndex)
+                        }
+                    }
+                })
+                break;
+            case Roles.Admin:
+                [...routes.ADMIN].forEach(route => {
+                    switch (window.location.pathname)
+                    {
+                        case `${route.link}`:
+                            if (activePage !== route.activeIndex)
+                            {
+                                setActivePage(route.activeIndex)
+                            }
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (window.location.pathname.includes(route.link) && route.link !== "/")
+                    {
+                        if (activePage !== route.activeIndex)
+                        {
+                            setActivePage(route.activeIndex)
+                        }
+                    }
+                })
+                break;
+        }
+    }, [activePage, routes])
+
+    const getUserDatas = async (token) => {
+        const axiosInstance = axios.create({
+            baseURL: process.env.REACT_APP_BACKEND_URL
+        })
+        const response = await axiosInstance.get("getUserData", {
+            headers: {
+                "x-access-token": token
+            }
+        });
+        const user = response.data.data.user;
+        let highestRole = 2001;
+        Array.from(user.roles).forEach(role => {
+            if (role > highestRole) {
+                highestRole = role;
             }
         })
-    }, [activePage, routes])
+        const role = highestRole;
+        setAuth({ user, token, role });
+    }
+
+    useEffect(() => {
+        if (localStorage.getItem("token")) {
+            getUserDatas(localStorage.getItem("token"))
+        }
+    }, []);
 
     return (
     <ThemeProvider theme={theme}>
@@ -78,25 +198,25 @@ function App() {
             { /*Public routes*/ }
             <Route path='/bejelentkezes' element={<Login />} />
             <Route path='/regisztracio' element={<Registration />} />
-            <Route path='/aktivalas/:id' element={<EmailVerification />} />   
+            <Route path='/aktivalas/:token' element={<EmailVerification />} />   
 
             { /*Protected routes*/ }
             <Route element={<RequireAuth allowedRoles={[Roles.User, Roles.Employee, Roles.Admin, Roles.Owner]} />}>
                 <Route path='/' element={<Home handleChangeTab={handleChangeTab} /> } />
                 <Route path='/muhely' element={<MechanicWorkshop handleChangeTab={handleChangeTab} /> } />
                 <Route path='/jarmuveim' element={<Garage handleChangeTab={handleChangeTab} /> } />
-                <Route path='/jarmuveim/:id' element={<GarageVehiclePreview handleChangeTab={handleChangeTab} /> } />
+                <Route path='/jarmuveim/:id' element={<GarageVehiclePreview activePage={activePage}  routes={routes} handleChangeTab={handleChangeTab} /> } />
                 <Route path='/beallitasok' element={<Settings handleChangeTab={handleChangeTab} /> } />
             </Route>   
-
-            { /* admin */ }
-            <Route element={<RequireAuth allowedRoles={[Roles.Admin]} />}>
-                <Route path='/adminisztracio' element={<AdminPage handleChangeTab={handleChangeTab} /> } />
-            </Route>
 
             { /* owner */ }
             <Route element={<RequireAuth allowedRoles={[Roles.Owner]} />}>
                 <Route path='/adminisztracio' element={<OwnerPage handleChangeTab={handleChangeTab} /> } />
+            </Route>
+
+            { /* admin */ }
+            <Route element={<RequireAuth allowedRoles={[Roles.Admin]} />}>
+                <Route path='/adminisztracio' element={<AdminPage handleChangeTab={handleChangeTab} /> } />
             </Route>
             
             { /* Forbidden requests */ }

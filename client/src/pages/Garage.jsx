@@ -62,6 +62,8 @@ import ValidityIcon from '@mui/icons-material/VerifiedOutlined';
 import axios from "axios";
 import {toast} from "react-toastify";
 import {MyCardSkeleton, MyInputSkeleton} from "../lib/Skeletons";
+import moment from "moment";
+import useAuth from "../hooks/useAuth";
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 
@@ -230,6 +232,8 @@ const MenuProps = {
 };
 
 function Garage({handleChangeTab}) {
+    const { auth } = useAuth();
+
     /* variables that used for cars */
     const [openCarOptions, changeCarOptions] = useState(false);
     const [carAnchorEl, setCarAnchorEL] = useState(null);
@@ -265,6 +269,7 @@ function Garage({handleChangeTab}) {
     /* new vehicle datas */
     /* these variables stores the new car datas */
     const [isAdding, setIsAdding] = useState(false);
+    const [newVehicleWallpaperInBase64, setNewVehicleWallpaperInBase64] = useState("");
     const [newVehicleWallpaper, setNewVehicleWallpaper] = useState("");
     const [newVehicleVin, setNewVehicleVin] = useState("");
     const [newVehicleLicenseNum, setNewVehicleLicenseNum] = useState("");
@@ -282,7 +287,8 @@ function Garage({handleChangeTab}) {
     const [newVehicleDriveType, setNewVehicleDriveType] = useState("");
     const [newVehicleTransmission, setNewVehicleTransmission] = useState("");
     const [newVehicleDocument, setNewVehicleDocument] = useState("");
-    const [newVehicleDocumentValidity, setNewVehicleDocumentValidity] = useState(new Date().toLocaleDateString("en-CA"));
+    const [newVehicleDocumentValidity, setNewVehicleDocumentValidity] = useState(moment().format("YYYY-MM-DD"));
+    const [newVehicleGalleryInBase64, setNewVehicleGalleryInBase64] = useState([]);
     const [newVehicleGallery, setNewVehicleGallery] = useState([]);
 
     /* We use it for add error message to the new car component. */
@@ -310,30 +316,61 @@ function Garage({handleChangeTab}) {
     const [vehicleModels, setVehicleModels] = useState([]);
 
     /* handle add new car */
-    const handleNewVehicle = () => {
-        console.log(
-            `
-            Wallpaper: ${newVehicleWallpaper.substring(0, 10)} \n
-            Vin: ${newVehicleVin}
-            LicenseNum: ${newVehicleLicenseNum}
-            Category: ${newVehicleCategory}
-            Manufacture: ${newVehicleManufacture}
-            DesignType: ${newVehicleDesignType}
-            Model: ${newVehicleModel}
-            Vintage: ${newVehicleVintage}
-            KM: ${newVehicleKm}
-            Weight: ${newVehicleOwnWeight}
-            MaxWeight: ${newVehicleMaxWeight}
-            Fuel: ${newVehicleFuel}
-            CylinderCapacity: ${newVehicleCylinderCapacity}
-            Performance: ${newVehiclePerformance}
-            DriveType: ${newVehicleDriveType}
-            Transmission: ${newVehicleTransmission}
-            Document: ${newVehicleDocument}
-            DocumentValidity: ${newVehicleDocumentValidity.toString()}
-            Gallery: ${newVehicleGallery.toString()}
-            `
-        )
+    const handleNewVehicle = async () => {
+        const body = {
+            manufacture: newVehicleManufacture,
+            model: newVehicleModel,
+            fuel: newVehicleFuel,
+            driveType: newVehicleDriveType,
+            designType: newVehicleDesignType,
+            transmission: newVehicleTransmission,
+            licenseNumber: newVehicleLicenseNum,
+            vin: newVehicleVin,
+            vintage: newVehicleVintage,
+            ownMass: newVehicleOwnWeight,
+            fullMass: newVehicleMaxWeight,
+            cylinderCapacity: newVehicleCylinderCapacity,
+            performance: newVehiclePerformance,
+            mot: `${newVehicleDocumentValidity}`,
+            nod: newVehicleDocument,
+            mileage: newVehicleKm
+        }
+        const formData = new FormData();
+        formData.append("preview", newVehicleWallpaper);
+        for (let i = 0; i < newVehicleGallery.length; i++) {
+            formData.append("picture", newVehicleGallery[i]);
+        }
+        formData.append("manufacture", body.manufacture);
+        formData.append("model", body.model);
+        formData.append("fuel", body.fuel);
+        formData.append("designType", body.designType);
+        formData.append("driveType", body.driveType);
+        formData.append("transmission", body.transmission);
+        formData.append("vin", body.vin);
+        formData.append("vintage", body.vintage);
+        formData.append("ownMass", body.ownMass);
+        formData.append("fullMass", body.fullMass);
+        formData.append("cylinderCapacity", body.cylinderCapacity);
+        formData.append("performance", body.performance);
+        formData.append("nod", body.nod);
+        formData.append("mot", body.mot);
+        formData.append("mileage", body.mileage);
+        formData.append("licenseNumber", body.licenseNumber);
+
+        for (var [key, value] of formData.entries()) { 
+            console.log(key, value);
+        }
+
+        const headers = {
+            'Content-Type': 'multipart/form-data',
+            'x-access-token': localStorage.getItem("token")
+        }
+        const response = await axiosInstance.post("/addVehicle", formData, { headers });
+
+        if (response.status == 200) {
+            toast.success("Sikeresen hozzáadtál egy új járművet!");
+            setIsAdding(false);
+        }
     }
 
     /* vehicle search method(s) */
@@ -342,10 +379,11 @@ function Garage({handleChangeTab}) {
     }
 
     /* file upload methods */
-    const handleProfileImageChange = async (e) => {
+    const handleVehiclePreviewChange = async (e) => {
         const file = e.target.files[0];
         const base64 = await convertBase64(file);
-        setNewVehicleWallpaper(base64)
+        setNewVehicleWallpaperInBase64(base64);
+        setNewVehicleWallpaper(file)
     }
     const handleNewVehicleGalleryImageDelete = (e, id) => {
         let index = -1;
@@ -368,12 +406,15 @@ function Garage({handleChangeTab}) {
     }
     const handleNewVehicleGalleryUpload = async (e) => {
         const readedImages = [...newVehicleGallery];
+        const readedImages2 = [...newVehicleGalleryInBase64];
         for (const file of e.target.files)
         {
             const base64 = await convertBase64(file);
-            await readedImages.push(base64);
+            await readedImages2.push(base64);
+            readedImages.push(file);
         }
         setNewVehicleGallery(readedImages);
+        setNewVehicleGalleryInBase64(readedImages2);
     }
     const convertBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -390,6 +431,20 @@ function Garage({handleChangeTab}) {
     /* end of file upload methods */
 
     /* data request methods */
+    const getVehicles = async (token) => {
+        const response = await axiosInstance.get("getVehicles",
+            {
+                headers: {
+                    "x-access-token": token
+                }
+            });
+        const data = await response.data;
+        const vehicles = JSON.parse(JSON.stringify(data.data.vehicles))
+        setVehicles(vehicles);
+
+        /* When I am searching I search in the visiblevehicles and after I back up datas from vehicles */
+        setVisibleVehicles(vehicles);
+    }
     const getVehicleFuelTypes = async (token) => {
         const response = await axiosInstance.post("getFuels", {}, {
             headers: {
@@ -496,8 +551,10 @@ function Garage({handleChangeTab}) {
     /* handle searching... */
     useEffect(() => {
         let filteredVehicles = [];
+        let carName = "";
         vehicles.forEach(vehicle => {
-            if ((vehicle.carName.toLowerCase()).startsWith(searchText.toLowerCase())) {
+            carName = vehicle.manufacture+" "+vehicle.model;
+            if ((carName.toLowerCase()).startsWith(searchText.toLowerCase())) {
                 filteredVehicles.push(vehicle)
             }
         })
@@ -534,49 +591,7 @@ function Garage({handleChangeTab}) {
         /* method execution order is very important! First is always the getvehicletypes */
         getVehicleFuelTypes(token);
         getVehicleTypes(token);
-
-        const vehicles = [
-            {
-                carId: "2e2zbahdb2a#",
-                imageUrl: "https://img.jofogas.hu/620x620aspect/Honda_Accord_Tourer_2_0_Elegance__Automata__Xen____659692224244378.jpg",
-                carName: "Honda Accord",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "AA AA 001",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 10,
-                year: 2004,
-                km: 200_422,
-                le: 232
-            },
-            {
-                carId: "2e2zbasdhdb2a#",
-                imageUrl: "https://autosoldalak.hu/auto_kepek/10403/6799b9ecbfd2d79af5820fdadb30d4f6.jpg",
-                carName: "SEAT Alhambra",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "CA AA 021",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 43,
-                year: 2010,
-                km: 130_422,
-                le: 130
-            },
-            {
-                carId: "2e2zbahdveeeb2a#",
-                imageUrl: "https://file.joautok.hu/car-for-sale-images/500x375/auto/img-20210614-140459_7rac40yw.jpg",
-                carName: "Honda Civic",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "AA AB 101",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 212,
-                year: 1998,
-                km: 400_001,
-                le: 90
-            }
-        ]
-
-        /* When I am searching I search in the visiblevehicles and after I back up datas from vehicles */
-        setVisibleVehicles(vehicles);
-        setVehicles(vehicles);
+        getVehicles(token);
 
         /* end loading screen */
         setIsLoading(false)
@@ -678,7 +693,7 @@ function Garage({handleChangeTab}) {
                                     <Grid item>
                                         <CarCardMedia
                                             component="img"
-                                            image={newVehicleWallpaper ? newVehicleWallpaper : "https://t3.ftcdn.net/jpg/04/21/50/96/360_F_421509616_AW4LfRfbYST8T2ZT9gFGxGWfrCwr4qm4.jpg"}
+                                            image={newVehicleWallpaperInBase64 ? newVehicleWallpaperInBase64 : "https://t3.ftcdn.net/jpg/04/21/50/96/360_F_421509616_AW4LfRfbYST8T2ZT9gFGxGWfrCwr4qm4.jpg"}
                                             alt="new-wallpaper"
                                         />
                                     </Grid>
@@ -689,7 +704,7 @@ function Garage({handleChangeTab}) {
                                                 Háttérkép feltöltése
                                             </AddCarSubTitle>
 
-                                            <MyTextField onChange={e=>handleProfileImageChange(e)} inputProps={{ accept: 'image/*' }} fullWidth name="wallpaper" placeholder="Kép kiválasztása..."
+                                            <MyTextField onChange={e=>handleVehiclePreviewChange(e)} inputProps={{ accept: 'image/*' }} fullWidth name="wallpaper" placeholder="Kép kiválasztása..."
                                                        type="file" />
                                         </CarCardContent>
                                     </Grid>
@@ -857,7 +872,7 @@ function Garage({handleChangeTab}) {
                                                     {vehicleDesignTypes.map((x, i) => {
                                                         return <MenuItem
                                                             key={x + i}
-                                                            value={x.type}
+                                                            value={x.id}
                                                         >
                                                             {x.type}
                                                         </MenuItem>
@@ -1220,8 +1235,7 @@ function Garage({handleChangeTab}) {
                                                 value={newVehicleDocumentValidity}
                                                 type="date"
                                                 onChange={e=>{
-                                                    let input = new Date(e.target.value);
-                                                    setNewVehicleDocumentValidity(input)
+                                                    setNewVehicleDocumentValidity(moment(e.target.value).format("YYYY-MM-DD"))
                                                 }}
                                             />
                                         </Grid>
@@ -1245,7 +1259,7 @@ function Garage({handleChangeTab}) {
                                                 id="outlined-disabled"
                                                 default={2010}
                                                 type="file"
-                                                multiple
+                                                multiple={true}
                                                 onChange={e=>handleNewVehicleGalleryUpload(e)}
                                             />
                                         </Grid>
@@ -1258,7 +1272,7 @@ function Garage({handleChangeTab}) {
                                         gap={2}
                                     >
                                         {
-                                            Array.from(newVehicleGallery).map((image, i) => {
+                                            Array.from(newVehicleGalleryInBase64).map((image, i) => {
                                                 return <Grid item>
                                                     <Grid container direction="column" gap={2} justifyContent="center" alignItems="center">
                                                         <Grid item>
@@ -1300,13 +1314,17 @@ function Garage({handleChangeTab}) {
         { /* end of create new car */ }
 
         {
-            visibleVehicles.map((vehicle,i) => {
+            visibleVehicles.length == 0 && !isSearchEmpty && <Typography variant="h4">Jelenleg nincs járműved!</Typography>
+        }
+
+        {
+            visibleVehicles.length > 0 && visibleVehicles.map((vehicle,i) => {
                 return <ContentBox key={vehicle+i}>
                     <Grid container direction="column">
                         <Grid item>
                             <CarCard>
                                 <CarCardHeader
-                                    title={vehicle.carName}
+                                    title={`${vehicle.manufacture} ${vehicle.model}`}
                                     action={
                                         <IconButton aria-label="settings" onClick={e => {
                                             changeCarOptions(true);
@@ -1326,8 +1344,8 @@ function Garage({handleChangeTab}) {
                                     <Grid item>
                                         <CarCardMedia
                                             component="img"
-                                            image={vehicle.imageUrl}
-                                            alt={vehicle.carName}
+                                            image={`${vehicle['pictures'][0]}`}
+                                            alt={vehicle.manufacture+" "+vehicle.model}
                                         />
                                     </Grid>
 
@@ -1337,27 +1355,21 @@ function Garage({handleChangeTab}) {
                                                 <Grid container direction="row" spacing={2}>
                                                     <Grid item><Typography variant="h4">Alvázszám:</Typography></Grid>
                                                     <Grid item><Typography
-                                                        variant="h4">{vehicle.chassisNumber}</Typography></Grid>
+                                                        variant="h4">{vehicle.vin}</Typography></Grid>
                                                 </Grid>
 
                                                 <Grid container direction="row" spacing={2}>
                                                     <Grid item><Typography variant="h4">Rendszám:</Typography></Grid>
                                                     <Grid item><Typography
-                                                        variant="h4">{vehicle.licensePlateNumber}</Typography></Grid>
+                                                        variant="h4">{vehicle.licenseNumber}</Typography></Grid>
                                                 </Grid>
 
-                                                <Grid container direction="row" spacing={2}>
-                                                    <Grid item><Typography variant="h4">Motorszám:</Typography></Grid>
-                                                    <Grid item><Typography
-                                                        variant="h4">{vehicle.motorNumber}</Typography></Grid>
-                                                </Grid>
-
-                                                <Grid container direction="row" spacing={2}>
+                                                { vehicle.serviceEntries && <Grid container direction="row" spacing={2}>
                                                     <Grid item><Typography variant="h4">Bejegyzett
                                                         szervízek:</Typography></Grid>
                                                     <Grid item><Typography
-                                                        variant="h4">{vehicle.registeredServices}</Typography></Grid>
-                                                </Grid>
+                                                        variant="h4">{vehicle.serviceEntries.length}</Typography></Grid>
+                                                </Grid> }
                                             </Grid>
                                         </CarCardContent>
                                     </Grid>
@@ -1367,14 +1379,14 @@ function Garage({handleChangeTab}) {
                                     {
                                         underMD
                                             ?
-                                            <Chip label={vehicle.year} variant="outlined"/>
+                                            <Chip label={moment(vehicle.vintage).format("YYYY-MM-DD")} variant="outlined"/>
                                             :
-                                            <><Chip label={vehicle.year} variant="outlined"/>
-                                                <Chip label={`${vehicle.km} km`} variant="outlined"/>
-                                                <Chip label={`${vehicle.le} LE`} variant="outlined"/></>
+                                            <><Chip label={moment(vehicle.vintage).format("YYYY-MM-DD")} variant="outlined"/>
+                                                <Chip label={`${vehicle.mileage} km`} variant="outlined"/>
+                                                <Chip label={`${vehicle.performanceLE} LE`} variant="outlined"/></>
                                     }
                                     <ViewButton sx={{marginLeft: "auto"}} component={Link}
-                                                to={`/jarmuveim/${vehicle.carId}`} onClick={e => {
+                                                to={`/jarmuveim/${vehicle.id}`} onClick={e => {
                                         handleChangeTab(1)
                                     }}>Megtekintem</ViewButton>
                                 </CarCardActions>

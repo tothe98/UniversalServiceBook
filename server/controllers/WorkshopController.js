@@ -3,7 +3,6 @@ const multer = require('multer')
 const {uploadServiceEntry, deleteFiles} = require("../core/FilesManagment");
 const {Workshops, Users, Vehicles, ServiceEntries, Pictures} = require("../core/DatabaseInitialization");
 
-
 exports.getWorkshops = async (req, res) => {
     try {
         const resFromDB = await Workshops.find({}).populate('_owner').populate('employees')
@@ -252,6 +251,7 @@ exports.addServiceEntry = (req, res) => {
         if (req.files?.pictures) {
             files = req.files.pictures
         }
+        
         const {vehicleID, date, mileage, description} = req.body
         if (!vehicleID || !date || !mileage || !description) {
             deleteFiles(files)
@@ -287,6 +287,7 @@ exports.addServiceEntry = (req, res) => {
                     return res.status(400).json({message: 'error', data: {error: err}})
                 })
             }
+            
             const workshop = await Workshops.findOne({$or: [{employees: req.userId}, {_owner: req.userId}]})
 
             const newServcieEntry = await ServiceEntires.create({
@@ -309,3 +310,4 @@ exports.addServiceEntry = (req, res) => {
 
     })
 }
+
