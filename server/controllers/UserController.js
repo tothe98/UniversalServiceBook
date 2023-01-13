@@ -1,18 +1,16 @@
-const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sendEmail = require("../core/Mailer")
 const confirmationEmail = require('../core/MailViews')
 const {uploadUser} = require("../core/FilesManagment");
 const multer = require('multer')
-require('../models/UserModel')
-require('../models/PictureModel')
+const {Users, Pictures} = require("../core/DatabaseInitialization");
+
 
 
 exports.getUser = async (req, res) => {
     try {
-        const User = mongoose.model('UserInfo')
-        const resUser = await User.findOne({_id: req.userId}).populate("_profilImg")
+        const resUser = await Users.findOne({_id: req.userId}).populate("_profilImg")
         req.email = resUser.getUserData.email
         res.status(200).json({message: '', data: {user: resUser.getUserData}});
     } catch (err) {
@@ -23,17 +21,15 @@ exports.getUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
     uploadUser(req, res, async function (err) {
         const {lName, fName, phone, home, oldPassword, newPassword} = req.body
-        const User = mongoose.model('UserInfo')
         try {
             if (err instanceof multer.MulterError) {
                 return res.status(400).json({message: 'LimitFileCount', data: {error: err}})
             }
 
             let uploadImg = undefined
-            const updateUser = await User.findOne({_id: req.userId})
+            const updateUser = await Users.findOne({_id: req.userId})
             if (req.files?.picture) {
-                const Picture = mongoose.model('Pictures')
-                await Picture.create({
+                await Pictures.create({
                     picture: req.files.picture[0].path.replaceAll('\\', '/'),
                     _uploadFrom: req.userId
                 }).then((e) => {
@@ -77,8 +73,8 @@ exports.forgotPassword = async (req, res) => {
         return res.status(422).json({message: 'EmailIsEmpty', data: {}})
     }
     try {
-        const User = mongoose.model('UserInfo')
-        const findUser = await User.findOne({email: email})
+        const findUser = await Users.findOne({email: email})
+
         if (findUser) {
             const token = jwt.sign({
                 userId: findUser._id,
@@ -109,8 +105,7 @@ exports.newPassword = async (req, res) => {
         }
         try {
             if (password === cpassword) {
-                const User = mongoose.model('UserInfo')
-                const updateUser = await User.findOne({_id: decoded.userId, email: decoded.email})
+                const updateUser = await Users.findOne({_id: decoded.userId, email: decoded.email})
                 const salt = bcrypt.genSaltSync(10)
                 const updatePsw = bcrypt.hashSync(password, salt)
                 updateUser.password = updatePsw
