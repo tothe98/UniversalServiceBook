@@ -120,6 +120,7 @@ dist
 
 config/.env
 
-.idea/
+.DS_Store
+.idea
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node,dotenv
