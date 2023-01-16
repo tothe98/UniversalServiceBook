@@ -2,6 +2,7 @@ const fs = require("fs")
 const multer = require('multer')
 const moment = require("moment/moment");
 const {Pictures, Workshops} = require("./DatabaseInitialization");
+const {logger} = require("../config/logger");
 
 const rmDir = async (dirPath, removeSelf) => {
     if (removeSelf === undefined)
@@ -77,7 +78,7 @@ const fileName = (req, file, cb) => {
 }
 
 const errorHandle = (err, next) => {
-    console.log('error', err);
+    logger.error('Sikertelen képmentés!', {user: 'FileManager', data: JSON.stringify(err)})
     next(err);
 }
 

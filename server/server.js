@@ -1,4 +1,4 @@
-require('dotenv').config()
+require('dotenv').config({path: './config/.env'})
 const express = require('express')
 const cors = require('cors')
 const bodyParser = require('body-parser')
@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser')
 const session = require('express-session')
 const mongoose = require('mongoose')
 const routesUrls = require('./routes/routes')
+const {logger} = require("./config/logger");
 
 const app = express()
 app.use(express.json({limit: '100mb'}))
@@ -37,12 +38,18 @@ mongoose.connect(
         useNewUrlParser: true,
     })
     .then(() => {
-        console.log("[DATABASE]:Adatbázis kapcsolat létrejött.");
+        logger.info('[DATABASE]:Adatbázis kapcsolat létrejött.', {user: 'System', data: ""})
+        console.log('[DATABASE]:Adatbázis kapcsolat létrejött.')
         app.listen(process.env.PORT || 5000, () => {
+            logger.info(`[SERVER]:Szerver elindult a ${process.env.PORT || 5000}-as porton.`, {
+                user: 'System',
+                data: ""
+            })
             console.log(`[SERVER]:Szerver elindult a ${process.env.PORT || 5000}-as porton.`)
         })
     })
     .catch((e) => {
+        logger.error('Nem sikerült csatlakozni az adatbázishoz.', {user: 'System', data: JSON.stringify(e)})
         console.log(e);
     })
 
