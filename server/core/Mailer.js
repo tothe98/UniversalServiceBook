@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-
+const {logger} = require('../config/logger')
 
 const sendEmail = async (to, subject, txt) => {
     const transporter = nodemailer.createTransport({
@@ -19,9 +19,9 @@ const sendEmail = async (to, subject, txt) => {
 
     transporter.sendMail(mailDetails, function (err, info) {
         if (err) {
-            console.log(err);
+            logger.error('Sikertelen email küldés!', {user: 'Mailer', data: JSON.stringify(err)})
         } else {
-            console.log(info);
+            logger.info('Sikeres email küldés!', {user: 'Mailer', data: JSON.stringify(info)})
         }
     });
 };

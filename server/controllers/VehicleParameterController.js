@@ -7,6 +7,7 @@ const {
     DriveTypes,
     Transmissions
 } = require("../core/DatabaseInitialization");
+const {logger} = require("../config/logger");
 
 //Kategóriák kilistázása
 exports.getCategories = async (req, res) => {
@@ -16,11 +17,19 @@ exports.getCategories = async (req, res) => {
                 return res.status(200).json({message: '', data: {categories: response}});
             })
             .catch((err) => {
+                logger.error("[SERVER] Hiba történt a kategória listázása során!", {
+                    user: req.userId,
+                    data: JSON.stringify(err)
+                })
                 return res.status(400).json({message: 'Error', data: {err}})
             })
 
-    } catch (err) {
-        return res.status(500).json({message: 'Error', data: {err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a kategória listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'Error', data: {error}})
     }
 }
 
@@ -63,8 +72,12 @@ exports.getManufactures = async (req, res) => {
                 return res.status(404).json({message: 'NotFound', data: {err}})
             })
 
-    } catch (err) {
-        return res.status(500).json({message: 'Error', data: {err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a márka listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'Error', data: {error}})
     }
 }
 
@@ -111,8 +124,12 @@ exports.getModels = async (req, res) => {
             .catch((err) => {
                 return res.status(404).json({message: 'NotFound', data: {err}})
             })
-    } catch (err) {
-        return res.status(500).json({message: 'Error', data: {err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a model listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'Error', data: {error}})
     }
 }
 
@@ -155,8 +172,12 @@ exports.getFuels = async (req, res) => {
             .catch((err) => {
                 return res.status(404).json({message: 'Error', data: {err}})
             })
-    } catch (err) {
-        return res.status(500).json({message: 'Error', data: {err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a üzemanyag listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'Error', data: {error}})
     }
 }
 
@@ -195,8 +216,12 @@ exports.getDesignTypes = async (req, res) => {
             .catch((err) => {
                 return res.status(404).json({message: 'Error', data: {err}})
             })
-    } catch (err) {
-        return res.status(500).json({message: 'Error', data: {err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a kivitel típus listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'Error', data: {error}})
     }
 }
 
@@ -236,8 +261,12 @@ exports.getDriveType = async (req, res) => {
             .catch((err) => {
                 return res.status(404).json({message: 'Error', data: {err}})
             })
-    } catch (err) {
-        return res.status(500).json({message: 'Error', data: {err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a hajtás típus listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'Error', data: {error}})
     }
 }
 
@@ -277,8 +306,12 @@ exports.getTransmissions = async (req, res) => {
             .catch((err) => {
                 return res.status(404).json({message: 'Error', data: {err}})
             })
-    } catch (err) {
-        return res.status(500).json({message: 'Error', data: {err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a sebességváltók listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'Error', data: {error}})
     }
 }
 
