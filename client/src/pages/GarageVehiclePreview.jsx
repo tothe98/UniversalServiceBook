@@ -18,6 +18,8 @@ import DOMPurify from "isomorphic-dompurify";
 import {MyFullWidthInputSkeleton, MyInputSkeleton, MyTextSkeleton, MyWallpaperSkeleton} from "../lib/Skeletons";
 import useAuth from "../hooks/useAuth";
 import Roles from "../components/Roles";
+import axios from "axios";
+import moment from "moment";
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 const CAR_NAME_BOX_MAX_HEIGHT = "80px";
@@ -55,7 +57,7 @@ const NameBox = styled('div')(({theme}) => ({
     maxHeight: CAR_NAME_BOX_MAX_HEIGHT,
     height: "auto",
     background: theme.palette.common.white,
-    boxShadow: theme.shadows[25],
+    boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)",
     margin: "23px 0",
     padding: "10px"
 }))
@@ -77,6 +79,7 @@ const CarGalleryImage = styled("img")(({theme}) => ({
     maxWidth: "97px",
     objectFit: "cover",
     width: "100%",
+    minHeight: "40px",
     height: "auto",
     "&:hover": {
         opacity: 0.7
@@ -88,11 +91,13 @@ const CarDetailsTitle = styled(Typography)(({theme}) => ({
 }))
 
 const CarDetailGridItem = styled(Grid)(({theme}) => ({
-    marginBottom: CAR_DETAIL_GRID_ITEM_SPACE
+    marginBottom: CAR_DETAIL_GRID_ITEM_SPACE,
+    width: "100%"
 }))
 
 const CarDetailValue = styled(Typography)(({theme}) => ({
-    fontWeight: 390
+    fontWeight: 390,
+    width: "100%"
 }))
 
 const MyAccordion = styled(Accordion)(({theme}) => ({
@@ -101,7 +106,7 @@ const MyAccordion = styled(Accordion)(({theme}) => ({
 }))
 
 const MyAccordionImage = styled("img")(({theme}) => ({
-    maxWidth: "300px",
+    maxWidth: "150px",
     width: "100%",
     height: "100%",
     objectFit: "cover"
@@ -112,13 +117,33 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
     const [isLoading, setIsLoading] = useState(true);
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
-    const [car, setCar] = useState({});
+    const [vehicle, setVehicle] = useState({});
     const [expanded, setExpanded] = useState(false);
     const { id } = useParams();
+
+    /* network settings */
+    const axiosInstance = axios.create({
+        baseURL: process.env.REACT_APP_BACKEND_URL
+    })
 
     const handleAccordionChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
+
+    /* data request methods */
+    const getVehicle = async (token) => {
+        const response = await axiosInstance.get(`getVehicle/${id}`,
+            {
+                headers: {
+                    "x-access-token": token
+                }
+            });
+        const data = await response.data;
+        const vehicle = JSON.parse(JSON.stringify(data.data.vehicle))
+        vehicle['serviceEntries'] = data.data.serviceEntries;
+        setVehicle(vehicle);
+        setIsLoading(false)
+    }
 
     useEffect(() => {
         /* For Tabs */
@@ -217,68 +242,14 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                 break;
         }
 
-        const car = {
-            carId: "2e2zbahdb2a#",
-            imageUrl: "https://hasznaltauto.medija.hu/2202975/18830119_1.jpg?v=1668441109", // https://hasznaltauto.medija.hu/2700439/18711995_1.jpg?v=1665186628
-            carName: "Honda Accord",
-            chassisNumber: "JACUBS25DN7100010",
-            licensePlateNumber: "AA AA 001",
-            motorNumber: "Z14XEP19ET4682",
-            registeredServices: 10,
-            gallery: [
-                "https://hasznaltauto.medija.hu/2202975/18830119_2.jpg?v=1668441109",
-                "https://hasznaltauto.medija.hu/2202975/18830119_3.jpg?v=1668441109",
-                "https://hasznaltauto.medija.hu/2202975/18830119_4.jpg?v=1668441109",
-                "https://hasznaltauto.medija.hu/2202975/18830119_5.jpg?v=1668441109",
-                "https://hasznaltauto.medija.hu/2202975/18830119_6.jpg?v=1668441109",
-                "https://hasznaltauto.medija.hu/2202975/18830119_7.jpg?v=1668441109",
-                "https://hasznaltauto.medija.hu/2202975/18830119_8.jpg?v=1668441109",
-                "https://hasznaltauto.medija.hu/2202975/18830119_9.jpg?v=1668441109",
-                "https://hasznaltauto.medija.hu/2202975/18830119_10.jpg?v=1668441109"
-            ],
-            services: [
-                {
-                    id: "12312xa2132",
-                    date: new Date(),
-                    message: "Figyelem az ön Honda Accord gépjárműve (alvz.szm: JACUBS25DN7100010)\n" +
-                        "2023.01.13-án kötelező szervízen kell résztvennie!",
-                    images: [
-                        "https://bontoplaza.hu/pic.php?guid=0FACD49A-E9D1-4B94-B142-299679E55EBE"
-                    ],
-                    kmHour: 200_012
-                },
-                {
-                    id: "asdawd2e21a",
-                    date: new Date(),
-                    message: "Figyelem az ön Honda Accord gépjárműve (alvz.szm: JACUBS25DN7100010)\n" +
-                        "2023.01.13-án kötelező szervízen kell résztvennie!",
-                    images: [
-                        "https://bontoplaza.hu/bontott-alkatresz-kepek/opel-astra-h-1.6-gyujtotrafo_532EB777-49C6-464D-BFB2-46194A7A8CA6_MEDIUM.jpg"
-                    ],
-                    kmHour: 200_013
-                },
-                {
-                    id: "12312QA2132",
-                    date: new Date(),
-                    message: "Figyelem az ön Honda Accord gépjárműve (alvz.szm: JACUBS25DN7100010)\n" +
-                        "2023.01.13-án kötelező szervízen kell résztvennie!",
-                    images: [
-                        "https://bontoplaza.hu/pic.php?guid=3FC4B8AB-A1CB-43E6-B228-941F8F6D96AC&size=LARGE"
-                    ],
-                    kmHour: 200_015
-                }
-            ]
-        }
-
-        setCar(car);
-        setIsLoading(false)
+        getVehicle(localStorage.getItem("token"));
     }, []);
 
     if (isLoading)
     {
         return (<React.Fragment>
             <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/jarmuveim">
-                <SubTitle variant='h3' sx={{marginBottom: "0", marginLeft: "1em"}}>Autóim</SubTitle>
+                <SubTitle variant='h3' sx={{marginBottom: "0", marginLeft: "1em"}}>Járműveim</SubTitle>
             </BackToCarsButton>
 
             <NameBox>
@@ -493,12 +464,12 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
 
     return (<React.Fragment>
         <BackToCarsButton startIcon={<KeyboardBackspaceOutlinedIcon />} component={Link} to="/jarmuveim">
-            <SubTitle variant='h3' sx={{marginBottom: "0", marginLeft: "1em"}}>Autóim</SubTitle>
+            <SubTitle variant='h3' sx={{marginBottom: "0", marginLeft: "1em"}}>Járműveim</SubTitle>
         </BackToCarsButton>
 
         <NameBox>
-            <Typography variant="h3" sx={{fontWeight: 900}}>{car.carName}</Typography>
-            <Typography variant="h4" sx={{ color: "rgba(17, 17, 17, 0.74)", fontWeight: 900 }}>{car.chassisNumber}</Typography>
+            <Typography variant="h3" sx={{fontWeight: 900}}>{vehicle.manufacture + " " + vehicle.model}</Typography>
+            <Typography variant="h4" sx={{ color: "rgba(17, 17, 17, 0.74)", fontWeight: 900 }}>{vehicle.vin}</Typography>
         </NameBox>
 
         <Grid container direction="column" alignItems="flex-start">
@@ -508,12 +479,12 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                     <Grid item xs={7}>
                         <Grid container direction="column" alignItems="flex-start" justifyContent="center">
                             <Grid item>
-                                <CarWallPaperImage src={car.imageUrl}  alt={car.carName}/>
+                                <CarWallPaperImage src={`/${vehicle['pictures'][0]}`}  alt={vehicle.manufacture + " " + vehicle.model}/>
 
                                 <Grid container direction="row" spacing={0.4}>
                                     {
-                                        car.gallery.map((image, i) => {
-                                            return <Grid item key={image+""+i}><CarGalleryImage src={image} /></Grid>
+                                        vehicle['pictures'].map((image, i) => {
+                                            return <Grid item key={image+""+i}><CarGalleryImage src={"/"+image} /></Grid>
                                         })
                                     }
                                 </Grid>
@@ -536,7 +507,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Évjárat: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>2007/6</CarDetailValue>
+                                                <CarDetailValue>{moment(vehicle.vintage).format("YYYY-MM-DD")}</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -547,7 +518,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Kivitel: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>Sedan</CarDetailValue>
+                                                <CarDetailValue>{vehicle.designType}</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -566,7 +537,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Km. óra állás: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>192 332 km</CarDetailValue>
+                                                <CarDetailValue>{vehicle.mileage} km</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -577,7 +548,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Saját tömeg: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>1 458 kg</CarDetailValue>
+                                                <CarDetailValue>{vehicle.ownMass} kg</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -588,7 +559,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Teljes tömeg: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>1 970 kg</CarDetailValue>
+                                                <CarDetailValue>{vehicle.fullMass} kg</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -607,7 +578,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Üzemanyag: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>Dízel</CarDetailValue>
+                                                <CarDetailValue>{vehicle.fuel}</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -618,7 +589,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Hengerűrtartalom: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>2 204 cm<sup>3</sup></CarDetailValue>
+                                                <CarDetailValue>{vehicle.cylinderCapacity} cm<sup>3</sup></CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -629,7 +600,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Teljesítmény: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>103 kW, 140 LE</CarDetailValue>
+                                                <CarDetailValue>{vehicle.performanceKW} kW, {vehicle.performanceLE} LE</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -640,7 +611,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Hajtás: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>Első kerék</CarDetailValue>
+                                                <CarDetailValue>{vehicle.driveType}</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -651,7 +622,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Sebességváltó: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>Manuális</CarDetailValue>
+                                                <CarDetailValue>{vehicle.transmission}</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -670,7 +641,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Okmányok jellege: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>Magyar</CarDetailValue>
+                                                <CarDetailValue>{vehicle.nod}</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -681,7 +652,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Műszaki vizsga érvényessége: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>2022/10</CarDetailValue>
+                                                <CarDetailValue>{ moment(vehicle.mot).format("YYYY-MM-DD") }</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>
@@ -696,10 +667,10 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
 
             { /* Service information(s) */ }
             <Grid item sx={{width: "100%"}}>
-                    <NameBox> <Typography>Szervíz Előélet</Typography> </NameBox>
-                    <Grid container direction="column">
+                    <NameBox> <SubTitle variant="h4" sx={{marginBottom: "0"}}>Szervíz Előélet</SubTitle> </NameBox>
+                    { vehicle.serviceEntries && <Grid container direction="column">
                         {
-                            Array.from(car.services).map((service, i) => {
+                            Array.from(vehicle.serviceEntries).map((service, i) => {
                                 let panel = `panel${i}`
                                 return <MyAccordion key={service+""+i} expanded={expanded === panel} onChange={handleAccordionChange(panel)} TransitionProps={{ unmountOnExit: true }} >
                                     <AccordionSummary
@@ -707,25 +678,63 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                         aria-controls="panel1bh-content"
                                         id="panel1bh-header"
                                     >
-                                        <Typography sx={{ width: '33%', flexShrink: 0 }}>
+                                        <SubTitle variant="h4" sx={{ width: '33%', flexShrink: 0 }}>
                                             #{i+1} Szervíz Bejegyzés
-                                        </Typography>
-                                        { !underMD && <Typography sx={{ color: 'text.secondary' }}>{service.kmHour} km</Typography> }
+                                        </SubTitle>
+                                        { !underMD && <Typography sx={{ color: 'text.secondary' }}>{service.mileage} km</Typography> }
                                     </AccordionSummary>
                                     <AccordionDetails>
-                                        <Typography  dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(service.message)}}>
-                                        </Typography>
 
-                                        <div>
-                                            {
-                                                service.images.map((serviceImage, i) => <MyAccordionImage key={serviceImage+""+i} src={serviceImage}  alt={`${service.id}`} />)
-                                            }
-                                        </div>
+                                        <SubTitle variant="h4">Műhely Adatok:</SubTitle>
+
+                                        {
+                                            underS
+                                            ?
+                                                    <>
+                                                    <Typography variant="body1" >Bejegyzést kiállító műhely: <strong>{ service.workshop }</strong></Typography>
+                                                    <Typography variant="body1" >Bejegyzést kiállító szerelő: <strong>{ service.mechanicer }</strong></Typography>
+                                                    </>
+                                            :
+                                            <dl>
+                                                <dd>
+                                                    <Typography variant="body1" >Bejegyzést kiállító műhely: <strong>{ service.workshop }</strong></Typography>
+                                                    <Typography variant="body1" >Bejegyzést kiállító szerelő: <strong>{ service.mechanicer }</strong></Typography>
+                                                </dd>
+                                            </dl>
+                                        }
+
+                                        <SubTitle variant="h4" sx={{margin: "1rem 0"}}>Bejegyzés</SubTitle>
+
+                                        {
+                                            underS
+                                            ?
+                                            <Typography variant="body1" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(service.description)}}>
+                                            </Typography>
+                                            :
+                                            <dl>
+                                                <dd>
+                                                    <Typography variant="body1" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(service.description)}}>
+                                                    </Typography>
+                                                </dd>
+                                            </dl> 
+                                        }
+
+                                        {
+                                            service.pictures && <>
+                                                <SubTitle variant="h4">Csatolmányok</SubTitle>
+
+                                                <div>
+                                                    {
+                                                        service.pictures.map((image, i) => <MyAccordionImage key={image+""+i} src={`${image}`}  alt={`${service.id}`} />)
+                                                    }
+                                                </div>
+                                            </>
+                                        }
                                     </AccordionDetails>
                                 </MyAccordion>
                             })
                         }
-                    </Grid>
+                    </Grid> }
             </Grid>
         </Grid>
     </React.Fragment>)
