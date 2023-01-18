@@ -1,168 +1,203 @@
-const mongoose = require('mongoose')
-const {uploadVehicle, deleteFiles} = require("../core/FilesManagment");
+const {uploadVehicle, deleteFiles, deleteFile} = require("../core/FilesManagment");
 const multer = require('multer')
-require('../models/DesignTypeModel')
-require('../models/DriveTypeModel')
-require('../models/FuelModel')
-require('../models/ManufactureModel')
-require('../models/ModelModel')
-require('../models/TransmissionModel')
-require('../models/VehicleTypeModel')
-require('../models/VehicleModel')
-require('../models/ServiceEntryModel')
-require('../models/PictureModel')
+const {
+    ServiceEntries,
+    Vehicles,
+    Manufactures,
+    Models,
+    Fuels,
+    DriveTypes,
+    DesignTypes,
+    Transmissions,
+    Pictures
+} = require("../core/DatabaseInitialization");
+const {addVehicleValidate} = require("../models/ValidationSchema");
+const {logger} = require("../config/logger");
+
+const getMileageFromServices = async (vehicleID) => {
+    let currentMaxMileage = false
+    const serviceEntries = await ServiceEntries.find({_vehicle: vehicleID})
+    if (serviceEntries.length > 0) {
+        currentMaxMileage = Math.max(...serviceEntries.map(e => e.mileage))
+    }
+    return currentMaxMileage
+}
 
 exports.addVehicle = (req, res) => {
     uploadVehicle(req, res, async function (err) {
-        if (err instanceof multer.MulterError) {
-            return res.status(400).json({message: 'LimitFileCount', data: {error: err}})
+            if (err instanceof multer.MulterError) {
+                logger.warn(`Sikertelen jármű hozzáadás! Exception: Kép elérte a maximum számot!`, {
+                    user: req.userId,
+                    data: JSON.stringify(err)
+                })
+                return res.status(400).json({message: 'LimitFileCount', data: {error: err}})
+            }
+
+            if (!req.files?.picture || !req.files?.preview) {
+                logger.warn(`Sikertelen jármű hozzáadás! Exception: Kép nincs feltöltve!`, {
+                    user: req.userId,
+                    data: JSON.stringify(req.files)
+                })
+                return res.status(422).json({message: 'PictureIsEmpty', data: {}})
+            }
+            const filesArray = req.files.picture
+
+            const {value, error} = addVehicleValidate(req.body)
+
+            if (error) {
+                deleteFiles(filesArray)
+                deleteFiles(req.files?.preview)
+                logger.warn(`Sikertelen jármű hozzáadás! Exception: ${error.details[0].message}`, {
+                    user: req.userId,
+                    data: JSON.stringify(req.body)
+                })
+                return res.status(422).json({message: error.details[0].message, data: {}})
+            }
+
+            try {
+                const fileName = req.files.picture.map(picture => picture.path.replaceAll('\\', '/')).join('@')
+                const previewName = req.files.preview[0].path.replaceAll('\\', '/')
+
+                const isExistVin = await Vehicles.findOne({vin: value.vin})
+                if (isExistVin) {
+                    deleteFiles(req.files?.preview)
+                    deleteFiles(filesArray)
+                    logger.warn(`Sikertelen jármű hozzáadás! Exception: Ezzel az alvázszámmal már létezik jármű! VIN: ${value.vin}`, {
+                        user: req.userId,
+                        data: JSON.stringify(value)
+                    })
+                    return res.status(409).json({message: "VinIsExists", data: {}})
+                }
+
+                const isExistManufacture = await Manufactures.findOne({_id: value.manufacture})
+                if (!isExistManufacture) {
+                    deleteFiles(filesArray)
+                    deleteFiles(req.files?.preview)
+                    logger.warn(`Sikertelen jármű hozzáadás! Exception: Nem létezik ilyen márka! MANUFACTURE: ${value.manufacture}`, {
+                        user: req.userId,
+                        data: JSON.stringify(value)
+                    })
+                    return res.status(409).json({message: "ManufactureIsNotExists", data: {}})
+                }
+                const isExistModel = await Models.findOne({_id: value.model, _manufacture: value.manufacture})
+                if (!isExistModel) {
+                    deleteFiles(filesArray)
+                    deleteFiles(req.files?.preview)
+                    logger.warn(`Sikertelen jármű hozzáadás! Exception: Nem létezik ilyen model! MODEL: ${value.model}`, {
+                        user: req.userId,
+                        data: JSON.stringify(value)
+                    })
+                    return res.status(409).json({message: "ModelIsNotExists", data: {}})
+                }
+                const isExistFuel = await Fuels.findOne({_id: value.fuel})
+                if (!isExistFuel) {
+                    deleteFiles(filesArray)
+                    deleteFiles(req.files?.preview)
+                    logger.warn(`Sikertelen jármű hozzáadás! Exception: Nem létezik ilyen üzemanyag fajta! FUEL: ${value.fuel}`, {
+                        user: req.userId,
+                        data: JSON.stringify(value)
+                    })
+                    return res.status(409).json({message: "FuelIsNotExists", data: {}})
+                }
+                const isExistDriveType = await DriveTypes.findOne({_id: value.driveType})
+                if (!isExistDriveType) {
+                    deleteFiles(filesArray)
+                    deleteFiles(req.files?.preview)
+                    logger.warn(`Sikertelen jármű hozzáadás! Exception: Nem létezik ilyen hajtás típus! DRIVETYPE: ${value.driveType}`, {
+                        user: req.userId,
+                        data: JSON.stringify(value)
+                    })
+                    return res.status(409).json({message: "DriveTypeIsNotExists", data: {}})
+                }
+                const isExistDesignType = await DesignTypes.findOne({_id: value.designType})
+                if (!isExistDesignType) {
+                    deleteFiles(filesArray)
+                    deleteFiles(req.files?.preview)
+                    logger.warn(`Sikertelen jármű hozzáadás! Exception: Nem létezik ilyen kiviteli típus! DESIGNTYPE: ${value.designType}`, {
+                        user: req.userId,
+                        data: JSON.stringify(value)
+                    })
+                    return res.status(409).json({message: "DesignTypeIsNotExists", data: {}})
+                }
+                const isExistTransmission = await Transmissions.findOne({_id: value.transmission})
+                if (!isExistTransmission) {
+                    deleteFiles(filesArray)
+                    deleteFiles(req.files?.preview)
+                    logger.warn(`Sikertelen jármű hozzáadás! Exception: Nem létezik ilyen sebességváltó típus! TRANSMISSION: ${value.transmission}`, {
+                        user: req.userId,
+                        data: JSON.stringify(value)
+                    })
+                    return res.status(409).json({message: "TransmissionIsNotExists", data: {}})
+                }
+                let uploadedImg = undefined
+                let previewImg = undefined
+
+                const pictures = {
+                    picture: fileName,
+                    _uploadFrom: req.userId
+                }
+                const preview = {
+                    picture: previewName,
+                    _uploadFrom: req.userId
+                }
+
+                const createPicture = new Pictures(pictures)
+                const createPreview = new Pictures(preview)
+                await createPicture.save()
+                await createPreview.save()
+
+                uploadedImg = createPicture._id
+                previewImg = createPreview._id
+
+                if (uploadedImg === undefined || previewImg === undefined) {
+                    deleteFiles(filesArray)
+                    deleteFiles(req.files?.preview)
+                    logger.warn(`Sikertelen jármű hozzáadás! Exception: Képek nem kerültek elmentésre!`, {
+                        user: req.userId,
+                        data: JSON.stringify(req.files)
+                    })
+                    return res.status(400).json({message: 'error', data: {}})
+                }
+
+
+                const newVehicle = await Vehicles.create({
+                    _userId: req.userId,
+                    _manufacture: value.manufacture,
+                    _model: value.model,
+                    _fuel: value.fuel,
+                    _driveType: value.driveType,
+                    _designType: value.designType,
+                    _transmission: value.transmission,
+                    licenseNumber: value.licenseNumber,
+                    vin: value.vin,
+                    vintage: value.vintage,
+                    ownMass: value.ownMass,
+                    fullMass: value.fullMass,
+                    cylinderCapacity: value.cylinderCapacity,
+                    performance: value.performance,
+                    mot: value.mot,
+                    nod: value.nod,
+                    mileage: value.mileage,
+                    pictures: uploadedImg,
+                    preview: previewImg
+                })
+                logger.info(`Sikeres jármű hozzáadás!`, {user: req.userId, data: JSON.stringify(newVehicle)})
+                return res.status(201).json({message: '', data: {vehicle: newVehicle}})
+            } catch (error) {
+                deleteFiles(filesArray)
+                deleteFiles(req.files?.preview)
+                logger.error("[SERVER] Hiba történt a jármű hozzáadás során!", {
+                    user: req.userId,
+                    data: JSON.stringify(error)
+                })
+                return res.status(500).json({message: "error", data: {error}})
+            }
         }
-
-        if (!req.files?.picture || !req.files?.preview) {
-            return res.status(422).json({message: 'PictureIsEmpty', data: {error: err}})
-        }
-        const filesArray = req.files.picture
-
-        const {
-            manufacture,
-            model,
-            fuel,
-            driveType,
-            designType,
-            transmission,
-            licenseNumber,
-            vin,
-            vintage,
-            ownMass,
-            fullMass,
-            cylinderCapacity,
-            performance,
-            mot,
-            nod,
-            mileage
-        } = req.body
-
-        if (!manufacture || !model || !fuel || !driveType ||
-            !designType || !transmission || !vin || !vintage ||
-            !ownMass || !fullMass || !cylinderCapacity || !performance || !nod || !mileage) {
-            return res.status(422).json({message: 'AllFieldsMustBeFill', data: {}})
-        }
-
-        try {
-            const fileName = req.files.picture.map(picture => picture.path.replaceAll('\\', '/')).join('@')
-            const previewName = req.files.preview[0].path.replaceAll('\\', '/')
-            const Vehicles = mongoose.model('Vehicles')
-            const Pictures = mongoose.model('Pictures')
-            const Manufactures = mongoose.model('Manufactures')
-            const Models = mongoose.model('Models')
-            const Fuels = mongoose.model('Fuels')
-            const DriveTypes = mongoose.model('DriveTypes')
-            const DesignTypes = mongoose.model('DesignTypes')
-            const Transmissions = mongoose.model('Transmissions')
-
-            const isExistVin = await Vehicles.findOne({vin: vin})
-            if (isExistVin) {
-                deleteFiles(filesArray)
-                deleteFiles(req.files?.preview)
-                return res.status(409).json({message: "VinIsExists", data: {}})
-            }
-
-            const isExistManufacture = await Manufactures.findOne({_id: manufacture})
-            if (!isExistManufacture) {
-                deleteFiles(filesArray)
-                deleteFiles(req.files?.preview)
-                return res.status(409).json({message: "ManufactureIsNotExists", data: {}})
-            }
-            const isExistModel = await Models.findOne({_id: model, _manufacture: manufacture})
-            if (!isExistModel) {
-                deleteFiles(filesArray)
-                deleteFiles(req.files?.preview)
-                return res.status(409).json({message: "ModelIsNotExists", data: {}})
-            }
-            const isExistFuel = await Fuels.findOne({_id: fuel})
-            if (!isExistFuel) {
-                deleteFiles(filesArray)
-                deleteFiles(req.files?.preview)
-                return res.status(409).json({message: "FuelIsNotExists", data: {}})
-            }
-            const isExistDriveType = await DriveTypes.findOne({_id: driveType})
-            if (!isExistDriveType) {
-                deleteFiles(filesArray)
-                deleteFiles(req.files?.preview)
-                return res.status(409).json({message: "DriveTypeIsNotExists", data: {}})
-            }
-            const isExistDesignType = await DesignTypes.findOne({_id: designType})
-            if (!isExistDesignType) {
-                deleteFiles(filesArray)
-                deleteFiles(req.files?.preview)
-                return res.status(409).json({message: "DesignTypeIsNotExists", data: {}})
-            }
-            const isExistTransmission = await Transmissions.findOne({_id: transmission})
-            if (!isExistTransmission) {
-                deleteFiles(filesArray)
-                deleteFiles(req.files?.preview)
-                return res.status(409).json({message: "TransmissionIsNotExists", data: {}})
-            }
-            let uploadedImg = undefined
-            let previewImg = undefined
-
-            const pictures = {
-                picture: fileName,
-                _uploadFrom: req.userId
-            }
-            const preview = {
-                picture: previewName,
-                _uploadFrom: req.userId
-            }
-
-            const createPicture = new Pictures(pictures)
-            const createPreview = new Pictures(preview)
-            await createPicture.save()
-            await createPreview.save()
-
-            uploadedImg = createPicture._id
-            previewImg = createPreview._id
-
-            if (uploadedImg === undefined || previewImg === undefined) {
-                deleteFiles(filesArray)
-                deleteFiles(req.files?.preview)
-                return res.status(400).json({message: 'error', data: {}})
-            }
-
-
-            const newVehicle = await Vehicles.create({
-                _userId: req.userId,
-                _manufacture: manufacture,
-                _model: model,
-                _fuel: fuel,
-                _driveType: driveType,
-                _designType: designType,
-                _transmission: transmission,
-                licenseNumber,
-                vin: vin,
-                vintage: vintage,
-                ownMass: ownMass,
-                fullMass: fullMass,
-                cylinderCapacity: cylinderCapacity,
-                performance: performance,
-                mot,
-                nod: nod,
-                mileage: mileage,
-                pictures: uploadedImg,
-                preview: previewImg
-            })
-            return res.status(201).json({message: '', data: {vehicle: newVehicle}})
-        } catch (err) {
-            deleteFiles(filesArray)
-            deleteFiles(req.files?.preview)
-            return res.status(400).json({message: "error", data: {err}})
-        }
-    })
+    )
 }
 
 exports.getVehicles = async (req, res) => {
     try {
-        const Vehicles = mongoose.model("Vehicles")
         const resFromDB = await Vehicles.find({_userId: req.userId, isActive: true})
             .populate('_manufacture')
             .populate('_model')
@@ -173,13 +208,20 @@ exports.getVehicles = async (req, res) => {
             .populate('pictures')
             .populate('preview')
         let responseData = []
-        resFromDB.forEach((vehicle) => {
+
+        for (const vehicle of resFromDB) {
+            const currentMaxMileage = await getMileageFromServices(vehicle._id)
+            vehicle.mileage = currentMaxMileage ? currentMaxMileage : vehicle.mileage
             responseData.push(vehicle.getVehicleData)
-        })
+        }
 
         return res.status(200).json({message: '', data: {vehicles: responseData}})
-    } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a járművek listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'error', data: {error: error}})
     }
 }
 
@@ -187,14 +229,20 @@ exports.getVehicle = async (req, res) => {
     try {
         const {id} = req.params
         if (!id) {
-            return res.status(409).json({message: "IdIsNotExists", data: {}})
+            logger.warn(`Sikertelen jármű listázás! Exception: Id paraméter hiányzik!`, {
+                user: req.userId,
+                data: JSON.stringify(req.params)
+            })
+            return res.status(422).json({message: "IdIsNotExists", data: {}})
         }
-        const Vehicles = mongoose.model("Vehicles")
-        const ServiceEntires = mongoose.model("ServiceEntries")
 
-        const isExist = Vehicles.findOne({_id: id, _userId: req.userId})
+        const isExist = await Vehicles.findOne({_id: id, _userId: req.userId, isActive: true})
         if (!isExist) {
-            return res.status(409).json({message: "VehicleIsNotExists", data: {}})
+            logger.warn(`Sikertelen jármű listázás! Exception: Jármű nem található!`, {
+                user: req.userId,
+                data: JSON.stringify(req.params)
+            })
+            return res.status(404).json({message: "VehicleIsNotExists", data: {}})
         }
 
         const resFromDB = await Vehicles.findOne({_userId: req.userId, _id: id})
@@ -207,7 +255,7 @@ exports.getVehicle = async (req, res) => {
             .populate('pictures')
             .populate('preview')
 
-        const resFromDBServices = await ServiceEntires.find({_vehicle: id, isDelete: false})
+        const resFromDBServices = await ServiceEntries.find({_vehicle: id, isDelete: false})
             .populate("_workshop")
             .populate("pictures")
             .populate('_mechanicer')
@@ -217,17 +265,28 @@ exports.getVehicle = async (req, res) => {
             responseData.push(service.getServices)
         })
 
+        const currentMaxMileage = await getMileageFromServices(resFromDB._id)
+        resFromDB.mileage = currentMaxMileage ? currentMaxMileage : resFromDB.mileage
+
         return res.status(200).json({
             message: '', data: {vehicle: resFromDB.getVehicleDataById, serviceEntries: responseData || []}
         })
-    } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a jármű listázása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'error', data: {error: error}})
     }
 }
 
 exports.updateVehicle = async (req, res) => {
     uploadVehicle(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
+            logger.warn(`Sikertelen jármű szerkesztés! Exception: Képek elérte a maximumot!`, {
+                user: req.userId,
+                data: JSON.stringify(err)
+            })
             return res.status(400).json({message: 'LimitFileCount', data: {error: err}})
         }
 
@@ -244,14 +303,22 @@ exports.updateVehicle = async (req, res) => {
             } = req.body
             const {id} = req.params
             if (!id) {
+                logger.warn(`Sikertelen jármű szerkesztés! Exception: Id paraméter hiányzik!`, {
+                    user: req.userId,
+                    data: JSON.stringify(req.params)
+                })
                 return res.status(422).json({message: 'IdIsEmpty', data: {}})
             }
-            const Vehicles = mongoose.model('Vehicles')
+
             const vehicle = await Vehicles.findOne({
                 _id: id,
                 _userId: req.userId
             }).populate('pictures').populate('preview')
             if (!vehicle) {
+                logger.warn(`Sikertelen jármű szerkesztés! Exception: Jármű nem létezik!`, {
+                    user: req.userId,
+                    data: JSON.stringify(req.body)
+                })
                 return res.status(404).json({message: 'VehicleNotFound', data: {}})
             }
             let currentPictures = vehicle.pictures?.picture.split('@')
@@ -261,6 +328,7 @@ exports.updateVehicle = async (req, res) => {
                 deletedPictures.split('@').forEach(deletedPicture => {
                     const indexAtCurrentPictures = currentPictures.indexOf(deletedPicture);
                     if (indexAtCurrentPictures > -1) {
+                        deleteFile(deletedPicture)
                         currentPictures.splice(indexAtCurrentPictures, 1);
                     }
                     if (deletedPicture == currentPreview && req.files.preview) {
@@ -278,7 +346,10 @@ exports.updateVehicle = async (req, res) => {
                 }
             }
 
-            const Pictures = mongoose.model('Pictures')
+            currentPictures = currentPictures.filter((p) => {
+                return p != ""
+            })
+
             await Pictures.findOneAndUpdate({_id: vehicle.pictures._id.toString()}, {picture: currentPictures.join('@')})
             await Pictures.findOneAndUpdate({_id: vehicle.preview._id.toString()}, {picture: currentPreview})
             vehicle.cylinderCapacity = cylinderCapacity ? cylinderCapacity : vehicle.cylinderCapacity
@@ -290,32 +361,46 @@ exports.updateVehicle = async (req, res) => {
             vehicle.mot = mot ? mot : vehicle.mot
             await vehicle.save()
 
+            logger.info("Sikeres jármű szerkesztés!", {user: req.userId, data: JSON.stringify(vehicle)})
             return res.status(202).json({message: '', data: {vehicle: vehicle}})
 
-        } catch (err) {
-            return res.status(400).json({message: 'error', data: {error: err}})
+        } catch (error) {
+            logger.error("[SERVER] Hiba történt a jármű szerkesztés során!", {
+                user: req.userId,
+                data: JSON.stringify(error)
+            })
+            return res.status(500).json({message: 'error', data: {error: error}})
         }
     })
 }
 
 exports.deleteVehicle = async (req, res) => {
     const {id} = req.params
-
     if (!id) {
+        logger.warn(`Sikertelen jármű törlés! Exception: Id paraméter hiányzik!`, {
+            user: req.userId,
+            data: JSON.stringify(req.params)
+        })
         return res.status(422).json({message: "IDIsEmpty", data: {}})
     }
-
     try {
-        const Vehicles = mongoose.model('Vehicles')
         const vehicle = await Vehicles.findOne({_id: id, _userId: req.userId})
         if (!vehicle) {
+            logger.warn(`Sikertelen jármű törlés! Exception: Jármű nem található!`, {
+                user: req.userId,
+                data: JSON.stringify(req.params)
+            })
             return res.status(404).json({message: "VehicleNotFound", data: {}})
         }
         vehicle.isActive = false
         await vehicle.save()
-        return res.status(202).json({message: '', data: {vehicle: vehicle}})
-    } catch (err) {
-        return res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(204).json({message: '', data: {}})
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a jármű törlés során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'error', data: {error}})
     }
 
 }

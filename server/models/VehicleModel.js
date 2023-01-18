@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const moment = require("moment");
 
 const VehiclesSchema = new mongoose.Schema({
     _userId: {
@@ -108,14 +109,14 @@ VehiclesSchema.virtual("getVehicleData").get(function () {
         "transmission": this._transmission.transmission,
         "licenseNumber": (this.licenseNumber ? this.licenseNumber : undefined),
         "vin": this.vin,
-        "vintage": this.vintage,
+        "vintage": moment(this.vintage).format('YYYY'),
         "ownMass": this.ownMass,
         "fullMass": this.fullMass,
         "cylinderCapacity": this.cylinderCapacity,
         "performanceLE": this.performance,
         "performanceKW": Math.round(this.performance / 1.36),
         "nod": this.nod,
-        "mot": (this.mot ? this.mot : undefined),
+        "mot": (this.mot ? moment(this.mot).format('YYYY-MM-DD') : undefined),
         "mileage": this.mileage,
         "pictures": picturesToArray(this.pictures.picture),
         "preview": this.preview.picture
@@ -132,14 +133,14 @@ VehiclesSchema.virtual("getVehicleDataById").get(function () {
         "transmission": this._transmission.transmission,
         "licenseNumber": (this.licenseNumber ? this.licenseNumber : undefined),
         "vin": this.vin,
-        "vintage": this.vintage,
+        "vintage": moment(this.vintage).format('YYYY'),
         "ownMass": this.ownMass,
         "fullMass": this.fullMass,
         "cylinderCapacity": this.cylinderCapacity,
         "performanceLE": this.performance,
         "performanceKW": Math.round(this.performance / 1.36),
         "nod": this.nod,
-        "mot": (this.mot ? this.mot : undefined),
+        "mot": (this.mot ? moment(this.mot).format('YYYY-MM-DD') : undefined),
         "mileage": this.mileage,
         "pictures": picturesToArray(this.pictures.picture, this.preview.picture),
     }
@@ -152,11 +153,11 @@ VehiclesSchema.virtual("getVehicleByVin").get(function () {
         "fullName": this._userId.lName + " " + this._userId.fName,
         "licenseNumber": (this.licenseNumber ? this.licenseNumber : undefined),
         "vin": this.vin,
-        "vintage": this.vintage,
+        "vintage": moment(this.vintage).format('YYYY'),
         "cylinderCapacity": this.cylinderCapacity,
         "performanceLE": this.performance,
         "performanceKW": Math.round(this.performance / 1.36),
-        "mot": (this.mot ? this.mot : undefined),
+        "mot": (this.mot ? moment(this.mot).format('YYYY-MM-DD') : undefined),
         "mileage": this.mileage,
         "preview": this.preview.picture,
     }

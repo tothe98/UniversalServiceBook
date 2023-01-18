@@ -1,45 +1,54 @@
-const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const sendEmail = require("../core/Mailer")
 const confirmationEmail = require('../core/MailViews')
 const {uploadUser} = require("../core/FilesManagment");
 const multer = require('multer')
-require('../models/UserModel')
-require('../models/PictureModel')
+const {Users, Pictures} = require("../core/DatabaseInitialization");
+const {newPasswordValidate} = require("../models/ValidationSchema");
+const {logger} = require("../config/logger");
 
 
 exports.getUser = async (req, res) => {
     try {
-        const User = mongoose.model('UserInfo')
-        const resUser = await User.findOne({_id: req.userId}).populate("_profilImg")
+        const resUser = await Users.findOne({_id: req.userId}).populate("_profilImg")
         req.email = resUser.getUserData.email
-        res.status(200).json({message: '', data: {user: resUser.getUserData}});
-    } catch (err) {
-        res.status(400).json({message: 'error', data: {error: err}})
+        return res.status(200).json({message: '', data: {user: resUser.getUserData}});
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a user adatok lekérésénél!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({message: 'error', data: {error}})
     }
 }
 
 exports.updateUser = async (req, res) => {
     uploadUser(req, res, async function (err) {
         const {lName, fName, phone, home, oldPassword, newPassword} = req.body
-        const User = mongoose.model('UserInfo')
         try {
             if (err instanceof multer.MulterError) {
-                return res.status(400).json({message: 'LimitFileCount', data: {error: err}})
+                logger.warn(`Sikertelen user adatok frissítése! Exception: Kép száma elérte a maximumot!`, {
+                    user: req.userId,
+                    data: JSON.stringify(err)
+                })
+                return res.status(422).json({message: 'LimitFileCount', data: {error: err}})
             }
 
             let uploadImg = undefined
-            const updateUser = await User.findOne({_id: req.userId})
+            const updateUser = await Users.findOne({_id: req.userId})
             if (req.files?.picture) {
-                const Picture = mongoose.model('Pictures')
-                await Picture.create({
+                await Pictures.create({
                     picture: req.files.picture[0].path.replaceAll('\\', '/'),
                     _uploadFrom: req.userId
                 }).then((e) => {
                     uploadImg = e['_id'].toString()
                 }).catch((err) => {
-                    return res.status(400).json({message: 'error', data: {error: err}})
+                    logger.error("[SERVER] Hiba történt a user adatok frissítésnél a képfeltöltésénél!", {
+                        user: req.userId,
+                        data: JSON.stringify(err)
+                    })
+                    return res.status(500).json({message: 'error', data: {error: err}})
                 })
             }
 
@@ -50,7 +59,12 @@ exports.updateUser = async (req, res) => {
                     const salt = bcrypt.genSaltSync(10)
                     updatePsw = bcrypt.hashSync(newPassword, salt)
                 } else {
-                    return res.status(400).json({message: 'passwordNotCorrect', data: {}})
+                    updateUser.password = ""
+                    logger.warn(`Sikertelen user adatok frissítése! Exception: A jelszó nem egyezik!`, {
+                        user: req.userId,
+                        data: JSON.stringify(updateUser)
+                    })
+                    return res.status(422).json({message: 'passwordNotCorrect', data: {}})
                 }
             }
 
@@ -62,10 +76,16 @@ exports.updateUser = async (req, res) => {
             updateUser.home = home ? home : updateUser.home
 
             await updateUser.save()
+            updateUser.password = ""
+            logger.info('Sikeres user adat frissítés!', {user: req.userId, data: JSON.stringify(updateUser)})
             return res.status(202).json({message: 'OK', data: {user: updateUser}})
 
-        } catch (err) {
-            return res.status(400).json({message: 'error', data: {error: err}})
+        } catch (error) {
+            logger.error("[SERVER] Hiba történt a user adatok frissítésénél!", {
+                user: req.userId,
+                data: JSON.stringify(error)
+            })
+            return res.status(500).json({message: 'error', data: {error}})
         }
     })
 
@@ -74,11 +94,15 @@ exports.updateUser = async (req, res) => {
 exports.forgotPassword = async (req, res) => {
     const {email} = req.body
     if (!email) {
+        logger.warn(`Sikertelen elfelejtett jelszó kérés! Exception: Az email mező hiányzik!`, {
+            user: 'System',
+            data: ''
+        })
         return res.status(422).json({message: 'EmailIsEmpty', data: {}})
     }
     try {
-        const User = mongoose.model('UserInfo')
-        const findUser = await User.findOne({email: email})
+        const findUser = await Users.findOne({email: email})
+
         if (findUser) {
             const token = jwt.sign({
                 userId: findUser._id,
@@ -88,38 +112,65 @@ exports.forgotPassword = async (req, res) => {
             await sendEmail(findUser.email, "Elfelejtett jelszó",
                 confirmationEmail(`http://127.0.0.1:8080/api/v1/newPassword/${token}`)
             )
+            logger.info(`Sikeres elfelejtett jelszó kérés! Email: ${email}`, {user: 'System', data: ''})
             return res.status(200).json({message: 'EmailIsSent', data: {}})
         } else {
-            return res.status(404).json({message: 'UserIsNotFound', data: {error}})
+            logger.warn(`Sikertelen elfelejtett jelszó kérés! Exception: A felhasználó nem létezik! Email: ${email}`, {
+                user: 'System',
+                data: ''
+            })
+            return res.status(404).json({message: 'UserIsNotFound', data: {}})
         }
     } catch (error) {
+        logger.error("[SERVER] Hiba történt az elfelejtett jelszó kérésnél!", {
+            user: 'System',
+            data: JSON.stringify(error)
+        })
         return res.status(500).json({message: 'error', data: {error}})
     }
 }
 
 exports.newPassword = async (req, res) => {
-    const {token, password, cpassword} = req.body
+    const {value, error} = newPasswordValidate(req.body)
 
-    if (!token || !password || !cpassword) {
-        return res.status(422).json({message: 'FieldsMustBeField', data: {}})
+    if (error) {
+        logger.warn(`Sikertelen új jelszó létrehozás! Exception: ${error.details[0].message}`, {
+            user: 'System',
+            data: JSON.stringify(req.body)
+        })
+        return res.status(422).json({message: error.details[0].message, data: {}})
     }
-    jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+
+    jwt.verify(value.token, process.env.JWT_SECRET, async (err, decoded) => {
         if (err) {
-            return res.status(409).json({message: 'TokenIsExpired', data: []})
+            logger.warn(`Sikertelen új jelszó létrehozás! Exception: A token lejárt!`, {
+                user: 'System',
+                data: JSON.stringify(err)
+            })
+            return res.status(409).json({message: 'TokenIsExpired', data: {err}})
         }
         try {
-            if (password === cpassword) {
-                const User = mongoose.model('UserInfo')
-                const updateUser = await User.findOne({_id: decoded.userId, email: decoded.email})
+            if (value.password === value.cpassword) {
+                const updateUser = await Users.findOne({_id: decoded.userId, email: decoded.email})
                 const salt = bcrypt.genSaltSync(10)
-                const updatePsw = bcrypt.hashSync(password, salt)
+                const updatePsw = bcrypt.hashSync(value.password, salt)
                 updateUser.password = updatePsw
                 await updateUser.save()
+                updateUser.password = ""
+                logger.info(`Sikeres új jelszó létrehozás!`, {user: 'System', data: JSON.stringify(updateUser)})
                 return res.status(201).json({message: 'success', data: {}})
             } else {
-                return res.status(409).json({message: 'PasswordIsNotEqual', data: []})
+                logger.warn(`Sikertelen új jelszó létrehozás! Exception: A két jelszó nem egyezik!`, {
+                    user: 'System',
+                    data: ''
+                })
+                return res.status(422).json({message: 'PasswordIsNotEqual', data: {}})
             }
         } catch (error) {
+            logger.error("[SERVER] Hiba történt a új jelszó létrehozásánál!", {
+                user: 'System',
+                data: JSON.stringify(error)
+            })
             return res.status(500).json({message: 'error', data: {error}})
         }
     })

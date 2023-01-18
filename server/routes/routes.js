@@ -1,12 +1,12 @@
 const express = require('express')
 const router = express.Router()
-const { authorize } = require('../core/Auth')
+const {authorize} = require('../core/Auth')
 const ROLES = require('../core/Role')
 
+const {signup, signin, confirmEmail, isValidToken} = require('../controllers/AuthController')
+const {addVehicle, getVehicles, getVehicle, updateVehicle, deleteVehicle} = require('../controllers/VehicleController')
+const {getUser, updateUser, forgotPassword, newPassword} = require('../controllers/UserController')
 
-const { signup, signin, confirmEmail, isValidToken } = require('../controllers/AuthController')
-const { addVehicle, getVehicles, getVehicle, updateVehicle, deleteVehicle } = require('../controllers/VehicleController')
-const { getUser, updateUser, forgotPassword, newPassword } = require('../controllers/UserController')
 const {
     getManufactures,
     getCategories,
@@ -23,7 +23,18 @@ const {
     addTransmission,
     getTransmissions
 } = require('../controllers/VehicleParameterController')
-const { getWorkshops, addWorkshop, deleteWorkshop, getMyWorkshop, editWorkshop, getEmployees, addEmployee, deleteEmployee, getVehicleByVin, addServiceEntry } = require('../controllers/WorkshopController')
+const {
+    getWorkshops,
+    addWorkshop,
+    deleteWorkshop,
+    getMyWorkshop,
+    editWorkshop,
+    getEmployees,
+    addEmployee,
+    deleteEmployee,
+    getVehicleByVin,
+    addServiceEntry
+} = require('../controllers/WorkshopController')
 
 
 //AuthController
@@ -31,7 +42,9 @@ router.post('/signup', signup)
 router.post('/signin', signin)
 router.get('/emailConfirmation/:token', confirmEmail)
 router.get('/isValidToken/:token', isValidToken)
-router.get('/isLoggedIn', authorize(ROLES.User), (req, res) => { res.status(200).json({ message: 'ok', data: {} }) })
+router.get('/isLoggedIn', authorize(ROLES.User), (req, res) => {
+    res.status(200).json({message: 'ok', data: {}})
+})
 
 //UserController
 router.get('/getUserData', authorize(ROLES.User), getUser)
@@ -76,7 +89,7 @@ router.post('/addServiceEntry', authorize(ROLES.Owner, ROLES.Employee), addServi
 
 //404 API Request
 router.get('*', (req, res) => {
-    res.status(404).json({ message: "Not Found" })
+    res.status(404).json({message: "Not Found"})
 })
 
 
