@@ -48,6 +48,7 @@ function Settings({handleChangeTab}) {
     const [isLoading, setIsLoading] = useState(true);
 
     const [picture, setPicture] = useState("");
+    const [pictureInBase64, setPictureInBase64] = useState("");
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -60,15 +61,18 @@ function Settings({handleChangeTab}) {
     const [oldPasswordError, setOldPasswordError] = useState(null);
     const [formUnderProcessing, setIsProcessing] = useState(false)
 
+    /* for backend requests */
+    const axiosInstance = axios.create({
+        baseURL: process.env.REACT_APP_BACKEND_URL
+    })
+
     useEffect(() => {
-        const user = auth.user;
-        
-        setPicture(user.picture);
-        setFirstName(user.fName);
-        setLastName(user.lName);
-        setEmail(user.email);
-        setHome(user.home);
-        setPhoneNumber(user.phone);
+        setPicture(auth.user.picture);
+        setFirstName(auth.user.fName);
+        setLastName(auth.user.lName);    
+        setEmail(auth.user.email);
+        setHome(auth.user.home);
+        setPhoneNumber(Number(auth.user.phone));
         setIsLoading(false);
     }, []);
 
@@ -76,7 +80,8 @@ function Settings({handleChangeTab}) {
         setIsProcessing(true)
         const file = e.target.files[0];
         const base64 = await convertBase64(file);
-        setPicture(base64);
+        setPictureInBase64(base64);
+        setPicture(file);
         setIsProcessing(false)
     }
 
@@ -94,15 +99,12 @@ function Settings({handleChangeTab}) {
     }
 
     const getUserDatas = async (token) => {
-        const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_BACKEND_URL
-        })
         const response = await axiosInstance.get("getUserData", {
             headers: {
                 "x-access-token": token
             }
         });
-        const user = response.data.data.user;
+        let user = response.data.data.user;
         let highestRole = 2001;
         Array.from(user.roles).forEach(role => {
             if (role > highestRole) {
@@ -110,6 +112,9 @@ function Settings({handleChangeTab}) {
             } 
         })
         const role = highestRole;
+
+        // TODO: I have to change this code (setAuth..) and write instead auth.user = user and that's all or change the properties only
+
         setAuth({ user, token, role });
     }
 
@@ -117,7 +122,7 @@ function Settings({handleChangeTab}) {
         e.preventDefault()
         if (formUnderProcessing) return;
 
-        const body = {}
+        const formData = new FormData();
 
         setOldPasswordError(null)
         setChangePasswordError(null)
@@ -131,10 +136,8 @@ function Settings({handleChangeTab}) {
                 return;
             }
 
-            body.oldPassword = password;
-            body.newPassword = newPassword;
-            /*formData.append("oldPassword", JSON.stringify(password));
-            formData.append("newPassword", JSON.stringify(newPassword));*/
+            formData.append("oldPassword", JSON.stringify(password));
+            formData.append("newPassword", JSON.stringify(newPassword));
             changedSomething = true;
         } else {
             if (newPassword || reNewPassword) {
@@ -142,65 +145,50 @@ function Settings({handleChangeTab}) {
             }
         }
 
-        // user datas
-        const user = JSON.parse(localStorage.getItem("user")).user;
-
-        if (user.fName !== firstName) {
+        if (auth.user.fName !== firstName) {
             changedSomething = true;
-            body.fname = firstName;
-            //formData.append("fname", JSON.stringify(firstName));
+            formData.append("fname", JSON.stringify(firstName));
         }
-        if (user.lName !== lastName) {
+        if (auth.user.lName !== lastName) {
             changedSomething = true;
-            body.lname = lastName;
-            //formData.append("lname", JSON.stringify(lastName));
+            formData.append("lname", JSON.stringify(lastName));
         }
-        if (user.home !== home) {
+        if (auth.user.home !== home) {
             changedSomething = true;
-            body.home = home;
-            //formData.append("home", JSON.stringify(home));
+            formData.append("home", JSON.stringify(home));
         }
-        if (user.phone !== phoneNumber) {
+        if (auth.user.phone !== phoneNumber) {
             changedSomething = true;
-            body.phone = phoneNumber;
-            //formData.append("phone", JSON.stringify(phoneNumber));
+            formData.append("phone", JSON.stringify(phoneNumber));
         }
 
         // profile picture
         // if user does not have picture attribute the user does not have picture otherwise I have to compare the two base64 string
-        if (user.picture === undefined) {
+        if (auth.user.picture === undefined) {
             if (picture)
             {
                 changedSomething = true;
-                body.picture = picture;
-                //formData.append("picture", JSON.stringify(picture));
+                formData.append("picture", picture);
             }
-        } else {
-            // compare base64 strings
-            if (!(user.picture == picture)) {
-                body.picture = picture;
-                //formData.append("picture", JSON.stringify(picture));
-                changedSomething = true;
-            }
+        } else if(pictureInBase64 !== auth.user.picture) {
+            formData.append("picture", picture);
+            changedSomething = true;
         }
 
         if (changedSomething) {
-            const axiosInstance = axios.create({
-                baseURL: process.env.REACT_APP_BACKEND_URL
-            })
-            const response = await axiosInstance.put("updateUser", body,
-                {headers: {"x-access-token": localStorage.getItem("token")}});
-            const data = await response.data;
-
+            const headers = {
+                'Content-Type': 'multipart/form-data',
+                'x-access-token': localStorage.getItem("token")
+            }
+            const response = await axiosInstance.put("updateUser", formData, { headers });
             await getUserDatas(localStorage.getItem("token"));
-            const freshUser = auth.user;
 
-            setPicture(freshUser.picture);
-            setFirstName(freshUser.fName);
-            setLastName(freshUser.lName);
-            setEmail(freshUser.email);
-            setHome(freshUser.home);
-            setPhoneNumber(freshUser.phone);
+            setPicture(auth.user.picture);
+            setFirstName(auth.user.fName);
+            setLastName(auth.user.lName);
+            setEmail(auth.user.email);
+            setHome(auth.user.home);
+            setPhoneNumber(auth.user.phone);
 
             toast.success("Sikeresen frissítetted a fiókodat!")
             global.location.reload()

@@ -1,12 +1,13 @@
-import {Button, Grid, Skeleton, styled, Toolbar, Typography, useMediaQuery} from '@mui/material';
+import {Button, Grid, Skeleton, styled, Toolbar, Typography, useMediaQuery, useTheme} from '@mui/material';
 import React, {Component, useEffect, useState} from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import theme from "../themes/theme";
 import dayjs from "dayjs";
 import {CalendarPicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import { MyCircularSkeleton, MyTextSkeleton } from '../lib/Skeletons'
 import useAuth from '../hooks/useAuth';
+import { toast } from 'react-toastify';
 const AVATAR_MAX_HEIGHT = '200px';
 const AVATAR_MAX_WIDTH = '200px';
 
@@ -68,17 +69,13 @@ const MyCalendar = styled(CalendarPicker)(({theme}) => ({
 
 function Profile({handleChangeTab, loggedIn}) {
     const { auth } = useAuth();
+    const theme = useTheme();
     const [isLoading, setIsLoading] = useState(true);
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
-    const [wallPaper, setWallpaper] = useState();
-    let today = new Date();
 
     useEffect(() => {
         setIsLoading(true);
-        today = new Date();
-        const user = auth.user;
-        setWallpaper((user && user.picture) ? user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA=')
         setIsLoading(false);
     });
 
@@ -147,7 +144,7 @@ function Profile({handleChangeTab, loggedIn}) {
                     <Grid item>
                         <Grid container direction="row" alignItems="center" justifyContent="flex-start" spacing={1.5}>
                             <Grid item>
-                                <AvatarImage src={wallPaper} alt="profil kép" sx={{margin: 0}} />
+                                <AvatarImage src={auth?.user?.picture !== undefined ? auth.user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profil kép" sx={{margin: 0}} />
                             </Grid>
 
                             <Grid item>
@@ -164,7 +161,7 @@ function Profile({handleChangeTab, loggedIn}) {
                 :
                 (<React.Fragment>
                     <Grid item>
-                        <AvatarImage src={wallPaper} alt="profil kép" />
+                        <AvatarImage src={auth?.user?.picture !== undefined ? auth.user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profil kép" />
                     </Grid>
                     <Grid item>
                         <Typography align="center" variant="h2">
@@ -180,9 +177,14 @@ function Profile({handleChangeTab, loggedIn}) {
             {
                 auth.user
                     ?
-                    <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
-                        Beállítások
-                    </SettingsButton>
+                    <>
+                        <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
+                            Beállítások
+                        </SettingsButton>
+                        <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "", background: theme.palette.common.orange, color: theme.palette.common.white }} onClick={e=>{handleChangeTab(1); localStorage.removeItem("token"); toast.success("Sikeresen kijelentkeztél!"); window.location.href = "/bejelentkezes" }}>
+                            Kijelentkezés
+                        </SettingsButton>
+                    </>
                     :
                     <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/bejelentkezes" onClick={e=>{handleChangeTab(3)}}>
                         Belépés
