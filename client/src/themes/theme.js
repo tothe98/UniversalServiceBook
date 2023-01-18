@@ -5,6 +5,7 @@ const DARK_BLACK = '#24292F';
 const GRAY = 'rgba(102, 102, 102, 0.05)';
 const LIGHTGRAY = '#D0D7DE';
 const BLUE = '#1B30F5';
+const ORANGE = '#f57c00';
 
 let theme = createTheme({
     palette: {
@@ -14,7 +15,8 @@ let theme = createTheme({
             gray: GRAY,
             lightgray: LIGHTGRAY,
             blue: BLUE,
-            _RoseRed: ROSE_RED_HEX
+            _RoseRed: ROSE_RED_HEX,
+            orange: ORANGE,
         }
     },
     mixins: {
@@ -86,7 +88,6 @@ let theme = createTheme({
         }
     },
     shadows: [
-        /* solving fucking The elevation provided <Paper elevation={1}> is not available in the theme. Please make sure that `theme.shadows[1]` is defined. error !!! */
         "none",
         "0px 15px 60px rgba(0, 0, 0, 0.25)",
         "0px 35px 60px rgba(0, 0, 0, 0.25)",

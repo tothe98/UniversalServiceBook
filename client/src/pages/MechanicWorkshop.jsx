@@ -7,6 +7,7 @@ import {
     CardHeader, Divider,
     FormControl,
     Grid,
+    IconButton,
     styled,
     TextField,
     Typography
@@ -16,10 +17,15 @@ import DoNotDisturbOnOutlinedIcon from "@mui/icons-material/DoNotDisturbOnOutlin
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import DateIcon from '@mui/icons-material/DateRangeOutlined';
+import KmIcon from '@mui/icons-material/SpeedOutlined';
+import DocumentsIcon from '@mui/icons-material/FilePresentOutlined';
+import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
 import {toast} from "react-toastify";
-import DocumentsIcon from "@mui/icons-material/FilePresentOutlined";
 import {Editor} from "@tinymce/tinymce-react";
 import {MyCardSkeleton, MyInputSkeleton, MyTextSkeleton} from "../lib/Skeletons";
+import moment from "moment";
+import axios from "axios";
+import useAuth from "../hooks/useAuth";
 
 const ContentBox = styled('div')(({theme}) => ({
     position: "relative",
@@ -29,6 +35,14 @@ const ContentBox = styled('div')(({theme}) => ({
     borderRadius: "5px",
     margin: "11px 0",
     padding: "10px"
+}))
+
+const GalleryImage = styled("img")(({theme}) => ({
+    maxWidth: "200px",
+    maxHeight: "200px",
+    width: "100%",
+    height: "auto",
+    objectFit: "cover"
 }))
 
 const SubTitle = styled(Typography)(({theme}) => ({
@@ -59,58 +73,28 @@ const UploadButton = styled(Button)(({theme}) => ({
 }))
 
 function MechanicWorkshop({handleChangeTab}) {
+    /* authentication context */
+    const { auth } = useAuth();
+
+    /* for backend requests */
+    const axiosInstance = axios.create({
+        baseURL: process.env.REACT_APP_BACKEND_URL
+    })
+
     const [isLoading, setIsLoading] = useState(true);
-    const [vehicles, setVehicles] = useState("");
     const [isFinded, setIsFinded] = useState(false);
     const [findedVehicle, setFindedVehicle] = useState({});
+    const [findedVehicleServiceEntriesCount, setFindedVehicleServiceEntriesCount] = useState(0);
     const [vehicleVin, setVehicleVin] = useState("");
 
     /* new service message datas */
-    let defaultDate = new Date()
-    const [newServiceDate, setNewServiceDate] = useState(defaultDate.toLocaleDateString("en-CA"));
+    const [isAttachmentLoading, setAttachmentLoading] = useState(false);
+    const [mileage, setMileage] = useState(0);
+    const [attachments, setAttachments] = useState([]);
+    const [newServiceDate, setNewServiceDate] = useState(moment().format("YYYY-MM-DD"));
     const serviceMessageHTML = useRef(null);
 
     useEffect(() => {
-        /* getting vehicles from the api */
-        const vehicles = [
-            {
-                carId: "2e2zbahdb2a#",
-                imageUrl: "https://img.jofogas.hu/620x620aspect/Honda_Accord_Tourer_2_0_Elegance__Automata__Xen____659692224244378.jpg",
-                carName: "Honda Accord",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "AA AA 001",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 10,
-                year: 2004,
-                km: 200_422,
-                le: 232
-            },
-            {
-                carId: "2e2zbasdhdb2a#",
-                imageUrl: "https://autosoldalak.hu/auto_kepek/10403/6799b9ecbfd2d79af5820fdadb30d4f6.jpg",
-                carName: "SEAT Alhambra",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "CA AA 021",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 43,
-                year: 2010,
-                km: 130_422,
-                le: 130
-            },
-            {
-                carId: "2e2zbahdveeeb2a#",
-                imageUrl: "https://file.joautok.hu/car-for-sale-images/500x375/auto/img-20210614-140459_7rac40yw.jpg",
-                carName: "Honda Civic",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "AA AB 101",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 212,
-                year: 1998,
-                km: 400_001,
-                le: 90
-            }
-        ]
-        setVehicles(vehicles);
         setIsLoading(false);
     }, []);
 
@@ -129,22 +113,110 @@ function MechanicWorkshop({handleChangeTab}) {
             return;
         }
 
-        Array.from(vehicles).forEach(vehicle => {
-            if (vehicle.chassisNumber === vehicleVin) {
-                setFindedVehicle(vehicle);
-                setIsFinded(true);
-            }
-        })
-
+        const response = await axiosInstance.get(`getVehicleByVin/${vehicleVin}`,
+            {
+                headers: {
+                    "x-access-token": localStorage.getItem("token")
+                }
+            });
+        /* We have to write the date to data  */
+        const data = await response.data;
+        const vehicle = await data.date.vehicle;
+        const serviceEntriesCount = await data.date.serviceEntriesCount;
+        setFindedVehicle(vehicle);
+        setFindedVehicleServiceEntriesCount(serviceEntriesCount);
+        
         if (!findedVehicle) {
             toast.error("Nem található jármű ezzel az alvázszámmal!")
             return;
         }
+
+        setIsFinded(true);
     }
 
-    const handleNewServiceMessage = async () => {
+    const handleNewServiceMessage = () => {
         /* it is a plain html text */
         let textEditorContent = serviceMessageHTML.current.getContent();
+
+        console.log(mileage, textEditorContent, newServiceDate.toString(), findedVehicle['id'])
+
+        const formData = new FormData();
+
+        for (let i = 0; i < attachments.length; i++) {
+            formData.append("pictures", attachments[i]['file']);
+        }
+
+        formData.append("mileage", mileage);
+        formData.append("description", textEditorContent);
+        formData.append("date", moment(newServiceDate).format("YYYY-MM-DD HH:mm"));
+        formData.append("vehicleID", findedVehicle.id)
+
+        const headers = {
+            'Content-Type': 'multipart/form-data',
+            'x-access-token': localStorage.getItem("token")
+        }
+        axiosInstance.post('/addServiceEntry', formData, { headers } )
+            .then((res) => {
+                toast.success("Sikeresen feltöttél egy új szerviz bejegyzést!")
+            })
+            .catch((err) => {
+                console.log(err.response)
+
+                if (err.response.status == 409) {
+                    // mileage is less then the before one
+                } else if (err.response.status == 422) {
+                    toast.error("Hoops! Valamit nem töltöttél ki!")
+                } else if (err.response.status == 400) {
+                    toast.error("Hoop! Több fájlt töltöttél ki!")
+                }
+            });
+    }
+
+    const handleNewAttachmentUpload = async (e) => {
+        setAttachmentLoading(true);
+        const attachments = [];
+
+        for (const file of e.target.files) {
+            const base64 = await convertBase64(file);
+
+            attachments.push({
+                file: file,
+                base64: base64,
+                deleted: false
+            })
+        }
+
+        setAttachments(attachments);
+        setAttachmentLoading(false);
+    }
+
+    /* id = base64 */
+    const handleNewAttachmentDelete = (e, id) => {
+        setAttachmentLoading(true);
+        const newAttachments = [...attachments];
+
+        for (let index = 0; index < newAttachments.length; index++) {
+            const element = newAttachments[index];
+            if (element.base64 == id) {
+                element.deleted = true;
+            }
+        }
+
+        setAttachments(newAttachments);
+        setAttachmentLoading(false);
+    }
+
+    const convertBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+            const fileReader = new FileReader();
+            fileReader.readAsDataURL(file)
+            fileReader.onload = () => {
+                resolve(fileReader.result);
+            }
+            fileReader.onerror = (error) => {
+                reject(error);
+            }
+        })
     }
 
     if (isLoading) {
@@ -194,13 +266,13 @@ function MechanicWorkshop({handleChangeTab}) {
                 <Card variant="outlined">
                     <CardActionArea>
                         <MyCardHeader
-                            title={findedVehicle.carName}
-                            subheader={findedVehicle.chassisNumber}
+                            title={`${findedVehicle.manufacture} ${findedVehicle.model}`}
+                            subheader={findedVehicle.vin}
                         />
 
                         <CardContent>
-                            <Typography variant="h4">Tulajdonos: <a href={"#"}>Tomas a Macska</a></Typography>
-                            <Typography variant="h4">Bejegyzett szervízek: {findedVehicle.registeredServices}</Typography>
+                            <Typography variant="h4">Tulajdonos: <a href={"#"}>{findedVehicle.fullName}</a></Typography>
+                            <Typography variant="h4">Bejegyzett szervízek: { findedVehicleServiceEntriesCount }</Typography>
                         </CardContent>
                     </CardActionArea>
                 </Card>
@@ -227,10 +299,84 @@ function MechanicWorkshop({handleChangeTab}) {
                             }}
                         />
                     </Grid>
+                </Grid>
 
+                <Grid container direction="row" spacing={0} wrap="nowrap" alignItems="center" justifyContent="center">
+                    <Grid item xs={1}>
+                        <Typography align="center">
+                            <KmIcon />
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={11}>
+                        <MyTextField
+                            fullWidth
+                            id="outlined-disabled"
+                            label="Km. óra állás"
+                            type="number"
+                            onChange={e=>{
+                                let kmInput = parseInt(e.target.value+"")
+
+                                if (kmInput < 0)
+                                {
+                                    toast.error("Ez a mező nem lehet kisebb mint 0!");
+                                    return;
+                                }
+                                else if (kmInput >= parseInt(process.env.REACT_APP_MAXIMUM_KM))
+                                {
+                                    toast.error("Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_KM} km!");
+                                    return;
+                                }
+                                setMileage(kmInput);
+                            }}
+                        />
+                    </Grid>
+                </Grid>
+
+                <Grid container direction="row" spacing={0} wrap="nowrap" alignItems="center" justifyContent="center">
+                    <Grid item xs={1}>
+                        <Typography align="center">
+                            <DocumentsIcon />
+                        </Typography>
+                    </Grid>
+
+                    <Grid item xs={11}>
+                        <MyTextField
+                            fullWidth
+                            id="outlined-disabled"
+                            default={2010}
+                            type="file"
+                            multiple={true}
+                            onChange={e=>handleNewAttachmentUpload(e)}
+                        />
+                    </Grid>
+                </Grid>
+
+                <Grid container
+                    direction="row"
+                    wrap="wrap"
+                    justifyContent="center"
+                    gap={2}
+                >
                     {
-                        /* TODO: KM óra állás input */
-                    }
+                        !isAttachmentLoading && Array.from(attachments).map((obj, i) => {
+                            return !obj.deleted && <Grid item key={obj+""+i}>
+                                <Grid container direction="column" gap={2} justifyContent="center" alignItems="center">
+                                    <Grid item>
+                                        <GalleryImage
+                                            src={obj.base64}
+                                            loading="lazy"
+                                        />
+                                    </Grid>
+
+                                    <Grid item>
+                                        <IconButton onClick={e=>handleNewAttachmentDelete(e, obj.base64)}>
+                                            <RemoveCircleOutlineOutlinedIcon color="error" />
+                                        </IconButton>
+                                    </Grid>
+                                </Grid>
+                            </Grid>
+                        })}
                 </Grid>
 
                 <Editor

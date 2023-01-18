@@ -235,6 +235,8 @@ function Garage({handleChangeTab}) {
     const { auth } = useAuth();
 
     /* variables that used for cars */
+    const [currentDeletedVehicleId, setCurrentDeletedVehicleID] = useState("");
+    const [currentDeletedVehicleName, setCurrentDeletedVehicleName] = useState("");
     const [openCarOptions, changeCarOptions] = useState(false);
     const [carAnchorEl, setCarAnchorEL] = useState(null);
     const [carModal, setCarModal] = useState(false);
@@ -262,6 +264,7 @@ function Garage({handleChangeTab}) {
     /* for dialog menu */
     const [deleteVehicleName, setDeleteVehicleName] = useState('');
     const [deleteVehicleID, setDeleteVehicleID] = useState('');
+    const [successVehicleDelete, setSuccessVehicleDelete] = useState(false);
 
     /* for snackbar*/
     const [isSnackOpen, setIsSnackOpen] = useState(false);
@@ -357,20 +360,26 @@ function Garage({handleChangeTab}) {
         formData.append("mileage", body.mileage);
         formData.append("licenseNumber", body.licenseNumber);
 
-        for (var [key, value] of formData.entries()) { 
-            console.log(key, value);
-        }
-
         const headers = {
             'Content-Type': 'multipart/form-data',
             'x-access-token': localStorage.getItem("token")
         }
-        const response = await axiosInstance.post("/addVehicle", formData, { headers });
+        const response = await axiosInstance.post("/addVehicle", formData, { headers })
+                        .then((response) => {
+                            toast.success("Sikeresen hozzáadtál egy új járművet!");
+                            setIsAdding(false);
+                        })
+                        .catch((error) => {
+                            if (error.response.status == 422) {
+                                toast.warning("Hiba! Nem töltöttél ki minden mezőt!");
+                                return;
+                            }
 
-        if (response.status == 200) {
-            toast.success("Sikeresen hozzáadtál egy új járművet!");
-            setIsAdding(false);
-        }
+                            if (error.response.status == 409) {
+                                toast.warning("Hiba! Ilyen alvázszámmal már létezik jármű!");
+                                return;
+                            }
+                        });
     }
 
     /* vehicle search method(s) */
@@ -547,6 +556,40 @@ function Garage({handleChangeTab}) {
         setVehicleModels(arr);
     }
     /* end data request methods */
+
+    /* helper methods for car delete */
+    const findVehicleNameById = (id) => {
+        let vehicleName = "";
+        visibleVehicles.forEach(x => {
+            if (x.id == id) {
+                vehicleName = `${x['manufacture'] + " " + x['model']}`;
+                return;
+            }
+        })
+        setCurrentDeletedVehicleName(vehicleName);
+    }
+    const deleteVehicle = async (id) => {
+        if (!id) return;
+
+        axiosInstance.delete(`/deleteVehicle/${id}`, {
+                headers: {
+                    "x-access-token": localStorage.getItem("token")
+                }
+            })
+            .then((response) => {
+                if (response.status == 202) {
+                    setSuccessVehicleDelete(true);
+
+                    // remove vehicle from vehicles and afterwards from the visiblevehicles
+                    const newVehicles = [...vehicles].map((x) => (x.id !== id));
+                    setVehicles(newVehicles);
+                    setVisibleVehicles(newVehicles);
+                }
+            })
+            .catch((err) => {
+                setSuccessVehicleDelete(false);
+            })
+    }
 
     /* handle searching... */
     useEffect(() => {
@@ -1244,7 +1287,7 @@ function Garage({handleChangeTab}) {
 
                                     <AddCarSubTitle variant="h4">
                                         Kép Galléria
-                                    </AddCarSubTitle>
+                                    </AddCarSubTitle>0
 
                                     <Grid container direction="row" spacing={0} wrap="nowrap" alignItems="center" justifyContent="center">
                                         <Grid item xs={1}>
@@ -1329,8 +1372,6 @@ function Garage({handleChangeTab}) {
                                         <IconButton aria-label="settings" onClick={e => {
                                             changeCarOptions(true);
                                             setCarAnchorEL(e.target)
-                                            setDeleteVehicleID(vehicle.carId)
-                                            setDeleteVehicleName(vehicle.carName)
                                         }}>
                                             <MoreVertIcon/>
                                         </IconButton>
@@ -1344,7 +1385,7 @@ function Garage({handleChangeTab}) {
                                     <Grid item>
                                         <CarCardMedia
                                             component="img"
-                                            image={`${vehicle['pictures'][0]}`}
+                                            image={`${vehicle['preview']}`}
                                             alt={vehicle.manufacture+" "+vehicle.model}
                                         />
                                     </Grid>
@@ -1379,9 +1420,9 @@ function Garage({handleChangeTab}) {
                                     {
                                         underMD
                                             ?
-                                            <Chip label={moment(vehicle.vintage).format("YYYY-MM-DD")} variant="outlined"/>
+                                            <Chip label={moment(vehicle.vintage).format("YYYY")} variant="outlined"/>
                                             :
-                                            <><Chip label={moment(vehicle.vintage).format("YYYY-MM-DD")} variant="outlined"/>
+                                            <><Chip label={moment(vehicle.vintage).format("YYYY")} variant="outlined"/>
                                                 <Chip label={`${vehicle.mileage} km`} variant="outlined"/>
                                                 <Chip label={`${vehicle.performanceLE} LE`} variant="outlined"/></>
                                     }
@@ -1405,9 +1446,11 @@ function Garage({handleChangeTab}) {
                     >
                         <Divider/>
                         <Button startIcon={<DoNotDisturbOnOutlinedIcon sx={{color: "red"}}/>}>
-                            <MenuText variant="h4" onClick={e => {
+                            <MenuText variant="h4" onClick={async (e) => {
                                 setCarModal(true);
                                 changeCarOptions(false)
+                                setCurrentDeletedVehicleID(vehicle.id+"");
+                                findVehicleNameById(vehicle.id);
                             }}>Törlés</MenuText>
                         </Button>
                         <Divider/>
@@ -1422,7 +1465,7 @@ function Garage({handleChangeTab}) {
                         >
                             <Button startIcon={<ShareOutlinedIcon/>}>
                                 <MenuText variant="h4"
-                                          onClick={e => CopyToClipBoard(`${process.env.REACT_APP_CLIENT_URL}/jarmuveim/${vehicle.carId}`)}>Megosztás</MenuText>
+                                          onClick={e => CopyToClipBoard(`${process.env.REACT_APP_CLIENT_URL}/jarmuveim/${vehicle.id}`)}>Megosztás</MenuText>
                             </Button>
                         </Tooltip>
                     </CarOptionsMenu>
@@ -1442,21 +1485,22 @@ function Garage({handleChangeTab}) {
             <DialogContent>
                 <CarDialogText id="alert-dialog-description">
                     Biztosan törölni kívánja az alábbi elemet?
-                    ( <b>{deleteVehicleName}</b> )
+                    ( <b>{currentDeletedVehicleName}</b> )
                 </CarDialogText>
             </DialogContent>
 
             <DialogActions>
                 <Button onClick={e=>setCarModal(!carModal)} variant="contained" color="success">Mégsem</Button>
-                <Button onClick={e=>{setCarModal(!carModal); setIsSnackOpen(!isSnackOpen)}} variant="contained" color="error" autoFocus>
+                <Button onClick={e=>{deleteVehicle(currentDeletedVehicleId); setCarModal(!carModal); setIsSnackOpen(!isSnackOpen)}} variant="contained" color="error" autoFocus>
                 Törlés
                 </Button>
             </DialogActions>
         </CarDialog>
 
         <Snackbar open={isSnackOpen} autoHideDuration={6000} onClose={e=>setIsSnackOpen(!isSnackOpen)}>
-            <Alert onClose={e=>setIsSnackOpen(!isSnackOpen)} severity="success" sx={{ width: '100%' }}>
-                Sikeresen törölted az alábbi elemet ({deleteVehicleName})!
+            <Alert onClose={e=>setIsSnackOpen(!isSnackOpen)} severity={ successVehicleDelete ? "success" : "error" } sx={{ width: '100%' }}>
+                { successVehicleDelete ? `Sikeresen törölted az alábbi elemet (${currentDeletedVehicleName})!` : `Az alábbi elem
+                ${currentDeletedVehicleName} törlése sikertelen volt!` }
             </Alert>
         </Snackbar>
     </React.Fragment>)
