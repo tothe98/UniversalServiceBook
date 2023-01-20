@@ -209,15 +209,24 @@ function App() {
                 <Route path='/beallitasok' element={<Settings handleChangeTab={handleChangeTab} /> } />
             </Route>   
 
-            { /* owner */ }
-            <Route element={<RequireAuth allowedRoles={[Roles.Owner]} />}>
-                <Route path='/adminisztracio' element={<OwnerPage handleChangeTab={handleChangeTab} /> } />
-            </Route>
-
-            { /* admin */ }
-            <Route element={<RequireAuth allowedRoles={[Roles.Admin]} />}>
-                <Route path='/adminisztracio' element={<AdminPage handleChangeTab={handleChangeTab} /> } />
-            </Route>
+            {
+                auth.user 
+                ? 
+                    auth.role == Roles.Owner 
+                    ? 
+                        <Route element={<RequireAuth allowedRoles={[Roles.Owner]} />}>
+                            <Route path='/adminisztracio' element={<OwnerPage handleChangeTab={handleChangeTab} /> } />
+                        </Route>
+                    :
+                        auth.role == Roles.Admin
+                        ?
+                            <Route element={<RequireAuth allowedRoles={[Roles.Admin]} />}>
+                                <Route path='/adminisztracio' element={<AdminPage handleChangeTab={handleChangeTab} /> } />
+                            </Route>
+                        :
+                        undefined
+                : undefined
+            }
             
             { /* Forbidden requests */ }
             <Route path='/megtagadva' element={<Unauthorized />} />

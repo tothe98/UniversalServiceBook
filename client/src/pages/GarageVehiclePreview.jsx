@@ -511,6 +511,21 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                             </Grid>
                                         </Grid>
                                     </Grid>
+                                    
+                                    {
+                                        vehicle?.licenseNumber
+                                        &&
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography>Rendszám: </Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue>{vehicle.licenseNumber}</CarDetailValue>
+                                                </Grid>
+                                            </Grid>
+                                        </Grid>
+                                    }
 
                                     <Grid item>
                                         <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
@@ -646,16 +661,21 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                         </Grid>
                                     </Grid>
 
-                                    <Grid item>
-                                        <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
-                                            <Grid item>
-                                                <Typography>Műszaki vizsga érvényessége: </Typography>
-                                            </Grid>
-                                            <Grid item>
-                                                <CarDetailValue>{ moment(vehicle.mot).format("YYYY-MM-DD") }</CarDetailValue>
+                                    {
+                                        vehicle?.mot
+                                        &&
+                                        <Grid item>
+                                            <Grid container direction="row" spacing={CAR_DETAiL_SPACING}>
+                                                <Grid item>
+                                                    <Typography>Műszaki vizsga érvényessége: </Typography>
+                                                </Grid>
+                                                <Grid item>
+                                                    <CarDetailValue>{ moment(vehicle.mot).format("YYYY-MM-DD") }</CarDetailValue>
+                                                </Grid>
                                             </Grid>
                                         </Grid>
-                                    </Grid>
+                                    }
+                                    
                                 </Grid>
                             </CarDetailGridItem>
                             { /* end of car detail */ }

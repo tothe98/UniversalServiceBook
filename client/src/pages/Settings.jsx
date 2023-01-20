@@ -72,7 +72,7 @@ function Settings({handleChangeTab}) {
         setLastName(auth.user.lName);    
         setEmail(auth.user.email);
         setHome(auth.user.home);
-        setPhoneNumber(Number(auth.user.phone));
+        setPhoneNumber(auth.user.phone);
         setIsLoading(false);
     }, []);
 
@@ -113,7 +113,12 @@ function Settings({handleChangeTab}) {
         })
         const role = highestRole;
 
-        // TODO: I have to change this code (setAuth..) and write instead auth.user = user and that's all or change the properties only
+        setPicture(user.picture);
+        setFirstName(user.fName);
+        setLastName(user.lName);
+        setEmail(user.email);
+        setHome(user.home);
+        setPhoneNumber(user.phone);
 
         setAuth({ user, token, role });
     }
@@ -136,8 +141,8 @@ function Settings({handleChangeTab}) {
                 return;
             }
 
-            formData.append("oldPassword", JSON.stringify(password));
-            formData.append("newPassword", JSON.stringify(newPassword));
+            formData.append("oldPassword", password);
+            formData.append("newPassword", newPassword);
             changedSomething = true;
         } else {
             if (newPassword || reNewPassword) {
@@ -147,19 +152,19 @@ function Settings({handleChangeTab}) {
 
         if (auth.user.fName !== firstName) {
             changedSomething = true;
-            formData.append("fname", JSON.stringify(firstName));
+            formData.append("fName", firstName);
         }
         if (auth.user.lName !== lastName) {
             changedSomething = true;
-            formData.append("lname", JSON.stringify(lastName));
+            formData.append("lName", lastName);
         }
         if (auth.user.home !== home) {
             changedSomething = true;
-            formData.append("home", JSON.stringify(home));
+            formData.append("home", home);
         }
         if (auth.user.phone !== phoneNumber) {
             changedSomething = true;
-            formData.append("phone", JSON.stringify(phoneNumber));
+            formData.append("phone", phoneNumber);
         }
 
         // profile picture
@@ -182,13 +187,6 @@ function Settings({handleChangeTab}) {
             }
             const response = await axiosInstance.put("updateUser", formData, { headers });
             await getUserDatas(localStorage.getItem("token"));
-
-            setPicture(auth.user.picture);
-            setFirstName(auth.user.fName);
-            setLastName(auth.user.lName);
-            setEmail(auth.user.email);
-            setHome(auth.user.home);
-            setPhoneNumber(auth.user.phone);
 
             toast.success("Sikeresen frissítetted a fiókodat!")
             global.location.reload()

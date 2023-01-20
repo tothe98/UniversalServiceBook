@@ -1,0 +1,31 @@
+"filename", "language", "JavaScript", "JavaScript React", "JSON", "HTML", "comment", "blank", "total"
+"d:\Web Projects\UniversalServiceBook\client\package-lock.json", "JSON", 0, 0, 48, 0, 0, 0, 48
+"d:\Web Projects\UniversalServiceBook\client\package.json", "JSON", 0, 0, 1, 0, 0, 0, 1
+"d:\Web Projects\UniversalServiceBook\client\public\index.html", "HTML", 0, 0, 0, 5, 0, 0, 5
+"d:\Web Projects\UniversalServiceBook\client\src\App.js", "JavaScript", 10, 0, 0, 0, 0, -1, 9
+"d:\Web Projects\UniversalServiceBook\client\src\global\Profile.jsx", "JavaScript React", 0, 2, 0, 0, 0, 0, 2
+"d:\Web Projects\UniversalServiceBook\client\src\pages\AdminPage.jsx", "JavaScript React", 0, 365, 0, 0, 4, 35, 404
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Garage.jsx", "JavaScript React", 0, 29, 0, 0, 1, 2, 32
+"d:\Web Projects\UniversalServiceBook\client\src\pages\GarageVehiclePreview.jsx", "JavaScript React", 0, 1, 0, 0, 2, 6, 9
+"d:\Web Projects\UniversalServiceBook\client\src\pages\MechanicWorkshop.jsx", "JavaScript React", 0, 119, 0, 0, 3, 24, 146
+"d:\Web Projects\UniversalServiceBook\client\src\pages\OwnerPage.jsx", "JavaScript React", 0, 219, 0, 0, 4, 23, 246
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Settings.jsx", "JavaScript React", 0, -4, 0, 0, -8, 0, -12
+"d:\Web Projects\UniversalServiceBook\client\src\themes\theme.js", "JavaScript", 2, 0, 0, 0, -1, 0, 1
+"d:\Web Projects\UniversalServiceBook\server\config\logger.js", "JavaScript", 33, 0, 0, 0, 0, 3, 36
+"d:\Web Projects\UniversalServiceBook\server\controllers\AuthController.js", "JavaScript", 62, 0, 0, 0, 0, -3, 59
+"d:\Web Projects\UniversalServiceBook\server\controllers\UserController.js", "JavaScript", 49, 0, 0, 0, 0, 2, 51
+"d:\Web Projects\UniversalServiceBook\server\controllers\VehicleController.js", "JavaScript", 82, 0, 0, 0, 0, 3, 85
+"d:\Web Projects\UniversalServiceBook\server\controllers\VehicleParameterController.js", "JavaScript", 18, 0, 0, 0, 0, -9, 9
+"d:\Web Projects\UniversalServiceBook\server\controllers\WorkshopController.js", "JavaScript", 84, 0, 0, 0, -4, -13, 67
+"d:\Web Projects\UniversalServiceBook\server\core\Auth.js", "JavaScript", 7, 0, 0, 0, 0, 0, 7
+"d:\Web Projects\UniversalServiceBook\server\core\DatabaseInitialization.js", "JavaScript", 39, 0, 0, 0, 0, 3, 42
+"d:\Web Projects\UniversalServiceBook\server\core\FilesManagment.js", "JavaScript", 7, 0, 0, 0, 0, 1, 8
+"d:\Web Projects\UniversalServiceBook\server\core\Mailer.js", "JavaScript", 1, 0, 0, 0, 0, 0, 1
+"d:\Web Projects\UniversalServiceBook\server\models\ServiceEntryModel.js", "JavaScript", 2, 0, 0, 0, 0, -1, 1
+"d:\Web Projects\UniversalServiceBook\server\models\ValidationSchema.js", "JavaScript", 77, 0, 0, 0, 0, 7, 84
+"d:\Web Projects\UniversalServiceBook\server\models\VehicleModel.js", "JavaScript", 1, 0, 0, 0, 0, 0, 1
+"d:\Web Projects\UniversalServiceBook\server\package-lock.json", "JSON", 0, 0, 354, 0, 0, 0, 354
+"d:\Web Projects\UniversalServiceBook\server\package.json", "JSON", 0, 0, 5, 0, 0, 0, 5
+"d:\Web Projects\UniversalServiceBook\server\routes\routes.js", "JavaScript", 13, 0, 0, 0, 0, 0, 13
+"d:\Web Projects\UniversalServiceBook\server\server.js", "JavaScript", -19, 0, 0, 0, -11, -1, -31
+"Total", "-", 468, 731, 408, 5, -10, 81, 1683
