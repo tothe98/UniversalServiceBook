@@ -121,8 +121,8 @@ function MechanicWorkshop({handleChangeTab}) {
             });
         /* We have to write the date to data  */
         const data = await response.data;
-        const vehicle = await data.date.vehicle;
-        const serviceEntriesCount = await data.date.serviceEntriesCount;
+        const vehicle = await data.data.vehicle;
+        const serviceEntriesCount = await data.data.serviceEntriesCount;
         setFindedVehicle(vehicle);
         setFindedVehicleServiceEntriesCount(serviceEntriesCount);
         

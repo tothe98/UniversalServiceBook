@@ -23,6 +23,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import DoNotDisturbOnOutlinedIcon from "@mui/icons-material/DoNotDisturbOnOutlined";
 import ShareOutlinedIcon from "@mui/icons-material/ShareOutlined";
 import {MyCardSkeleton, MyTextSkeleton} from "../lib/Skeletons";
+import axios from 'axios';
+import moment from 'moment';
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 
@@ -113,6 +115,11 @@ const CarDialogText = styled(DialogContentText)(({theme}) => ({
 }))
 
 function Home({handleChangeTab}) {
+    /* network settings */
+    const axiosInstance = axios.create({
+        baseURL: process.env.REACT_APP_BACKEND_URL
+    })
+
     /* loading screen variables */
     const [isLoading, setIsLoading] = useState(true);
 
@@ -121,19 +128,32 @@ function Home({handleChangeTab}) {
     const [carModal, setCarModal] = useState(false);
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
-    const [vehicles, setVehicles] = useState([]);
     const [serviceInformations, setServiceInformations] = useState([]);
-    const [openCopyToolTip, setOpenCopyToolTip] = useState(false);
+    const [lastActivityVehicles, setLastActivityVehicles] = useState([]);
 
     /* for dialog menu */
     const [deleteVehicleName, setDeleteVehicleName] = useState('');
-    const [deleteVehicleID, setDeleteVehicleID] = useState('');
 
     /* for snackbar */
     const [isSnackOpen, setIsSnackOpen] = useState(false);
 
     const CopyToClipBoard = (url) => {
         navigator.clipboard.writeText(url);
+    }
+
+    const getLastActivityVehicles = async (token, vehicleIDs) => {
+        setIsLoading(true);
+        const arr = [];
+        for (const id of vehicleIDs) {
+                await axiosInstance.get(`/getVehicle/${id}`, { headers: { 'x-access-token': token } })
+                    .then(res => {
+                        const v = res.data.data.vehicle;
+                        v['serviceEntries'] = res.data.data.serviceEntries;
+                        arr.push(v)
+                    })
+        }
+        setLastActivityVehicles(arr);
+        setIsLoading(false);
     }
 
     useEffect(() => {
@@ -203,7 +223,7 @@ function Home({handleChangeTab}) {
             }
         ]
 
-        setVehicles(vehicles);
+        if (localStorage.getItem("last_viewed")) getLastActivityVehicles(localStorage.getItem("token"), Array.from(JSON.parse(localStorage.getItem("last_viewed"))));
         setServiceInformations(serviceInformations);
         setIsLoading(false);
     }, []);
@@ -229,122 +249,86 @@ function Home({handleChangeTab}) {
             <SubTitle variant='h3'>Legutóbbi aktivításaim</SubTitle>
 
             {
-                vehicles.map((vehicle,i) => {
-                    return <ContentBox key={vehicle+i}>
-                        <Grid container direction="column">
-                            <Grid item>
-                                <CarCard>
-                                    <CarCardHeader
-                                        title={vehicle.carName}
-                                        action={
-                                            <IconButton aria-label="settings" onClick={e => {
-                                                changeCarOptions(true);
-                                                setCarAnchorEL(e.target)
-                                                setDeleteVehicleID(vehicle.carId)
-                                                setDeleteVehicleName(vehicle.carName)
-                                            }}>
-                                                <MoreVertIcon/>
-                                            </IconButton>
-                                        }
-                                    >
-                                    </CarCardHeader>
+                localStorage.getItem("last_viewed")
+                ?
+                    Array.from(JSON.parse(localStorage.getItem("last_viewed"))).length > 0
+                    ?
+                    <>
+                        {
+                            lastActivityVehicles
+                                .map((vehicle, i) => {
+                                    return <ContentBox key={vehicle+i}>
+                                            <Grid container direction="column">
+                                                <Grid item>
+                                                    <CarCard>
+                                                        <CarCardHeader
+                                                            title={`${vehicle.manufacture} ${vehicle.model}`}
+                                                        >
+                                                        </CarCardHeader>
 
-                                    <Grid container direction={underMD ? "column" : "center"}
-                                          alignItems={underMD ? "center" : "flex-start"}
-                                          justifyContent={underMD && "center"}>
-                                        <Grid item>
-                                            <CarCardMedia
-                                                component="img"
-                                                image={vehicle.imageUrl}
-                                                alt={vehicle.carName}
-                                            />
-                                        </Grid>
+                                                        <Grid container direction={underMD ? "column" : "center"}
+                                                            alignItems={underMD ? "center" : "flex-start"}
+                                                            justifyContent={underMD && "center"}>
+                                                            <Grid item>
+                                                                <CarCardMedia
+                                                                    component="img"
+                                                                    image={vehicle['pictures'][0]}
+                                                                    alt={`${vehicle.manufacture} ${vehicle.model}`}
+                                                                />
+                                                            </Grid>
 
-                                        <Grid item>
-                                            <CarCardContent>
-                                                <Grid container direction="column" justifyContent="center">
-                                                    <Grid container direction="row" spacing={2}>
-                                                        <Grid item><Typography variant="h4">Alvázszám:</Typography></Grid>
-                                                        <Grid item><Typography
-                                                            variant="h4">{vehicle.chassisNumber}</Typography></Grid>
-                                                    </Grid>
+                                                            <Grid item>
+                                                                <CarCardContent>
+                                                                    <Grid container direction="column" justifyContent="center">
+                                                                        <Grid container direction="row" spacing={2}>
+                                                                            <Grid item><Typography variant="h4">Alvázszám:</Typography></Grid>
+                                                                            <Grid item><Typography
+                                                                                variant="h4">{vehicle.vin}</Typography></Grid>
+                                                                        </Grid>
 
-                                                    <Grid container direction="row" spacing={2}>
-                                                        <Grid item><Typography variant="h4">Rendszám:</Typography></Grid>
-                                                        <Grid item><Typography
-                                                            variant="h4">{vehicle.licensePlateNumber}</Typography></Grid>
-                                                    </Grid>
+                                                                        <Grid container direction="row" spacing={2}>
+                                                                            <Grid item><Typography variant="h4">Rendszám:</Typography></Grid>
+                                                                            <Grid item><Typography
+                                                                                variant="h4">{vehicle.licenseNumber}</Typography></Grid>
+                                                                        </Grid>
 
-                                                    <Grid container direction="row" spacing={2}>
-                                                        <Grid item><Typography variant="h4">Motorszám:</Typography></Grid>
-                                                        <Grid item><Typography
-                                                            variant="h4">{vehicle.motorNumber}</Typography></Grid>
-                                                    </Grid>
+                                                                        <Grid container direction="row" spacing={2}>
+                                                                            <Grid item><Typography variant="h4">Bejegyzett
+                                                                                szervízek:</Typography></Grid>
+                                                                            <Grid item><Typography
+                                                                                variant="h4">{vehicle.serviceEntries.length}</Typography></Grid>
+                                                                        </Grid>
+                                                                    </Grid>
+                                                                </CarCardContent>
+                                                            </Grid>
+                                                        </Grid>
 
-                                                    <Grid container direction="row" spacing={2}>
-                                                        <Grid item><Typography variant="h4">Bejegyzett
-                                                            szervízek:</Typography></Grid>
-                                                        <Grid item><Typography
-                                                            variant="h4">{vehicle.registeredServices}</Typography></Grid>
-                                                    </Grid>
+                                                        <CarCardActions>
+                                                            {
+                                                                underMD
+                                                                    ?
+                                                                    <Chip label={moment(vehicle.vintage).format("YYYY")} variant="outlined"/>
+                                                                    :
+                                                                    <><Chip label={moment(vehicle.vintage).format("YYYY")} variant="outlined"/>
+                                                                        <Chip label={`${vehicle.mileage} km`} variant="outlined"/>
+                                                                        <Chip label={`${vehicle.performanceLE} LE`} variant="outlined"/></>
+                                                            }
+                                                            <ViewButton sx={{marginLeft: "auto"}} component={Link}
+                                                                        to={`/jarmuveim/${vehicle['_id']}`} onClick={e => {
+                                                                handleChangeTab(1)
+                                                            }}>Megtekintem</ViewButton>
+                                                        </CarCardActions>
+                                                    </CarCard>
                                                 </Grid>
-                                            </CarCardContent>
-                                        </Grid>
-                                    </Grid>
-
-                                    <CarCardActions>
-                                        {
-                                            underMD
-                                                ?
-                                                <Chip label={vehicle.year} variant="outlined"/>
-                                                :
-                                                <><Chip label={vehicle.year} variant="outlined"/>
-                                                    <Chip label={`${vehicle.km} km`} variant="outlined"/>
-                                                    <Chip label={`${vehicle.le} LE`} variant="outlined"/></>
-                                        }
-                                        <ViewButton sx={{marginLeft: "auto"}} component={Link}
-                                                    to={`/jarmuveim/${vehicle.carId}`} onClick={e => {
-                                            handleChangeTab(1)
-                                        }}>Megtekintem</ViewButton>
-                                    </CarCardActions>
-                                </CarCard>
-                            </Grid>
-                        </Grid>
-
-                        <CarOptionsMenu
-                            id="basic-menu"
-                            anchorEl={carAnchorEl}
-                            open={openCarOptions}
-                            onClose={e => changeCarOptions(!openCarOptions)}
-                            MenuListProps={{
-                                'aria-labelledby': 'basic-button',
-                            }}
-                        >
-                            <Divider/>
-                            <Button startIcon={<DoNotDisturbOnOutlinedIcon sx={{color: "red"}}/>}>
-                                <MenuText variant="h4" onClick={e => {
-                                    setCarModal(true);
-                                    changeCarOptions(false)
-                                }}>Törlés</MenuText>
-                            </Button>
-                            <Divider/>
-                            <Tooltip
-                                PopperProps={{
-                                    disablePortal: true,
-                                }}
-                                open={openCopyToolTip}
-                                onClick={e => setOpenCopyToolTip(!openCopyToolTip)}
-                                onClose={e => setOpenCopyToolTip(!openCopyToolTip)}
-                                title="Másolva a vágólapodra!"
-                            >
-                                <Button startIcon={<ShareOutlinedIcon/>}>
-                                    <MenuText variant="h4"
-                                              onClick={e => CopyToClipBoard(`${process.env.REACT_APP_CLIENT_URL}/jarmuveim/${vehicle.carId}`)}>Megosztás</MenuText>
-                                </Button>
-                            </Tooltip>
-                        </CarOptionsMenu>
-                    </ContentBox>
-                })
+                                            </Grid>
+                                        </ContentBox>
+                                })
+                        }
+                    </>
+                    :
+                    <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
+                :
+                <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
             }
 
             <SubTitle variant='h3' sx={{marginTop: "2rem"}}>Szervíz Információk</SubTitle>

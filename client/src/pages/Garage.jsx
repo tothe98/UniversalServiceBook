@@ -1287,7 +1287,9 @@ function Garage({handleChangeTab}) {
 
                                     <AddCarSubTitle variant="h4">
                                         Kép Galléria
-                                    </AddCarSubTitle>0
+                                    </AddCarSubTitle>
+
+                                    { /* TODO: I can't delete the gallery image. */ }
 
                                     <Grid container direction="row" spacing={0} wrap="nowrap" alignItems="center" justifyContent="center">
                                         <Grid item xs={1}>
@@ -1428,6 +1430,27 @@ function Garage({handleChangeTab}) {
                                     }
                                     <ViewButton sx={{marginLeft: "auto"}} component={Link}
                                                 to={`/jarmuveim/${vehicle.id}`} onClick={e => {
+                                        if (!localStorage.getItem("last_viewed")) {
+                                            localStorage.setItem("last_viewed", JSON.stringify([]));
+                                        }
+
+                                        let exists = false;
+                                        let ids = Array.from(JSON.parse(localStorage.getItem("last_viewed")));
+
+                                        for (let i = 0; i < ids.length; i++) {
+                                            if (ids[i] == vehicle.id) {
+                                                exists = true;
+                                            }
+                                        }
+
+                                        if (!exists) {
+                                            if (ids.length > 4) {
+                                                ids.unshift(vehicle.id);
+                                                ids.pop();
+                                            }
+                                            ids.unshift(vehicle.id);
+                                            localStorage.setItem("last_viewed", JSON.stringify(ids));
+                                        }
                                         handleChangeTab(1)
                                     }}>Megtekintem</ViewButton>
                                 </CarCardActions>

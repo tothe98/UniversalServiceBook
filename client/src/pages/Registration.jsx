@@ -25,8 +25,8 @@ function Registration() {
             baseURL: process.env.REACT_APP_BACKEND_URL
         })
         const response = await axiosInstance.post("signup", {
-            fname: firstName,
-            lname: lastName,
+            fName: firstName,
+            lName: lastName,
             email: email,
             password: password,
             phone: phoneNumber ? phoneNumber : ""
