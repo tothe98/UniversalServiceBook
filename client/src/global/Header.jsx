@@ -83,7 +83,7 @@ function Header({handleChangeTab}) {
 
     const handleLogout = (e) => {
         localStorage.removeItem("token")
-        localStorage.removeItem("user")
+        localStorage.removeItem("last_viewed")
         toast.success("Sikeresen kijelentkeztél!")
         global.location.reload()
         global.location.href="/"

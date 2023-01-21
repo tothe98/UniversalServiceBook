@@ -181,7 +181,12 @@ function Profile({handleChangeTab, loggedIn}) {
                         <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "" }} component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3)}}>
                             Beállítások
                         </SettingsButton>
-                        <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "", background: theme.palette.common.orange, color: theme.palette.common.white }} onClick={e=>{handleChangeTab(1); localStorage.removeItem("token"); toast.success("Sikeresen kijelentkeztél!"); window.location.href = "/bejelentkezes" }}>
+                        <SettingsButton sx={{marginTop: "10px", marginLeft: underLarge ? "auto" : "", background: theme.palette.common.orange, color: theme.palette.common.white }} onClick={e=>{
+                            handleChangeTab(1); 
+                            localStorage.removeItem("token");
+                            localStorage.removeItem("last_viewed");
+                            toast.success("Sikeresen kijelentkeztél!");
+                            window.location.href = "/bejelentkezes" }}>
                             Kijelentkezés
                         </SettingsButton>
                     </>

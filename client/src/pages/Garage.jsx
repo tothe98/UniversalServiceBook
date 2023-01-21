@@ -251,6 +251,7 @@ function Garage({handleChangeTab}) {
 
     /* screen variables */
     const [isLoading, setIsLoading] = useState(true);
+    const [isModified, setIsModified] = useState(false);
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
     /* end of screen variables */
@@ -291,8 +292,8 @@ function Garage({handleChangeTab}) {
     const [newVehicleTransmission, setNewVehicleTransmission] = useState("");
     const [newVehicleDocument, setNewVehicleDocument] = useState("");
     const [newVehicleDocumentValidity, setNewVehicleDocumentValidity] = useState(moment().format("YYYY-MM-DD"));
-    const [newVehicleGalleryInBase64, setNewVehicleGalleryInBase64] = useState([]);
     const [newVehicleGallery, setNewVehicleGallery] = useState([]);
+    const [newVehicleGalleryImageLoading, setNewVehicleGalleryImageLoading] = useState(false);
 
     /* We use it for add error message to the new car component. */
     const [AddCarErrorMessageBox, setAddCarErrorMessageBox] = useState("");
@@ -341,7 +342,7 @@ function Garage({handleChangeTab}) {
         const formData = new FormData();
         formData.append("preview", newVehicleWallpaper);
         for (let i = 0; i < newVehicleGallery.length; i++) {
-            formData.append("picture", newVehicleGallery[i]);
+            formData.append("picture", newVehicleGallery[i].file);
         }
         formData.append("manufacture", body.manufacture);
         formData.append("model", body.model);
@@ -368,6 +369,7 @@ function Garage({handleChangeTab}) {
                         .then((response) => {
                             toast.success("Sikeresen hozzáadtál egy új járművet!");
                             setIsAdding(false);
+                            setIsModified(true);
                         })
                         .catch((error) => {
                             if (error.response.status == 422) {
@@ -395,35 +397,35 @@ function Garage({handleChangeTab}) {
         setNewVehicleWallpaper(file)
     }
     const handleNewVehicleGalleryImageDelete = (e, id) => {
-        let index = -1;
-        let base64 = null;
-        for (let i = 0; i < newVehicleGallery.length; i++) {
-            if (newVehicleGallery[i] === id) {
-                index = i;
-                base64 = newVehicleGallery[i];
-                break;
+        setNewVehicleGalleryImageLoading(true);
+        const newAttachments = [...newVehicleGallery];
+
+        for (let index = 0; index < newAttachments.length; index++) {
+            const element = newAttachments[index];
+            if (element.base64 == id) {
+                element.deleted = true;
             }
         }
 
-        let newArray = [];
-        newVehicleGallery.forEach(img => {
-            if (img !== base64) {
-                newArray.push(img);
-            }
-        })
-        setNewVehicleGallery(newArray)
+        setNewVehicleGallery(newAttachments);
+        setNewVehicleGalleryImageLoading(false);
     }
     const handleNewVehicleGalleryUpload = async (e) => {
-        const readedImages = [...newVehicleGallery];
-        const readedImages2 = [...newVehicleGalleryInBase64];
-        for (const file of e.target.files)
-        {
+        setNewVehicleGalleryImageLoading(true);
+        const attachments = [...newVehicleGallery];
+
+        for (const file of e.target.files) {
             const base64 = await convertBase64(file);
-            await readedImages2.push(base64);
-            readedImages.push(file);
+
+            attachments.push({
+                file: file,
+                base64: base64,
+                deleted: false
+            })
         }
-        setNewVehicleGallery(readedImages);
-        setNewVehicleGalleryInBase64(readedImages2);
+
+        setNewVehicleGallery(attachments);
+        setNewVehicleGalleryImageLoading(false);
     }
     const convertBase64 = (file) => {
         return new Promise((resolve, reject) => {
@@ -453,6 +455,7 @@ function Garage({handleChangeTab}) {
 
         /* When I am searching I search in the visiblevehicles and after I back up datas from vehicles */
         setVisibleVehicles(vehicles);
+        setIsModified(false);
     }
     const getVehicleFuelTypes = async (token) => {
         const response = await axiosInstance.post("getFuels", {}, {
@@ -674,6 +677,17 @@ function Garage({handleChangeTab}) {
 
     }, [newVehicleVintage]);
 
+    useEffect(() => {
+        /* The modified variable is true when I upload a new vehicle */
+        if (isModified) {
+            setIsLoading(true);
+            const token = localStorage.getItem("token");
+            /* method execution order is very important! First is always the getvehicletypes */
+            getVehicles(token);
+            setIsLoading(false);
+        }
+    }, [isModified])
+
     /* loading screen */
     if (isLoading) {
         return (<React.Fragment>
@@ -774,7 +788,7 @@ function Garage({handleChangeTab}) {
                                                 type="text"
                                                 onChange={e=>{
                                                     if (newVehicleVin.length <= parseInt(process.env.REACT_APP_MAXIMUM_VIN_LENGTH)) {
-                                                        setNewVehicleVin(e.target.value)
+                                                        setNewVehicleVin(e.target.value+"".toUpperCase())
                                                     } else if (newVehicleVin.length > parseInt(process.env.REACT_APP_MAXIMUM_VIN_LENGTH)) {
                                                         setErrorMessageDuringCarAdd("alvázszám", "Az alvázszám nem lehet hosszabb mint 18 karakter!")
                                                         setNewVehicleVin("")
@@ -799,7 +813,7 @@ function Garage({handleChangeTab}) {
                                                 type="text"
                                                 onChange={e=>{
                                                     if (newVehicleLicenseNum.length <= parseInt(process.env.REACT_APP_MAXIMUM_LICENSE_PLATE_NUMBER_LENGTH)) {
-                                                        setNewVehicleLicenseNum(e.target.value)
+                                                        setNewVehicleLicenseNum(e.target.value+"".toUpperCase())
                                                     } else if (newVehicleLicenseNum.length > parseInt(process.env.REACT_APP_MAXIMUM_LICENSE_PLATE_NUMBER_LENGTH)) {
                                                         setErrorMessageDuringCarAdd("rendszám", "A rendszám nem lehet hosszabb mint 18 karakter!")
                                                         setNewVehicleLicenseNum("");
@@ -1317,19 +1331,19 @@ function Garage({handleChangeTab}) {
                                         gap={2}
                                     >
                                         {
-                                            Array.from(newVehicleGalleryInBase64).map((image, i) => {
-                                                return <Grid item>
+                                            !newVehicleGalleryImageLoading && Array.from(newVehicleGallery).map((obj, i) => {
+                                                return !obj.deleted && <Grid item>
                                                     <Grid container direction="column" gap={2} justifyContent="center" alignItems="center">
                                                         <Grid item>
                                                             <GalleryImage
-                                                                key={image+"asd"+i}
-                                                                src={`${image}`}
+                                                                key={obj+"asd"+i}
+                                                                src={`${obj.base64}`}
                                                                 loading="lazy"
                                                             />
                                                         </Grid>
 
                                                         <Grid item>
-                                                            <IconButton onClick={e=>handleNewVehicleGalleryImageDelete(e, image)}>
+                                                            <IconButton onClick={e=>handleNewVehicleGalleryImageDelete(e, obj.base64)}>
                                                                 <RemoveCircleOutlineOutlinedIcon color="error" />
                                                             </IconButton>
                                                         </Grid>
@@ -1444,11 +1458,22 @@ function Garage({handleChangeTab}) {
                                         }
 
                                         if (!exists) {
-                                            if (ids.length > 4) {
-                                                ids.unshift(vehicle.id);
-                                                ids.pop();
+                                            /* remove old ids from localStorage because I want to handle the array everytime */
+                                            localStorage.removeItem("last_viewed");
+
+                                            const maxActivities = process.env.REACT_APP_MAXIMUM_ACTIVITIES;
+                                            if (ids.length > maxActivities) {
+                                                ids = ids.map((x, i) => {
+                                                    if (i < maxActivities) {
+                                                        return x;
+                                                    }
+                                                })
                                             }
-                                            ids.unshift(vehicle.id);
+                                            else
+                                            {
+                                                ids.unshift(vehicle.id);
+                                            }
+
                                             localStorage.setItem("last_viewed", JSON.stringify(ids));
                                         }
                                         handleChangeTab(1)

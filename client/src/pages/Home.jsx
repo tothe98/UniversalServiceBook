@@ -141,60 +141,54 @@ function Home({handleChangeTab}) {
         navigator.clipboard.writeText(url);
     }
 
-    const getLastActivityVehicles = async (token, vehicleIDs) => {
-        setIsLoading(true);
-        const arr = [];
-        for (const id of vehicleIDs) {
-                await axiosInstance.get(`/getVehicle/${id}`, { headers: { 'x-access-token': token } })
+    const getVehicleById = async (token, id) => {
+        return new Promise((resolve, reject) => {
+            /* Constrainst: id cannot be null, id have to be valid (format) */
+            if (id)
+            {
+                // TODO: I have to tell to Erik to make an id checker
+                axiosInstance.get(`/getVehicle/${id}`, { headers: { 'x-access-token': token } })
                     .then(res => {
                         const v = res.data.data.vehicle;
                         v['serviceEntries'] = res.data.data.serviceEntries;
-                        arr.push(v)
+                        resolve(v);
                     })
+            }
+        })
+    }
+
+    const getLastActivityVehicles = (token, vehicleIDs) => {
+        setIsLoading(true);
+        const promises = [];
+
+        for (let i = 0; i < vehicleIDs.length; i++) {
+            if (vehicleIDs[i] != null) {
+                if (vehicleIDs[i].length == 24) {
+                    /* TODO: When I add etc. kecske as an id it throws 500 error. */
+                    promises.push(getVehicleById(token, vehicleIDs[i]));
+                }
+            }
         }
-        setLastActivityVehicles(arr);
+
+        Promise.all(promises)
+            .then((results) => {
+                const arr = [];
+                results.forEach((result) => {
+                    if (result != undefined) {
+                        if (result != null) {
+                            arr.push(result) 
+                        }
+                    }
+                })
+                setLastActivityVehicles(arr);
+            })
+            .catch((err) => {
+                
+            })
         setIsLoading(false);
     }
 
     useEffect(() => {
-        const vehicles = [
-            {
-                carId: "2e2zbahdb2a#",
-                imageUrl: "https://img.jofogas.hu/620x620aspect/Honda_Accord_Tourer_2_0_Elegance__Automata__Xen____659692224244378.jpg",
-                carName: "Honda Accord",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "AA AA 001",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 10,
-                year: 2004,
-                km: 200_422,
-                le: 232
-            },
-            {
-                carId: "2e2zbasdhdb2a#",
-                imageUrl: "https://autosoldalak.hu/auto_kepek/10403/6799b9ecbfd2d79af5820fdadb30d4f6.jpg",
-                carName: "SEAT Alhambra",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "CA AA 021",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 43,
-                year: 2010,
-                km: 130_422,
-                le: 130
-            },
-            {
-                carId: "2e2zbahdveeeb2a#",
-                imageUrl: "https://file.joautok.hu/car-for-sale-images/500x375/auto/img-20210614-140459_7rac40yw.jpg",
-                carName: "Honda Civic",
-                chassisNumber: "JACUBS25DN7100010",
-                licensePlateNumber: "AA AB 101",
-                motorNumber: "Z14XEP19ET4682",
-                registeredServices: 212,
-                year: 1998,
-                km: 400_001,
-                le: 90
-            }
-        ]
         const serviceInformations = [
             {
                 id: "12a12e",
@@ -223,7 +217,10 @@ function Home({handleChangeTab}) {
             }
         ]
 
-        if (localStorage.getItem("last_viewed")) getLastActivityVehicles(localStorage.getItem("token"), Array.from(JSON.parse(localStorage.getItem("last_viewed"))));
+        if (localStorage.getItem("last_viewed")) {
+            getLastActivityVehicles(localStorage.getItem("token"), 
+                Array.from(JSON.parse(localStorage.getItem("last_viewed"))));
+        }
         setServiceInformations(serviceInformations);
         setIsLoading(false);
     }, []);
