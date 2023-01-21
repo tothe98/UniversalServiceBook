@@ -7,7 +7,7 @@ const {logger} = require("../config/logger");
 
 exports.getWorkshops = async (req, res) => {
     try {
-        const resFromDB = await Workshops.find({}).populate('_owner').populate('employees')
+        const resFromDB = await Workshops.find({isActive:true}).populate('_owner').populate('employees')
         let responseData = []
         resFromDB.forEach((workshop) => {
             let worksp = workshop.getWorkshop
