@@ -27,7 +27,7 @@ import MechanicWorkshop from "./pages/MechanicWorkshop";
 import EmailVerification from "./pages/EmailVerification";
 import AdminPage from "./pages/AdminPage";
 import { AuthProvider } from './context/AuthProvider';
-import Layout from './components/Layout';
+import Layout from './components/Layout.component';
 import OwnerPage from './pages/OwnerPage';
 import Unauthorized from './pages/Unauthorized';
 import Roles from '../src/components/Roles'
