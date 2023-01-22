@@ -11,6 +11,7 @@ require('../models/UserModel')
 require('../models/VehicleModel')
 require('../models/VehicleTypeModel')
 require('../models/WorkShopModel')
+require('../models/RecentActivationModel')
 
 
 const DesignTypes = mongoose.model('DesignTypes')
@@ -25,6 +26,7 @@ const Users = mongoose.model('UserInfo')
 const Vehicles = mongoose.model('Vehicles')
 const VehicleTypes = mongoose.model('VehicleTypes')
 const Workshops = mongoose.model('WorkShops')
+const RecentActivations = mongoose.model('RecentActivations')
 
 module.exports = {
     DesignTypes,
@@ -38,5 +40,6 @@ module.exports = {
     Users,
     Vehicles,
     VehicleTypes,
-    Workshops
+    Workshops,
+    RecentActivations
 }

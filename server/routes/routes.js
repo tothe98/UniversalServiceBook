@@ -1,11 +1,11 @@
 const express = require('express')
 const router = express.Router()
-const {authorize} = require('../core/Auth')
+const { authorize } = require('../core/Auth')
 const ROLES = require('../core/Role')
 
-const {signup, signin, confirmEmail, isValidToken} = require('../controllers/AuthController')
-const {addVehicle, getVehicles, getVehicle, updateVehicle, deleteVehicle} = require('../controllers/VehicleController')
-const {getUser, updateUser, forgotPassword, newPassword} = require('../controllers/UserController')
+const { signup, signin, confirmEmail, isValidToken } = require('../controllers/AuthController')
+const { addVehicle, getVehicles, getVehicle, updateVehicle, deleteVehicle } = require('../controllers/VehicleController')
+const { getUser, updateUser, forgotPassword, newPassword } = require('../controllers/UserController')
 
 const {
     getManufactures,
@@ -35,6 +35,7 @@ const {
     getVehicleByVin,
     addServiceEntry
 } = require('../controllers/WorkshopController')
+const { getServiceInformation, getLastViewed } = require('../controllers/RecentActivationController')
 
 
 //AuthController
@@ -43,7 +44,7 @@ router.post('/signin', signin)
 router.get('/emailConfirmation/:token', confirmEmail)
 router.get('/isValidToken/:token', isValidToken)
 router.get('/isLoggedIn', authorize(ROLES.User), (req, res) => {
-    res.status(200).json({message: 'ok', data: {}})
+    res.status(200).json({ message: 'ok', data: {} })
 })
 
 //UserController
@@ -87,9 +88,13 @@ router.delete('/deleteEmployee/:id', authorize(ROLES.Owner), deleteEmployee)
 router.get('/getVehicleByVin/:vin', authorize(ROLES.Owner, ROLES.Employee), getVehicleByVin)
 router.post('/addServiceEntry', authorize(ROLES.Owner, ROLES.Employee), addServiceEntry)
 
+//RecentActivationsController
+router.get('/serviceInformation', authorize(ROLES.User), getServiceInformation)
+router.get('/lastViewed', authorize(ROLES.User), getLastViewed)
+
 //404 API Request
 router.get('*', (req, res) => {
-    res.status(404).json({message: "Not Found"})
+    res.status(404).json({ message: "Not Found" })
 })
 
 

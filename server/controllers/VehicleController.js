@@ -9,10 +9,12 @@ const {
     DriveTypes,
     DesignTypes,
     Transmissions,
-    Pictures
+    Pictures,
+    RecentActivations
 } = require("../core/DatabaseInitialization");
 const { addVehicleValidate } = require("../models/ValidationSchema");
 const { logger } = require("../config/logger");
+const moment = require("moment");
 
 const getMileageFromServices = async (vehicleID) => {
     let currentMaxMileage = false
@@ -269,6 +271,16 @@ exports.getVehicle = async (req, res) => {
 
         const currentMaxMileage = await getMileageFromServices(resFromDB._id)
         resFromDB.mileage = currentMaxMileage ? currentMaxMileage : resFromDB.mileage
+
+        const isRecentActivationExists = await RecentActivations.findOne({ vehicleId: id, isActive: true, userId: req.userId })
+        if (!isRecentActivationExists) {
+            const recentActivation = await RecentActivations.create({
+                userId: req.userId,
+                vehicleId: id,
+                expireDate: moment().add(1, 'days').format(),
+                category: "vehicle",
+            })
+        }
 
         return res.status(200).json({
             message: '', data: { vehicle: resFromDB.getVehicleDataById, serviceEntries: responseData || [] }
