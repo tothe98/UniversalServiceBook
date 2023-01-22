@@ -1,235 +1,84 @@
 import React, {useEffect, useRef, useState} from "react";
 import { useParams } from "react-router-dom";
 import {
+    Select,
+    axios,
+    Link,
+    theme,
     Alert,
-    alpha, Box,
+    Autocomplete,
     Button,
-    Card,
-    CardActions,
-    CardContent,
-    CardHeader,
-    CardMedia,
     Chip,
-    Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
-    Divider, FormControl,
+    Divider,
     Grid,
-    IconButton, InputAdornment,
+    IconButton,
+    InputAdornment,
     InputLabel,
-    List,
-    ListItem,
-    ListItemButton,
-    ListItemIcon,
     ListItemText,
-    Menu,
     MenuItem,
-    Modal, OutlinedInput, Select,
-    Snackbar, Stack,
-    styled,
+    Snackbar,
     TextField,
     Tooltip,
     Typography,
-    useMediaQuery
-} from "@mui/material";
-import {Link} from "react-router-dom";
-import theme from "../themes/theme";
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import DoNotDisturbOnOutlinedIcon from '@mui/icons-material/DoNotDisturbOnOutlined';
-import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
-import DirectionsCarFilledOutlinedIcon from '@mui/icons-material/DirectionsCarFilledOutlined';
-import DiscountOutlinedIcon from '@mui/icons-material/DiscountOutlined';
-import EnergySavingsLeafOutlinedIcon from '@mui/icons-material/EnergySavingsLeafOutlined';
-import TextsmsOutlinedIcon from '@mui/icons-material/TextsmsOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
-import AccountTreeOutlinedIcon from '@mui/icons-material/AccountTreeOutlined';
-import InputBase from '@mui/material/InputBase';
-import SearchIcon from '@mui/icons-material/Search';
-import DateIcon from '@mui/icons-material/DateRangeOutlined';
-import CarTypeIcon from '@mui/icons-material/RvHookupOutlined';
-import KmIcon from '@mui/icons-material/SpeedOutlined';
-import CarWeightIcon from '@mui/icons-material/FitnessCenterOutlined';
-import FuelIcon from '@mui/icons-material/LocalGasStationOutlined';
-import TankIcon from '@mui/icons-material/PropaneTankOutlined';
-import PerformanceIcon from '@mui/icons-material/SpeedOutlined';
-import WheelIcon from '@mui/icons-material/AttractionsOutlined';
-import ChangeGearIcon from '@mui/icons-material/DisplaySettingsOutlined';
-import DocumentsIcon from '@mui/icons-material/FilePresentOutlined';
-import ValidityIcon from '@mui/icons-material/VerifiedOutlined';
-import axios from "axios";
-import {toast} from "react-toastify";
-import {MyCardSkeleton, MyInputSkeleton} from "../lib/Skeletons";
-import moment from "moment";
+    useMediaQuery,
+    toast,
+    moment
+} from "../lib/GlobalImports";
+import {
+    AddCircleOutlineOutlinedIcon,
+    DirectionsCarFilledOutlinedIcon,
+    DiscountOutlinedIcon,
+    EnergySavingsLeafOutlinedIcon,
+    TextsmsOutlinedIcon,
+    RemoveCircleOutlineOutlinedIcon,
+    AccountTreeOutlinedIcon,
+    SearchIcon,
+    DateIcon,
+    CarTypeIcon,
+    KmIcon,
+    CarWeightIcon,
+    FuelIcon,
+    TankIcon,
+    PerformanceIcon,
+    WheelIcon,
+    ChangeGearIcon,
+    DocumentsIcon,
+    ValidityIcon,    
+    serviceInformationIcon,
+    MoreVertIcon,
+    DoNotDisturbOnOutlinedIcon,
+    ShareOutlinedIcon
+} from "../lib/GlobalIcons"
+import {
+    Search,
+    SearchIconWrapper,
+    StyledInputBase,
+    AddCarSubTitle,
+    MyTextField,
+    MyFormControll,
+    GalleryImage,
+    MenuProps,
+    SubTitle,
+    ContentBox,
+    ViewButton,
+    CarCard,
+    CarCardHeader,
+    CarCardMedia,
+    CarCardContent,
+    CarCardActions,
+    CarOptionsMenu,
+    CarDialog,
+    MenuText,
+    CarDialogText
+} from '../lib/StyledComponents'
+import {
+    MyCardSkeleton,
+    MyInputSkeleton
+} from "../lib/Skeletons";
 import useAuth from "../hooks/useAuth";
-
-const CONTENT_BOX_MAX_HEIGHT = "200px";
-
-const SubTitle = styled(Typography)(({theme}) => ({
-    ...theme.typography.link,
-    marginBottom: "2rem"
-}))
-
-const ContentBox = styled('div')(({theme}) => ({
-    position: "relative",
-    width: "100",
-    height: "auto",
-    border: `1px solid ${theme.palette.common.lightgray}`,
-    borderRadius: "5px",
-    margin: "11px 0",
-    padding: "10px"
-}))
-
-const ContentBoxImage = styled('img')(({theme}) => ({
-    width: "100%",
-    maxHeight: CONTENT_BOX_MAX_HEIGHT,
-    objectFit: "scale-down",
-    height: "100%"
-}))
-
-const ViewButton = styled(Button)(({theme}) => ({
-    ...theme.mixins.button,
-    position: "relative"
-}))
-
-const CarCard = styled(Card)(({theme}) => ({
-    padding: "0.2rem 1rem"
-}))
-
-const CarCardHeader = styled(CardHeader)(({theme}) => ({
-    "& .MuiCardHeader-title": {
-        ...theme.typography.h3
-    },
-    padding: 0
-}))
-
-/*
-*
-* Honda Accord
-* ----- SPACE BETWEEN ..
-* img
-* license plate number: ...
-* ----- SPACE BETWEEN ..
-* 2110 le 2016 year
-* */
-const SPACE_BETWEEN_HEADER_AND_FOOTER = "0.9rem";
-
-const CarCardMedia = styled(CardMedia)(({theme}) => ({
-    maxHeight: "300px",
-    maxWidth: "300px",
-    height: "100%",
-    width: "100%",
-    objectFit: "cover",
-    marginTop: SPACE_BETWEEN_HEADER_AND_FOOTER
-}))
-
-const CarCardContent = styled(CardContent)(({theme}) => ({
-
-}))
-
-const CarCardActions = styled(CardActions)(({theme}) => ({
-    marginTop: SPACE_BETWEEN_HEADER_AND_FOOTER,
-    padding: 0
-}))
-
-const CarOptionsMenu = styled(Menu)(({theme}) => ({
-    "&	.MuiMenu-paper": {
-        borderRadius: "5px",
-        border: theme.palette.common.lightgray
-    }
-}))
-
-const MenuText = styled(Typography)(({theme}) => ({
-    color: theme.palette.common.darkblack
-}))
-
-const CopyToClipBoard = (url) => {
-    navigator.clipboard.writeText(url);
-}
-
-const CarDialog = styled(Dialog)(({theme}) => ({
-    "& .MuiDialog-paper": {
-        backgroundColor: "none",
-        width: "100%"
-    }
-}))
-
-const CarDialogText = styled(DialogContentText)(({theme}) => ({
-}))
-
-const Search = styled('div')(({ theme }) => ({
-    position: 'relative',
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-    },
-}));
-
-const SearchIconWrapper = styled('div')(({ theme }) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-}));
-
-const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: 'inherit',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            width: '12ch',
-            '&:focus': {
-                width: '20ch',
-            },
-        },
-    },
-}));
-
-const AddCarSubTitle = styled(Typography)(({theme}) => ({
-    marginBottom: "0.9rem"
-}))
-
-const MyTextField = styled(TextField)(({theme}) => ({
-    margin: "0.7rem 0"
-}))
-const MyFormControll = styled(FormControl)(({theme}) => ({
-    margin: "0.7rem 0"
-}))
-
-const GalleryImage = styled("img")(({theme}) => ({
-    maxWidth: "200px",
-    maxHeight: "200px",
-    width: "100%",
-    height: "auto",
-    objectFit: "cover"
-}))
-
-/* multiple select field values */
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
 
 function Garage({handleChangeTab}) {
     const { auth } = useAuth();
@@ -318,19 +167,24 @@ function Garage({handleChangeTab}) {
     const [vehicleManufacturers, setVehicleManufacturers] = useState([]);
     const [vehicleTransmissions, setVehicleTransmissions] = useState([]);
     const [vehicleModels, setVehicleModels] = useState([]);
+    const [vehicleCountries, setVehicleCountries] = useState([]);
+
+    const CopyToClipBoard = (url) => {
+        navigator.clipboard.writeText(url);
+    }
 
     /* handle add new car */
     const handleNewVehicle = async () => {
         const body = {
-            manufacture: newVehicleManufacture,
-            model: newVehicleModel,
+            manufacture: newVehicleManufacture['id'],
+            model: newVehicleModel['id'],
             fuel: newVehicleFuel,
             driveType: newVehicleDriveType,
             designType: newVehicleDesignType,
             transmission: newVehicleTransmission,
             licenseNumber: newVehicleLicenseNum,
             vin: newVehicleVin,
-            vintage: newVehicleVintage,
+            vintage: newVehicleVintage['value'],
             ownMass: newVehicleOwnWeight,
             fullMass: newVehicleMaxWeight,
             cylinderCapacity: newVehicleCylinderCapacity,
@@ -643,6 +497,13 @@ function Garage({handleChangeTab}) {
         setIsLoading(false)
     }, []);
 
+    /* hanble open is vehicle menu */
+    useEffect(() => {
+        if (isAdding) {
+            // remove old values
+        }
+    }, [isAdding]);
+
     /* handle vehicle type change */
     useEffect(() => {
         if (newVehicleCategory == null) return;
@@ -665,7 +526,7 @@ function Garage({handleChangeTab}) {
         if (!newVehicleManufacture) return;
 
         const token = localStorage.getItem("token");
-        getVehicleModels(token, newVehicleManufacture);
+        getVehicleModels(token, newVehicleManufacture['id']);
     }, [newVehicleManufacture]);
 
     /* handle add car state variable change */
@@ -861,21 +722,24 @@ function Garage({handleChangeTab}) {
 
                                         <Grid item xs={11}>
                                             <MyFormControll fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Jármű márkája</InputLabel>
-                                                <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    label="Jármű márkája"
-                                                    onChange={e => setNewVehicleManufacture(e.target.value)}
-                                                    value={newVehicleManufacture}
-                                                    MenuProps={MenuProps}
-                                                >
-                                                    {
+                                                <Autocomplete
+                                                    fullWidth
+                                                    disablePortal
+                                                    id="combo-box-demo"
+                                                    options={
                                                         vehicleManufacturers.map((x,i) => {
-                                                            return <MenuItem key={x+i} value={`${x.id}`}>{x.manufacture}</MenuItem>
+                                                            return {
+                                                                label: x.manufacture,
+                                                                id: x.id
+                                                            }
                                                         })
                                                     }
-                                                </Select>
+                                                    value={newVehicleManufacture['label']}
+                                                    onChange={(event, newValue) => {
+                                                        setNewVehicleManufacture(newValue ? newValue : " ");
+                                                    }}
+                                                    renderInput={(params) => <TextField {...params} label="Jármű márkája" />}
+                                                />
                                             </MyFormControll>
                                         </Grid>
                                     </Grid>
@@ -889,21 +753,24 @@ function Garage({handleChangeTab}) {
 
                                         <Grid item xs={11}>
                                             <MyFormControll fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Jármű modell</InputLabel>
-                                                <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    label="Jármű modell"
-                                                    onChange={e => setNewVehicleModel(e.target.value)}
-                                                    value={newVehicleModel}
-                                                    MenuProps={MenuProps}
-                                                >
-                                                    {
+                                                <Autocomplete
+                                                    fullWidth
+                                                    disablePortal
+                                                    id="combo-box-demo"
+                                                    options={
                                                         vehicleModels.map((x,i) => {
-                                                            return <MenuItem key={x+i} value={`${x.id}`}>{x.model}</MenuItem>
+                                                            return {
+                                                                label: x.model,
+                                                                id: x.id
+                                                            }
                                                         })
                                                     }
-                                                </Select>
+                                                    value={newVehicleModel['label']}
+                                                    onChange={(event, newValue) => {
+                                                        setNewVehicleModel(newValue ? newValue : " ");
+                                                    }}
+                                                    renderInput={(params) => <TextField {...params} label="Jármű modell" />}
+                                                />
                                             </MyFormControll>
                                         </Grid>
                                     </Grid>
@@ -948,22 +815,24 @@ function Garage({handleChangeTab}) {
 
                                         <Grid item xs={11}>
                                             <MyFormControll fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Évjárat</InputLabel>
-                                                <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    label="Évjárat"
-                                                    onChange={e => setNewVehicleVintage(e.target.value)}
-                                                    value={newVehicleVintage}
-                                                    defaultValue={newVehicleVintage}
-                                                    MenuProps={MenuProps}
-                                                >
-                                                    {
-                                                        Array.from(vehicleVintages).map((year, i) => {
-                                                            return <MenuItem value={`${year+""}`}>{year + " "}</MenuItem>
+                                                <Autocomplete
+                                                    fullWidth
+                                                    disablePortal
+                                                    id="combo-box-demo"
+                                                    options={
+                                                        Array.from(vehicleVintages).map((year,i) => {
+                                                            return {
+                                                                label: `${year}`,
+                                                                value: year
+                                                            };
                                                         })
                                                     }
-                                                </Select>
+                                                    value={newVehicleVintage['label']}
+                                                    onChange={(event, newValue) => {
+                                                        setNewVehicleVintage(newValue ? newValue : " ");
+                                                    }}
+                                                    renderInput={(params) => <TextField {...params} label="Jármű évjárat" />}
+                                                />
                                             </MyFormControll>
                                         </Grid>
                                     </Grid>
@@ -1444,38 +1313,6 @@ function Garage({handleChangeTab}) {
                                     }
                                     <ViewButton sx={{marginLeft: "auto"}} component={Link}
                                                 to={`/jarmuveim/${vehicle.id}`} onClick={e => {
-                                        if (!localStorage.getItem("last_viewed")) {
-                                            localStorage.setItem("last_viewed", JSON.stringify([]));
-                                        }
-
-                                        let exists = false;
-                                        let ids = Array.from(JSON.parse(localStorage.getItem("last_viewed")));
-
-                                        for (let i = 0; i < ids.length; i++) {
-                                            if (ids[i] == vehicle.id) {
-                                                exists = true;
-                                            }
-                                        }
-
-                                        if (!exists) {
-                                            /* remove old ids from localStorage because I want to handle the array everytime */
-                                            localStorage.removeItem("last_viewed");
-
-                                            const maxActivities = process.env.REACT_APP_MAXIMUM_ACTIVITIES;
-                                            if (ids.length > maxActivities) {
-                                                ids = ids.map((x, i) => {
-                                                    if (i < maxActivities) {
-                                                        return x;
-                                                    }
-                                                })
-                                            }
-                                            else
-                                            {
-                                                ids.unshift(vehicle.id);
-                                            }
-
-                                            localStorage.setItem("last_viewed", JSON.stringify(ids));
-                                        }
                                         handleChangeTab(1)
                                     }}>Megtekintem</ViewButton>
                                 </CarCardActions>
@@ -1520,6 +1357,7 @@ function Garage({handleChangeTab}) {
                 </ContentBox>
             })
         }
+
         <CarDialog
             open={carModal}
             onClose={e=>setCarModal(!carModal)}
