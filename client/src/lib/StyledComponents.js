@@ -14,8 +14,14 @@ import {
     styled,
     Toolbar, Tooltip,
     Typography,
-    useMediaQuery
+    useMediaQuery,
+    Drawer,
+    Avatar,
+    Tab
 } from "@mui/material";
+import {
+    theme
+} from "./GlobalImports"
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
 
@@ -177,7 +183,88 @@ const MenuProps = {
     },
 };
 
+const MAX_HEIGHT = '100px';
+const MAX_WIDTH = '880px';
+
+const Wrapper = styled(Grid)(({theme}) => ({
+    maxHeight: MAX_HEIGHT,
+    height: '100%',
+    marginTop: "40px",
+    paddingLeft: theme.global.basePadding,
+    paddingRight: theme.global.basePadding
+}))
+
+const MyHr = styled('hr')(({theme}) => ({
+    margin: 0
+}))
+
+const FooterText = styled(Toolbar)(({theme}) => ({
+}))
+
+const SubMenuContainer = styled(Toolbar)(({theme}) => ({
+    marginLeft: 'auto'
+}))
+
+const FooterElement = styled(Typography)(({theme}) => ({
+    ...theme.typography.link,
+    margin: '0 5px'
+}))
+
+const Title = styled(Typography)(({theme}) => ({
+    ...theme.typography.link
+}))
+
+const SideMenu = styled(Grid)(({theme}) => ({
+    marginLeft: "auto"
+}))
+
+const MyDrawer = styled(Drawer)(({theme}) => ({
+    marginTop: "6.25rem",
+    "& 	.MuiDrawer-paper": {
+        backgroundColor: "rgba(36, 41, 47, 0.946555)",
+        color: theme.palette.common.white
+    }
+}))
+
+const MarginDiv = styled('div')(({theme}) => ({
+    marginTop: "7.0rem"
+}))
+
+const MyAvatar = styled(Avatar)(({theme}) => ({
+    color: theme.palette.common.white,
+    background: "none",
+    marginRight: "1em"
+}))
+
+const MyDivider = styled(Divider)(({theme}) => ({
+    "& 	.MuiDivider-root": {
+        color: theme.palette.common.gray
+    }
+}))
+
+const SpaceInList = styled('div')(({theme}) => ({
+    marginTop: "2rem"
+}))
+
+const MyTab = styled(Tab)(({theme}) => ({
+    ...theme.typography.h3,
+    textTransform: "none"
+}))
+
 export {
+    MyTab,
+    Title,
+    SideMenu,
+    MyDrawer,
+    MarginDiv,
+    MyAvatar,
+    MyDivider,
+    SpaceInList,
+    Wrapper,
+    MyHr,
+    FooterText,
+    SubMenuContainer,
+    FooterElement,
     Search,
     SearchIconWrapper,
     StyledInputBase,

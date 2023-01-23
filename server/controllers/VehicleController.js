@@ -272,7 +272,7 @@ exports.getVehicle = async (req, res) => {
         const currentMaxMileage = await getMileageFromServices(resFromDB._id)
         resFromDB.mileage = currentMaxMileage ? currentMaxMileage : resFromDB.mileage
 
-        const isRecentActivationExists = await RecentActivations.findOne({ vehicleId: id, isActive: true, userId: req.userId })
+        const isRecentActivationExists = await RecentActivations.findOne({ vehicleId: id, isActive: true, userId: req.userId, category: 'vehicle' })
         if (!isRecentActivationExists) {
             const recentActivation = await RecentActivations.create({
                 userId: req.userId,

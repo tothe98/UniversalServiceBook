@@ -1,13 +1,25 @@
-import {Button, Grid, Skeleton, styled, Toolbar, Typography, useMediaQuery, useTheme} from '@mui/material';
 import React, {Component, useEffect, useState} from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import theme from "../themes/theme";
-import dayjs from "dayjs";
-import {CalendarPicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import { MyCircularSkeleton, MyTextSkeleton } from '../lib/Skeletons'
+import {
+    Button,
+    Grid,
+    Skeleton,
+    styled,
+    Toolbar,
+    Typography,
+    useMediaQuery,
+    theme
+} from '../lib/GlobalImports';
+import {
+    Link,
+    toast,
+} from '../lib/GlobalImports'
+import {CalendarPicker} from "@mui/x-date-pickers";
+import {
+    MyCircularSkeleton,
+    MyTextSkeleton
+} from '../lib/Skeletons'
 import useAuth from '../hooks/useAuth';
-import { toast } from 'react-toastify';
+
 const AVATAR_MAX_HEIGHT = '200px';
 const AVATAR_MAX_WIDTH = '200px';
 
@@ -54,22 +66,8 @@ const SettingsButton = styled(Button)(({theme}) => ({
     }
 }))
 
-const LogOutButton = styled(Button)(({theme}) => ({
-    ...theme.mixins.button,
-    backgroundColor: theme.palette.common._RoseRed
-}))
-
-const MyCalendar = styled(CalendarPicker)(({theme}) => ({
-    maxWidth: "260px",
-    width: "auto",
-    [theme.breakpoints.down("sm")]: {
-        maxWidth: "100%"
-    }
-}))
-
 function Profile({handleChangeTab, loggedIn}) {
     const { auth } = useAuth();
-    const theme = useTheme();
     const [isLoading, setIsLoading] = useState(true);
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));

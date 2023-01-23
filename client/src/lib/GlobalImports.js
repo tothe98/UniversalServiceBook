@@ -36,10 +36,12 @@ import {
     InputBase,
     Toolbar, Tooltip,
     Typography,
-    useMediaQuery
+    useMediaQuery,
+    Drawer,
+    Tabs
 } from '@mui/material';
 import theme from '../themes/theme';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import moment from 'moment';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
@@ -47,6 +49,9 @@ import DOMPurify from 'isomorphic-dompurify';
 import {toast} from "react-toastify";
 
 export {
+    Navigate,
+    Tabs,
+    Drawer,
     InputBase,
     toast,
     alpha, 
