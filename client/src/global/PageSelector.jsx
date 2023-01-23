@@ -1,10 +1,16 @@
-import {Grid, styled, Tab, Tabs, useMediaQuery} from '@mui/material';
 import React, {useEffect} from 'react';
 import { useState } from 'react';
-import {Link} from "react-router-dom";
-import Roles from '../components/Roles';
+import {
+    Grid, 
+    styled,
+    Tabs,
+    useMediaQuery,
+    Link,
+    theme
+} from '../lib/GlobalImports';
+import { MyTab } from '../lib/StyledComponents';
+import Roles from '../lib/Roles';
 import useAuth from '../hooks/useAuth';
-import theme from "../themes/theme";
 
 const MAX_HEIGHT = '108px';
 
@@ -17,11 +23,6 @@ const Wrapper = styled(Grid)(({theme}) => ({
     [theme.breakpoints.down("md")]: {
         height: "3.375rem"
     }
-}))
-
-const MyTab = styled(Tab)(({theme}) => ({
-    ...theme.typography.h3,
-    textTransform: "none"
 }))
 
 function PageSelector({activePage, handleChangeTab, routes}) {

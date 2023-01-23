@@ -1,47 +1,26 @@
+import React, {Component, useState} from 'react';
 import {
-    Button,
     Drawer,
     Grid,
     IconButton,
     List,
     ListItem, ListItemButton,
     ListItemText,
-    styled,
-    Toolbar,
     Typography,
-    useMediaQuery
-} from '@mui/material';
-import React, {Component, useState} from 'react';
-import { Link } from 'react-router-dom';
-import MenuIcon from '@mui/icons-material/Menu';
-import theme from "../themes/theme";
-
-const MAX_HEIGHT = '100px';
-const MAX_WIDTH = '880px';
-
-const Wrapper = styled(Grid)(({theme}) => ({
-    maxHeight: MAX_HEIGHT,
-    height: '100%',
-    marginTop: "40px",
-    paddingLeft: theme.global.basePadding,
-    paddingRight: theme.global.basePadding
-}))
-
-const MyHr = styled('hr')(({theme}) => ({
-    margin: 0
-}))
-
-const FooterText = styled(Toolbar)(({theme}) => ({
-}))
-
-const SubMenuContainer = styled(Toolbar)(({theme}) => ({
-    marginLeft: 'auto'
-}))
-
-const FooterElement = styled(Typography)(({theme}) => ({
-    ...theme.typography.link,
-    margin: '0 5px'
-}))
+    useMediaQuery,
+    theme,
+    Link
+} from '../lib/GlobalImports';
+import {
+    Wrapper,
+    MyHr,
+    FooterText,
+    SubMenuContainer,
+    FooterElement
+} from '../lib/StyledComponents'
+import {
+    MenuIcon
+} from '../lib/GlobalIcons'
 
 function Footer() {
     const [open, setOpen] = useState(false);

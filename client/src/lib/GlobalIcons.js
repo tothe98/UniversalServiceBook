@@ -21,8 +21,24 @@ import WheelIcon from '@mui/icons-material/AttractionsOutlined';
 import ChangeGearIcon from '@mui/icons-material/DisplaySettingsOutlined';
 import DocumentsIcon from '@mui/icons-material/FilePresentOutlined';
 import ValidityIcon from '@mui/icons-material/VerifiedOutlined';
+import MenuIcon from '@mui/icons-material/Menu';
+import HelpIcon from '@mui/icons-material/HelpOutlineOutlined';
+import GavelIcon from '@mui/icons-material/GavelOutlined';
+import HomeIcon from '@mui/icons-material/CottageOutlined';
+import GarageIcon from '@mui/icons-material/BuildOutlined';
+import MailsIcon from '@mui/icons-material/EmailOutlined';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmailOutlined';
+import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 
 export {
+    HelpIcon,
+    GavelIcon,
+    HomeIcon,
+    GarageIcon,
+    MailsIcon,
+    AlternateEmailIcon,
+    LogoutOutlinedIcon,
+    MenuIcon,
     AddCircleOutlineOutlinedIcon,
     DirectionsCarFilledOutlinedIcon,
     DiscountOutlinedIcon,

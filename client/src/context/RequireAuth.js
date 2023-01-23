@@ -1,6 +1,5 @@
 /* This help us to protect our routes */
 import { useLocation, Navigate, Outlet } from "react-router-dom";
-import App from "../App";
 import useAuth from "../hooks/useAuth";
 
 const RequireAuth = ({ allowedRoles }) => {

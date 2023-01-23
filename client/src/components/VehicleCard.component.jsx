@@ -43,7 +43,7 @@ function VehicleCard({ vehicle, i, handleChangeTab }) {
                                 <Grid item>
                                     <CarCardMedia
                                         component="img"
-                                        image={vehicle['pictures'][0]}
+                                        image={ vehicle?.preview ? vehicle['preview'] : vehicle['pictures'][0] }
                                         alt={`${vehicle.manufacture} ${vehicle.model}`}
                                     />
                                 </Grid>
@@ -63,12 +63,16 @@ function VehicleCard({ vehicle, i, handleChangeTab }) {
                                                     variant="h4">{vehicle.licenseNumber}</Typography></Grid>
                                             </Grid>
 
-                                            <Grid container direction="row" spacing={2}>
-                                                <Grid item><Typography variant="h4">Bejegyzett
-                                                    szervízek:</Typography></Grid>
-                                                <Grid item><Typography
-                                                    variant="h4">{vehicle.serviceEntries.length}</Typography></Grid>
-                                            </Grid>
+                                            {
+                                                vehicle?.serviceEntries
+                                                &&
+                                                <Grid container direction="row" spacing={2}>
+                                                    <Grid item><Typography variant="h4">Bejegyzett
+                                                        szervízek:</Typography></Grid>
+                                                    <Grid item><Typography
+                                                        variant="h4">{vehicle.serviceEntries.length}</Typography></Grid>
+                                                </Grid>
+                                            }
                                         </Grid>
                                     </CarCardContent>
                                 </Grid>
@@ -85,7 +89,7 @@ function VehicleCard({ vehicle, i, handleChangeTab }) {
                                             <Chip label={`${vehicle.performanceLE} LE`} variant="outlined"/></>
                                 }
                                 <ViewButton sx={{marginLeft: "auto"}} component={Link}
-                                            to={`/jarmuveim/${vehicle['_id']}`} onClick={e => {
+                                            to={`/jarmuveim/${vehicle['_id'] ? vehicle['_id'] : vehicle['id']}`} onClick={e => {
                                     handleChangeTab(1)
                                 }}>Megtekintem</ViewButton>
                             </CarCardActions>

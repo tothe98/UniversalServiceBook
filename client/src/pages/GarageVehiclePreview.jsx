@@ -17,7 +17,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import DOMPurify from "isomorphic-dompurify";
 import {MyFullWidthInputSkeleton, MyInputSkeleton, MyTextSkeleton, MyWallpaperSkeleton} from "../lib/Skeletons";
 import useAuth from "../hooks/useAuth";
-import Roles from "../components/Roles";
+import Roles from "../lib/Roles";
 import axios from "axios";
 import moment from "moment";
 

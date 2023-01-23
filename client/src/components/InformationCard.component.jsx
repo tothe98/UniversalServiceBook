@@ -17,12 +17,13 @@ import {
     serviceInformationIcon
 } from '../lib/GlobalIcons'
 
-function InformationCard({ info, i, handleChangeTab }) {
+function InformationCard({ data, i, handleChangeTab }) {
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
 
     return <ContentBox key={uuidv4()}>
-                <Grid container spacing={2} direction={underS ? "column" : "row"}  alignItems="center" justifyContent={ underS ? "center" : "flex-start" }>
+                <Grid container spacing={2} direction={underS ? "column" : "row"}  alignItems="center" 
+                        justifyContent={ underS ? "center" : "flex-start" }>
                     <Grid item xs={1}>
                         <Grid container direction="column" justifyContent="center" alignItems="center">
                             <ContentBoxImage src={serviceInformationIcon} alt="Szervíz Információ" sx={{width: "4em", height: "4em"}} />
@@ -37,12 +38,13 @@ function InformationCard({ info, i, handleChangeTab }) {
                             </Typography>
                         </Grid>
                         <Grid container direction="row" sx={{ textAlign: underS ? "center" : "" }} >
-                            <Grid item><Typography variant="h5" sx={{textAlign: "justify", maxWidth: "500px"}} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(info.message)}} /></Grid>
+                            <Grid item><Typography variant="h5" sx={{textAlign: "justify", maxWidth: "500px"}} 
+                                dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(data['text'])}} /></Grid>
                         </Grid>
                     </Grid>
 
                     <Grid item xs sx={{position: underS ? "block" : "absolute", bottom: "2em", right: "2em"}}>
-                        <ViewButton component={Link} to={`/jarmuveim/2e2zbahdb2a#12`} onClick={e=>{handleChangeTab(2)}}  >Megtekintem</ViewButton>
+                        <ViewButton component={Link} to={`/jarmuveim/${data['vehicleId']}`} onClick={e=>{handleChangeTab(2)}}  >Megtekintem</ViewButton>
                     </Grid>
                 </Grid>
             </ContentBox>
