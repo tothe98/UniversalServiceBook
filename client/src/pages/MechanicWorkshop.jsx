@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
+import useAuth from "../hooks/useAuth";
 import {
     Avatar,
     Button,
@@ -10,63 +11,36 @@ import {
     IconButton,
     styled,
     TextField,
-    Typography
-} from "@mui/material";
-import EnergySavingsLeafOutlinedIcon from "@mui/icons-material/EnergySavingsLeafOutlined";
-import DoNotDisturbOnOutlinedIcon from "@mui/icons-material/DoNotDisturbOnOutlined";
-import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import DateIcon from '@mui/icons-material/DateRangeOutlined';
-import KmIcon from '@mui/icons-material/SpeedOutlined';
-import DocumentsIcon from '@mui/icons-material/FilePresentOutlined';
-import RemoveCircleOutlineOutlinedIcon from '@mui/icons-material/RemoveCircleOutlineOutlined';
-import {toast} from "react-toastify";
+    Typography,
+    toast,
+    axios,
+    moment
+} from "../lib/GlobalImports";
+import {
+    AddCircleOutlineOutlinedIcon,
+    SearchOutlinedIcon,
+    DateIcon,
+    KmIcon,
+    RemoveCircleOutlineOutlinedIcon,
+    DocumentsIcon
+} from "../lib/GlobalIcons"
+import {
+    MyCardSkeleton,
+    MyInputSkeleton,
+    MyTextSkeleton
+} from "../lib/Skeletons";
+import {
+    axiosInstance
+} from "../lib/GlobalConfigs"
+import {
+    ContentBox,
+    GalleryImage,
+    SubTitle,
+    SubTitle2,
+    MyTextField,
+    MyCardHeader
+} from "../lib/StyledComponents"
 import {Editor} from "@tinymce/tinymce-react";
-import {MyCardSkeleton, MyInputSkeleton, MyTextSkeleton} from "../lib/Skeletons";
-import moment from "moment";
-import axios from "axios";
-import useAuth from "../hooks/useAuth";
-
-const ContentBox = styled('div')(({theme}) => ({
-    position: "relative",
-    width: "100",
-    height: "auto",
-    border: `1px solid ${theme.palette.common.lightgray}`,
-    borderRadius: "5px",
-    margin: "11px 0",
-    padding: "10px"
-}))
-
-const GalleryImage = styled("img")(({theme}) => ({
-    maxWidth: "200px",
-    maxHeight: "200px",
-    width: "100%",
-    height: "auto",
-    objectFit: "cover"
-}))
-
-const SubTitle = styled(Typography)(({theme}) => ({
-    marginBottom: "2rem"
-}))
-const SubTitle2 = styled(Typography)(({theme}) => ({
-    margin: "2rem 0"
-}))
-
-const MyTextField = styled(TextField)(({theme}) => ({
-    marginBottom: "0.6rem"
-}))
-const MyFormControll = styled(FormControl)(({theme}) => ({
-    marginBottom: "0.6rem"
-}))
-
-const MyCardHeader = styled(CardHeader)(({theme}) => ({
-    "& .MuiCardHeader-title": {
-        ...theme.typography.h3
-    },
-    "& .MuiCardHeader-subheader": {
-        ...theme.typography.h4
-    }
-}))
 
 const UploadButton = styled(Button)(({theme}) => ({
     margin: "2rem 0"
@@ -75,11 +49,6 @@ const UploadButton = styled(Button)(({theme}) => ({
 function MechanicWorkshop({handleChangeTab}) {
     /* authentication context */
     const { auth } = useAuth();
-
-    /* for backend requests */
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_BACKEND_URL
-    })
 
     const [isLoading, setIsLoading] = useState(true);
     const [isFinded, setIsFinded] = useState(false);
@@ -380,6 +349,7 @@ function MechanicWorkshop({handleChangeTab}) {
                 </Grid>
 
                 <Editor
+                    apiKey="jdakkbjup13h3wxbimqnu4sii9msv6jim9sx9y7qfzk43spo"
                     onInit={ (evt, editor) => serviceMessageHTML.current = editor }
                     init={{
                         menubar: false

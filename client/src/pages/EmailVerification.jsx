@@ -1,11 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
-import {CircularProgress, Grid, styled, Typography} from "@mui/material";
-
-import SuccessIcon from "../global/successIcon.png"
-import NotActivatedIcon from "../global/notActivatedIcon.png"
-import axios from "axios";
-import { toast } from "react-toastify";
+import {
+    CircularProgress,
+    Grid,
+    styled,
+    Typography,
+    axios
+} from "../lib/GlobalImports";
+import {
+    SuccessIcon,
+    NotActivatedIcon
+} from "../lib/GlobalIcons";
+import {
+    axiosInstance
+} from "../lib/GlobalConfigs";
 
 const VerificationEmailIcon = styled("img")(({theme}) => ({
     maxWidth: "100px",
@@ -23,13 +31,11 @@ function EmailVerification() {
     * 3 => error (token expired)
     * */
     const [verificationStatus, setVerificationStatus] = useState(0);
-    const { token } = useParams();
+    const { userid, token } = useParams();
 
     useEffect(() => {
-        const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_BACKEND_URL
-        })
         axiosInstance.post(`/emailConfirmation/`, {
+            userid: userid,
             token: token
         })
         .then(response => {

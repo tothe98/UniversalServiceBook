@@ -1,115 +1,47 @@
 import React, {useEffect, useState} from "react";
 import { useParams } from "react-router-dom";
 import {
+    ExpandMoreIcon,
+    KeyboardBackspaceOutlinedIcon
+} from "../lib/GlobalIcons"
+import {
     Accordion, AccordionDetails, AccordionSummary,
     Button,
     Grid,
     styled,
     Typography,
-    useMediaQuery
-} from "@mui/material";
-import {Link} from "react-router-dom";
-import theme from "../themes/theme";
-import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
-import {LoadingButton} from "@mui/lab";
-import SaveIcon from '@mui/icons-material/Save';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import DOMPurify from "isomorphic-dompurify";
-import {MyFullWidthInputSkeleton, MyInputSkeleton, MyTextSkeleton, MyWallpaperSkeleton} from "../lib/Skeletons";
+    useMediaQuery,
+    Link,
+    axios,
+    moment,
+    DOMPurify,
+    theme
+} from "../lib/GlobalImports";
+import {
+    NameBox,
+    BackToCarsButton,
+    CarWallPaperImage,
+    CarGalleryImage,
+    CarDetailGridItem,
+    CarDetailsTitle,
+    CarDetailValue,
+    MyAccordionImage,
+    MyAccordion,
+    CAR_DETAiL_SPACING
+} from "../lib/StyledComponents"
+import {
+    MyFullWidthInputSkeleton,
+    MyInputSkeleton,
+    MyTextSkeleton,
+    MyWallpaperSkeleton
+} from "../lib/Skeletons";
 import useAuth from "../hooks/useAuth";
 import Roles from "../lib/Roles";
-import axios from "axios";
-import moment from "moment";
-
-const CONTENT_BOX_MAX_HEIGHT = "200px";
-const CAR_NAME_BOX_MAX_HEIGHT = "80px";
-const CAR_DETAiL_SPACING = 2;
-const CAR_DETAIL_GRID_ITEM_SPACE = "1em";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     ...theme.typography.link,
     marginBottom: "2rem",
     fontWeight: 800
-}))
-
-const ContentBox = styled('div')(({theme}) => ({
-    position: "relative",
-    height: "auto",
-    border: `1px solid ${theme.palette.common.lightgray}`,
-    borderRadius: "5px",
-    margin: "11px 0",
-    padding: "10px"
-}))
-
-const ContentBoxImage = styled('img')(({theme}) => ({
-    width: "100%",
-    maxHeight: CONTENT_BOX_MAX_HEIGHT,
-    objectFit: "scale-down",
-    height: "100%"
-}))
-
-const ViewButton = styled(Button)(({theme}) => ({
-    ...theme.mixins.button,
-    position: "relative"
-}))
-
-const NameBox = styled('div')(({theme}) => ({
-    maxHeight: CAR_NAME_BOX_MAX_HEIGHT,
-    height: "auto",
-    background: theme.palette.common.white,
-    boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)",
-    margin: "23px 0",
-    padding: "10px"
-}))
-
-const BackToCarsButton = styled(Button)(({theme}) => ({
-    color: theme.palette.common.darkblack,
-    textTransform: "none",
-    borderColor: `#D0D7DE`,
-    borderRadius: "5px"
-}))
-
-const CarWallPaperImage = styled("img")(({theme}) => ({
-    objectFit: "cover",
-    width: "100%",
-    height: "100%"
-}))
-
-const CarGalleryImage = styled("img")(({theme}) => ({
-    maxWidth: "97px",
-    objectFit: "cover",
-    width: "100%",
-    minHeight: "40px",
-    height: "auto",
-    "&:hover": {
-        opacity: 0.7
-    }
-}))
-
-const CarDetailsTitle = styled(Typography)(({theme}) => ({
-    fontWeight: 800
-}))
-
-const CarDetailGridItem = styled(Grid)(({theme}) => ({
-    marginBottom: CAR_DETAIL_GRID_ITEM_SPACE,
-    width: "100%"
-}))
-
-const CarDetailValue = styled(Typography)(({theme}) => ({
-    fontWeight: 390,
-    width: "100%"
-}))
-
-const MyAccordion = styled(Accordion)(({theme}) => ({
-    border: `1px solid ${theme.palette.common.lightgray}`,
-    marginBottom: "0.5em"
-}))
-
-const MyAccordionImage = styled("img")(({theme}) => ({
-    maxWidth: "150px",
-    width: "100%",
-    height: "100%",
-    objectFit: "cover"
 }))
 
 function GarageVehiclePreview({routes, activePage, handleChangeTab}) {

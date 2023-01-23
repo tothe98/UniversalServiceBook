@@ -1,4 +1,4 @@
-import React, {Component, useState} from 'react';
+import React, {Component, useEffect, useState} from 'react';
 import {
     Avatar,
     Divider,
@@ -27,14 +27,10 @@ import {
 } from '../lib/StyledComponents'
 import {
     MenuIcon,
-    HelpIcon,
-    GavelIcon,
-    HomeIcon,
-    GarageIcon,
-    MailsIcon,
-    AlternateEmailIcon,
-    LogoutOutlinedIcon
+    LogoutOutlinedIcon,
+    AutoAwesomeIcon
 } from '../lib/GlobalIcons'
+import Roles from '../lib/Roles';
 import useAuth from '../hooks/useAuth';
 
 const MAX_HEIGHT = '100px';
@@ -50,7 +46,7 @@ const Wrapper = styled('div')(({theme}) => ({
     position: "relative"
 }))
 
-function Header({handleChangeTab}) {
+function Header({routes, handleChangeTab}) {
     const { auth } = useAuth();
     const underS = useMediaQuery(theme.breakpoints.down("sm"))
     const [open, setOpen] = useState(false);
@@ -58,11 +54,66 @@ function Header({handleChangeTab}) {
 
     const handleLogout = (e) => {
         localStorage.removeItem("token")
-        localStorage.removeItem("last_viewed")
         toast.success("Sikeresen kijelentkeztél!")
         global.location.reload()
         global.location.href="/"
         setOpen(!open)
+    }
+
+    const getRoutesByRole = (role) => {
+        switch (role) {
+            case Roles.User:
+                return [...routes.USER]
+                break;
+            case Roles.Employee:
+                return [...routes.EMPLOYEE]
+                break;
+            case Roles.Owner:
+                return [...routes.OWNER]
+                break;
+            case Roles.Admin:
+                return [...routes.ADMIN]
+                break;
+        }
+    }
+
+    const Tabs = () => {
+        return <>
+            {
+                Array.from(getRoutesByRole(auth.role))
+                .map(route => {
+                    return <>
+                        <MyDivider variant="inset" component="li" />
+
+                        <ListItem>
+                            <ListItemButton component={Link} to={route.link}>
+                                <MyAvatar>
+                                    <AutoAwesomeIcon sx={{ color: "#fff" }} />
+                                </MyAvatar>
+                                <ListItemText primary={route.name} 
+                                        onClick={e=>{handleChangeTab(route.activeIndex); setOpen(!open)}} />
+                            </ListItemButton>
+                        </ListItem>
+
+                        <MyDivider variant="inset" component="li" />
+                    </>
+                })
+            }
+
+            <SpaceInList />
+
+            <ListItem>
+                <ListItemButton component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3); setOpen(!open)}}>
+                    <MyAvatar>
+                        <img src={auth?.user?.picture !== undefined ? auth.user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profilkép" />
+                    </MyAvatar>
+                    <ListItemText primary={`${
+                    auth.user && (
+                    auth.user.lName + " " + auth.user.fName
+                    )}`} />
+                </ListItemButton>
+            </ListItem>
+        </>
     }
 
     return (
@@ -94,93 +145,9 @@ function Header({handleChangeTab}) {
             >
                 <List >
                     <MarginDiv />
-
                     <SpaceInList />
 
-                    <MyDivider variant="inset" component="li" />
-
-                    <ListItem>
-                        <ListItemButton component={Link} to="/">
-                            <MyAvatar>
-                                <HomeIcon />
-                            </MyAvatar>
-                            <ListItemText primary="Főoldal"  onClick={e=>{handleChangeTab(0); setOpen(!open)}} />
-                        </ListItemButton>
-                    </ListItem>
-
-                    <MyDivider variant="inset" component="li" />
-
-                    <ListItem>
-                        <ListItemButton component={Link} to="/garazs"  onClick={e=>{handleChangeTab(1); setOpen(!open)}}>
-                            <MyAvatar>
-                                <GarageIcon />
-                            </MyAvatar>
-                            <ListItemText primary="Műhely" />
-                        </ListItemButton>
-                    </ListItem>
-
-                    <MyDivider variant="inset" component="li" />
-
-                    <ListItem>
-                        <ListItemButton component={Link} to="/levelek"  onClick={e=>{handleChangeTab(2); setOpen(!open)}}>
-                            <MyAvatar>
-                                <MailsIcon />
-                            </MyAvatar>
-                            <ListItemText primary="Leveleim"/>
-                        </ListItemButton>
-                    </ListItem>
-
-                    <SpaceInList />
-
-                    <MyDivider variant="inset" component="li" />
-
-                    <ListItem>
-                        <ListItemButton component={Link} to="#">
-                            <MyAvatar>
-                                <HelpIcon />
-                            </MyAvatar>
-                            <ListItemText primary="Segítség kérés" />
-                        </ListItemButton>
-                    </ListItem>
-
-                    <MyDivider variant="inset" component="li" />
-
-                    <ListItem>
-                        <ListItemButton component={Link} to="#">
-                            <MyAvatar>
-                                <GavelIcon />
-                            </MyAvatar>
-                            <ListItemText primary="Általános szerződési feltételek" />
-                        </ListItemButton>
-                    </ListItem>
-
-                    <MyDivider variant="inset" component="li" />
-
-                    <ListItem>
-                        <ListItemButton component={Link} to="#">
-                            <MyAvatar>
-                                <AlternateEmailIcon />
-                            </MyAvatar>
-                            <ListItemText primary="Elérhetőségeink" />
-                        </ListItemButton>
-                    </ListItem>
-
-                    <MyDivider variant="inset" component="li" />
-
-                    <SpaceInList />
-
-
-                    <ListItem>
-                        <ListItemButton component={Link} to="/beallitasok" onClick={e=>{handleChangeTab(3); setOpen(!open)}}>
-                            <MyAvatar>
-                                <img src="https://picsum.photos/400" alt="profilkép" />
-                            </MyAvatar>
-                            <ListItemText primary={`${
-                            auth.user && (
-                            auth.user.lName + " " + auth.user.fName
-                            )}`} />
-                        </ListItemButton>
-                    </ListItem>
+                    { auth.user && <Tabs /> }
 
                     <ListItem>
                         <ListItemButton onClick={e=>{handleLogout(e)}}>

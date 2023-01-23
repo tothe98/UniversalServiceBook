@@ -1,43 +1,41 @@
 import React, {Component, useEffect, useState} from 'react';
-import {Box, Button, Card, CardActionArea, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, Modal, styled, TextField, Typography, useMediaQuery} from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
-import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { Add } from '@mui/icons-material';
+import {
+    Box,
+    Button,
+    Card,
+    CardActionArea,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Grid,
+    Modal,
+    styled,
+    TextField,
+    Typography,
+    useMediaQuery,
+    theme,
+    axios,
+    toast
+} from "../lib/GlobalImports";
+import {
+    AddCircleOutlineOutlinedIcon,
+    SearchOutlinedIcon
+} from "../lib/GlobalIcons"
+import {
+    axiosInstance
+} from "../lib/GlobalConfigs"
+import {
+    SubTitle,
+    UserCard,
+    CarDialog,
+    CarDialogText,
+    MyTextField2
+} from "../lib/StyledComponents"
 import { Stack } from '@mui/system';
 import { useTheme } from '@emotion/react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
 import { DataGrid } from '@mui/x-data-grid';
-
-const SubTitle = styled(Typography)(({theme}) => ({
-    ...theme.typography.link,
-    marginBottom: "2rem"
-}))
-
-const UserCard = styled(CardActionArea)(({theme}) => ({
-    width: "200px",
-    height: "100px",
-    textAlign: "center",
-    marginBottom: "1rem",
-    "&:hover": {
-        backgroundColor: theme.palette.common.orange,
-        color: theme.palette.common.white
-    }
-}))
-
-const MyTextField = styled(TextField)(({theme}) => ({
-    marginBottom: "0.6rem"
-}))
-
-const CarDialog = styled(Dialog)(({theme}) => ({
-    "& .MuiDialog-paper": {
-        backgroundColor: "none",
-        width: "100%"
-    }
-}))
-
-const CarDialogText = styled(DialogContentText)(({theme}) => ({
-}))
 
 function OwnerPage() {
     const theme = useTheme();
@@ -58,9 +56,6 @@ function OwnerPage() {
 
     /* employeeID = email */
     const [employeeID, setEmployeeID] = useState("");
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_BACKEND_URL
-    })
 
     const columns = [
         { field: 'id', headerName: 'Sorszám', width: 70 },
@@ -187,7 +182,7 @@ function OwnerPage() {
             <Card variant="contained">
                 <UserCard onClick={e=>{setIsAdding(!isAdding); setEmployeeID("")}} >
                     <Stack flexDirection="column" justifyContent="center" alignItems="center">
-                        <AddIcon />
+                        <AddCircleOutlineOutlinedIcon />
                         <Typography>Dolgozó hozzáadása</Typography>
                     </Stack>
                 </UserCard>
@@ -197,7 +192,7 @@ function OwnerPage() {
         {
             isAdding && <Grid container direction="column" alignItems="flex-start" justifyContent="center" sx={{marginBottom: "1.5rem"}}>
                     <Grid item sx={{width: "100%"}}>
-                        <MyTextField
+                        <MyTextField2
                             fullWidth
                             id="outlined-disabled"
                             label="Dolgozó azonosító"
@@ -211,11 +206,11 @@ function OwnerPage() {
                         {
                             isAddingProcessing
                             ?
-                            <Button variant="contained" color="success" startIcon={<AddIcon />} disabled>
+                            <Button variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} disabled>
                                 Hozzáadás
                             </Button>
                             :
-                            <Button variant="contained" color="success" startIcon={<AddIcon />} onClick={e=>{handleEmployeeAddition(e); setIsAddingProcessing(true)}}>
+                            <Button variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} onClick={e=>{handleEmployeeAddition(e); setIsAddingProcessing(true)}}>
                                 Hozzáadás
                             </Button>
                         }

@@ -107,9 +107,17 @@ function Home({handleChangeTab}) {
             {
                 serviceInformations
                 ?
-                serviceInformations.map((information, i) => {
-                    return <InformationCard data={information} i={i} handleChangeTab={handleChangeTab} />
-                })
+                    serviceInformations.length
+                    ?
+                        serviceInformations.length > 0
+                        ?
+                            serviceInformations.map((information, i) => {
+                                return <InformationCard data={information} i={i} handleChangeTab={handleChangeTab} />
+                            })
+                        :
+                        <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
+                    :
+                    <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
                 :
                 <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
             }

@@ -13,15 +13,14 @@ import {
     Link,
     toast,
 } from '../lib/GlobalImports'
-import {CalendarPicker} from "@mui/x-date-pickers";
 import {
     MyCircularSkeleton,
     MyTextSkeleton
 } from '../lib/Skeletons'
+import {
+    AvatarImage
+} from '../lib/StyledComponents'
 import useAuth from '../hooks/useAuth';
-
-const AVATAR_MAX_HEIGHT = '200px';
-const AVATAR_MAX_WIDTH = '200px';
 
 const Container = styled(Grid)(({theme}) => ({
     paddingLeft: theme.global.basePadding,
@@ -31,26 +30,6 @@ const Container = styled(Grid)(({theme}) => ({
 const MyGridItem = styled(Grid)(({theme}) => ({
     [theme.breakpoints.down("sm")]: {
         width: "100%"
-    }
-}))
-
-const AvatarImage = styled('img')(({theme}) => ({
-    backgroundColor: theme.palette.common.gray,
-    height: AVATAR_MAX_HEIGHT,
-    width: AVATAR_MAX_WIDTH,
-    marginBottom: '40px',
-    borderRadius: '50%',
-    objectFit: "cover",
-    verticalAlign: "middle",
-    [theme.breakpoints.down("lg")]: {
-        width: "150px",
-        height: '150px',
-        marginBottom: "0px"
-    },
-    [theme.breakpoints.down("md")]: {
-        width: "100px",
-        height: '100px',
-        marginBottom: "0px"
     }
 }))
 
@@ -142,7 +121,10 @@ function Profile({handleChangeTab, loggedIn}) {
                     <Grid item>
                         <Grid container direction="row" alignItems="center" justifyContent="flex-start" spacing={1.5}>
                             <Grid item>
-                                <AvatarImage src={auth?.user?.picture !== undefined ? auth.user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profil kép" sx={{margin: 0}} />
+                                <AvatarImage src={auth?.user?.picture
+                                    ? 
+                                    `${process.env.REACT_APP_CLIENT_URL}/${auth.user.picture}`
+                                    : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profil kép" sx={{margin: 0}} />
                             </Grid>
 
                             <Grid item>
@@ -194,14 +176,6 @@ function Profile({handleChangeTab, loggedIn}) {
                     </SettingsButton>
             }
         </MyGridItem>
-
-            {
-                /*loggedIn && (biggerExtraLarge || underSmall) && <MyGridItem item xs>
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <MyCalendar date={date} onChange={(newDate) => setDate(newDate)} />
-                    </LocalizationProvider>
-                </MyGridItem> */
-            }
     </Container>
     {
         underLarge && <hr />
