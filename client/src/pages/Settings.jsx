@@ -1,44 +1,31 @@
 import React, {useEffect, useState} from "react";
-import {Button, Grid, styled, TextField, Typography, Input} from "@mui/material";
-import {Link} from "react-router-dom";
-import {toast} from "react-toastify";
-import axios from "axios";
-import {Password} from "@mui/icons-material";
-import {MyCircularSkeleton, MyFullWidthInputSkeleton, MyInputSkeleton} from "../lib/Skeletons";
+import {
+    axios,
+    toast,
+    Link,
+    Button,
+    Grid,
+    styled,
+    TextField,
+    Typography,
+    Input
+} from "../lib/GlobalImports"
+import {
+    MyCircularSkeleton,
+    MyFullWidthInputSkeleton,
+    MyInputSkeleton
+} from "../lib/Skeletons";
+import {
+    SubTitle,
+    MyGridItem,
+    FormCancelButton,
+    FormActionButton,
+    AvatarImage
+} from "../lib/StyledComponents";
+import {
+    axiosInstance
+} from "../lib/GlobalConfigs"
 import useAuth from "../hooks/useAuth";
-
-const AVATAR_MAX_HEIGHT = '200px';
-const AVATAR_MAX_WIDTH = '200px';
-
-const SubTitle = styled(Typography)(({theme}) => ({
-    ...theme.typography.link,
-    marginBottom: "2rem"
-}))
-
-const AvatarImage = styled('img')(({theme}) => ({
-    backgroundColor: theme.palette.common.gray,
-    height: AVATAR_MAX_HEIGHT,
-    width: AVATAR_MAX_WIDTH,
-    objectFit: "cover",
-    [theme.breakpoints.down("md")]: {
-        width: "100px",
-        height: '100%',
-        marginBottom: "0px"
-    }
-}))
-
-const FormActionButton = styled(Button)(({theme}) => ({
-    ...theme.mixins.button
-}))
-
-const FormCancelButton = styled(Button)(({theme}) => ({
-    ...theme.mixins.cancelButton
-}))
-
-const MyGridItem = styled(Grid)(({theme}) => ({
-    marginBottom: "30px",
-    width: "100%"
-}))
 
 function Settings({handleChangeTab}) {
     /* getting context data */
@@ -60,11 +47,6 @@ function Settings({handleChangeTab}) {
     const [changePasswordError, setChangePasswordError] = useState(null);
     const [oldPasswordError, setOldPasswordError] = useState(null);
     const [formUnderProcessing, setIsProcessing] = useState(false)
-
-    /* for backend requests */
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_BACKEND_URL
-    })
 
     useEffect(() => {
         setPicture(auth.user.picture);
@@ -271,14 +253,12 @@ function Settings({handleChangeTab}) {
                         <Grid item><TextField
                             disabled
                             fullWidth
-                            id="outlined-disabled"
                             label="Felhasználói email"
                             defaultValue={email}
                         /></Grid>
 
                         <Grid item><TextField
                             fullWidth
-                            id="outlined-disabled"
                             label="Kereszt név:"
                             defaultValue={firstName}
                             onChange={e=>setFirstName(e.target.value)}
@@ -286,7 +266,6 @@ function Settings({handleChangeTab}) {
 
                         <Grid item><TextField
                             fullWidth
-                            id="outlined-disabled"
                             label="Család név:"
                             defaultValue={lastName}
                             onChange={e=>setLastName(e.target.value)}
@@ -294,7 +273,6 @@ function Settings({handleChangeTab}) {
 
                         <Grid item><TextField
                             fullWidth
-                            id="outlined-disabled"
                             label="Telefonszám"
                             type="tel"
                             defaultValue={phoneNumber}
@@ -303,7 +281,6 @@ function Settings({handleChangeTab}) {
 
                         <Grid item><TextField
                             fullWidth
-                            id="outlined-disabled"
                             label="Város"
                             defaultValue={ home ? home : ""}
                             onChange={e=>setHome(e.target.value)}

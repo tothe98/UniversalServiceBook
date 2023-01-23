@@ -1,6 +1,9 @@
 import React from "react";
-import {styled, Typography} from "@mui/material";
-import {Link} from "react-router-dom";
+import {
+    Link,
+    styled,
+    Typography
+} from "../lib/GlobalImports";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     ...theme.typography.link,

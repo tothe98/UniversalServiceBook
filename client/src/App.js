@@ -194,7 +194,7 @@ function App() {
             { /*Public routes*/ }
             <Route path='/bejelentkezes' element={<Login />} />
             <Route path='/regisztracio' element={<Registration />} />
-            <Route path='/aktivalas/:token' element={<EmailVerification />} />   
+            <Route path='/aktivalas/:userid/:token' element={<EmailVerification />} />   
 
             { /*Protected routes*/ }
             <Route element={<RequireAuth allowedRoles={[Roles.User, Roles.Employee, Roles.Admin, Roles.Owner]} />}>

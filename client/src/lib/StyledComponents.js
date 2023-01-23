@@ -1,5 +1,6 @@
 import {
     Alert,
+    Accordion,
     alpha,
     InputBase,
     TextField,
@@ -17,16 +18,37 @@ import {
     useMediaQuery,
     Drawer,
     Avatar,
-    Tab
+    Tab,
+    CardActionArea
 } from "@mui/material";
 import {
     theme
 } from "./GlobalImports"
 
 const CONTENT_BOX_MAX_HEIGHT = "200px";
+/* multiple select field values */
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+    PaperProps: {
+        style: {
+            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+            width: 250,
+        },
+    },
+};
+const MAX_HEIGHT = '100px';
+const MAX_WIDTH = '880px';
+const CAR_NAME_BOX_MAX_HEIGHT = "80px";
+const CAR_DETAiL_SPACING = 2;
+const CAR_DETAIL_GRID_ITEM_SPACE = "1em";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     marginBottom: "2rem"
+}))
+
+const SubTitle2 = styled(Typography)(({theme}) => ({
+    margin: "2rem 0"
 }))
 
 const ContentBox = styled('div')(({theme}) => ({
@@ -159,6 +181,9 @@ const AddCarSubTitle = styled(Typography)(({theme}) => ({
 const MyTextField = styled(TextField)(({theme}) => ({
     margin: "0.7rem 0"
 }))
+const MyTextField2 = styled(TextField)(({theme}) => ({
+    margin: "0.7"
+}))
 const MyFormControll = styled(FormControl)(({theme}) => ({
     margin: "0.7rem 0"
 }))
@@ -171,20 +196,6 @@ const GalleryImage = styled("img")(({theme}) => ({
     objectFit: "cover"
 }))
 
-/* multiple select field values */
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-        style: {
-            maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-            width: 250,
-        },
-    },
-};
-
-const MAX_HEIGHT = '100px';
-const MAX_WIDTH = '880px';
 
 const Wrapper = styled(Grid)(({theme}) => ({
     maxHeight: MAX_HEIGHT,
@@ -251,7 +262,144 @@ const MyTab = styled(Tab)(({theme}) => ({
     textTransform: "none"
 }))
 
+const NameBox = styled('div')(({theme}) => ({
+    maxHeight: CAR_NAME_BOX_MAX_HEIGHT,
+    height: "auto",
+    background: theme.palette.common.white,
+    boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.2)",
+    margin: "23px 0",
+    padding: "10px"
+}))
+
+const BackToCarsButton = styled(Button)(({theme}) => ({
+    color: theme.palette.common.darkblack,
+    textTransform: "none",
+    borderColor: `#D0D7DE`,
+    borderRadius: "5px"
+}))
+
+const CarWallPaperImage = styled("img")(({theme}) => ({
+    objectFit: "cover",
+    width: "100%",
+    height: "100%"
+}))
+
+const CarGalleryImage = styled("img")(({theme}) => ({
+    maxWidth: "97px",
+    objectFit: "cover",
+    width: "100%",
+    minHeight: "40px",
+    height: "auto",
+    "&:hover": {
+        opacity: 0.7
+    }
+}))
+
+const CarDetailsTitle = styled(Typography)(({theme}) => ({
+    fontWeight: 800
+}))
+
+const CarDetailGridItem = styled(Grid)(({theme}) => ({
+    marginBottom: CAR_DETAIL_GRID_ITEM_SPACE,
+    width: "100%"
+}))
+
+const CarDetailValue = styled(Typography)(({theme}) => ({
+    fontWeight: 390,
+    width: "100%"
+}))
+
+const MyAccordion = styled(Accordion)(({theme}) => ({
+    border: `1px solid ${theme.palette.common.lightgray}`,
+    marginBottom: "0.5em"
+}))
+
+const MyAccordionImage = styled("img")(({theme}) => ({
+    maxWidth: "150px",
+    width: "100%",
+    height: "100%",
+    objectFit: "cover"
+}))
+
+const MyCardHeader = styled(CardHeader)(({theme}) => ({
+    "& .MuiCardHeader-title": {
+        ...theme.typography.h3
+    },
+    "& .MuiCardHeader-subheader": {
+        ...theme.typography.h4
+    }
+}))
+
+const UserCard = styled(CardActionArea)(({theme}) => ({
+    width: "200px",
+    height: "100px",
+    textAlign: "center",
+    marginBottom: "1rem",
+    "&:hover": {
+        backgroundColor: theme.palette.common.orange,
+        color: theme.palette.common.white
+    }
+}))
+
+const SendButton = styled(Button)(({theme}) => ({
+    ...theme.mixins.button,
+}))
+
+const AVATAR_MAX_HEIGHT = '200px';
+const AVATAR_MAX_WIDTH = '200px';
+
+const AvatarImage = styled('img')(({theme}) => ({
+    backgroundColor: theme.palette.common.gray,
+    height: AVATAR_MAX_HEIGHT,
+    width: AVATAR_MAX_WIDTH,
+    marginBottom: '40px',
+    borderRadius: '50%',
+    objectFit: "cover",
+    [theme.breakpoints.down("lg")]: {
+        width: "150px",
+        height: '150px',
+        marginBottom: "0px"
+    },
+    [theme.breakpoints.down("md")]: {
+        width: "100px",
+        height: '100%',
+        marginBottom: "0px"
+    }
+}))
+
+const FormActionButton = styled(Button)(({theme}) => ({
+    ...theme.mixins.button
+}))
+
+const FormCancelButton = styled(Button)(({theme}) => ({
+    ...theme.mixins.cancelButton
+}))
+
+const MyGridItem = styled(Grid)(({theme}) => ({
+    marginBottom: "30px",
+    width: "100%"
+}))
+
 export {
+    MyGridItem,
+    FormCancelButton,
+    FormActionButton,
+    AvatarImage,
+    SendButton,
+    MyTextField2,
+    UserCard,
+    CAR_DETAiL_SPACING,
+    MyCardHeader,
+    SubTitle2,
+    NameBox,
+    BackToCarsButton,
+    CarWallPaperImage,
+    CarGalleryImage,
+    CarDetailGridItem,
+    CarDetailsTitle,
+    CarDetailValue,
+    MyAccordionImage,
+    MyAccordion,
     MyTab,
     Title,
     SideMenu,

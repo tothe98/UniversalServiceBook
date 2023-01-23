@@ -1,4 +1,7 @@
 import {
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
     Alert,
     alpha, 
     Autocomplete,
@@ -38,7 +41,9 @@ import {
     Typography,
     useMediaQuery,
     Drawer,
-    Tabs
+    Tabs,
+    CardActionArea,
+    CircularProgress
 } from '@mui/material';
 import theme from '../themes/theme';
 import { Link, Navigate } from 'react-router-dom';
@@ -49,6 +54,11 @@ import DOMPurify from 'isomorphic-dompurify';
 import {toast} from "react-toastify";
 
 export {
+    CircularProgress,
+    CardActionArea,
+    Accordion,
+    AccordionSummary,
+    AccordionDetails,
     Navigate,
     Tabs,
     Drawer,

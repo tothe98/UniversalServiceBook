@@ -25,7 +25,10 @@ const Layout = ({handleChangeTab, routes, activePage}) => {
     const betweenSM_MD = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
     return <>
-        <Header handleChangeTab={handleChangeTab} />
+        <Header 
+            handleChangeTab={handleChangeTab}
+            routes={routes}
+        />
           { !underSmall && <PageSelector routes={routes} 
                                          activePage={activePage} 
                                          handleChangeTab={handleChangeTab} /> }
