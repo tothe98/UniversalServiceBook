@@ -78,20 +78,23 @@ import {
     MyCardSkeleton,
     MyInputSkeleton
 } from "../lib/Skeletons";
+import {
+    CopyToClipBoard
+} from "../lib/GlobalFunctions"
+import {
+    axiosInstance
+} from "../lib/GlobalConfigs"
 import useAuth from "../hooks/useAuth";
+import VehicleCard from "../components/VehicleCard.component";
 
 function Garage({handleChangeTab}) {
     const { auth } = useAuth();
+    const underMD = useMediaQuery(theme.breakpoints.down("md"));
+    const underS = useMediaQuery(theme.breakpoints.down("sm"));
 
     /* variables that used for cars */
-    const [currentDeletedVehicleId, setCurrentDeletedVehicleID] = useState("");
-    const [currentDeletedVehicleName, setCurrentDeletedVehicleName] = useState("");
-    const [openCarOptions, changeCarOptions] = useState(false);
-    const [carAnchorEl, setCarAnchorEL] = useState(null);
-    const [carModal, setCarModal] = useState(false);
     const [vehicles, setVehicles] = useState([]);
     const [visibleVehicles, setVisibleVehicles] = useState([]);
-    const [openCopyToolTip, setOpenCopyToolTip] = useState(false);
     /* end of car variables */
 
     /* searching variables */
@@ -101,23 +104,7 @@ function Garage({handleChangeTab}) {
     /* screen variables */
     const [isLoading, setIsLoading] = useState(true);
     const [isModified, setIsModified] = useState(false);
-    const underMD = useMediaQuery(theme.breakpoints.down("md"));
-    const underS = useMediaQuery(theme.breakpoints.down("sm"));
     /* end of screen variables */
-
-    /* network settings */
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_BACKEND_URL
-    })
-    /* end of network settings */
-
-    /* for dialog menu */
-    const [deleteVehicleName, setDeleteVehicleName] = useState('');
-    const [deleteVehicleID, setDeleteVehicleID] = useState('');
-    const [successVehicleDelete, setSuccessVehicleDelete] = useState(false);
-
-    /* for snackbar*/
-    const [isSnackOpen, setIsSnackOpen] = useState(false);
 
     /* new vehicle datas */
     /* these variables stores the new car datas */
@@ -168,10 +155,6 @@ function Garage({handleChangeTab}) {
     const [vehicleTransmissions, setVehicleTransmissions] = useState([]);
     const [vehicleModels, setVehicleModels] = useState([]);
     const [vehicleCountries, setVehicleCountries] = useState([]);
-
-    const CopyToClipBoard = (url) => {
-        navigator.clipboard.writeText(url);
-    }
 
     /* handle add new car */
     const handleNewVehicle = async () => {
@@ -423,7 +406,6 @@ function Garage({handleChangeTab}) {
                 return;
             }
         })
-        setCurrentDeletedVehicleName(vehicleName);
     }
     const deleteVehicle = async (id) => {
         if (!id) return;
@@ -435,8 +417,6 @@ function Garage({handleChangeTab}) {
             })
             .then((response) => {
                 if (response.status == 202) {
-                    setSuccessVehicleDelete(true);
-
                     // remove vehicle from vehicles and afterwards from the visiblevehicles
                     const newVehicles = [...vehicles].map((x) => (x.id !== id));
                     setVehicles(newVehicles);
@@ -444,7 +424,6 @@ function Garage({handleChangeTab}) {
                 }
             })
             .catch((err) => {
-                setSuccessVehicleDelete(false);
             })
     }
 
@@ -1247,148 +1226,9 @@ function Garage({handleChangeTab}) {
 
         {
             visibleVehicles.length > 0 && visibleVehicles.map((vehicle,i) => {
-                return <ContentBox key={vehicle+i}>
-                    <Grid container direction="column">
-                        <Grid item>
-                            <CarCard>
-                                <CarCardHeader
-                                    title={`${vehicle.manufacture} ${vehicle.model}`}
-                                    action={
-                                        <IconButton aria-label="settings" onClick={e => {
-                                            changeCarOptions(true);
-                                            setCarAnchorEL(e.target)
-                                        }}>
-                                            <MoreVertIcon/>
-                                        </IconButton>
-                                    }
-                                >
-                                </CarCardHeader>
-
-                                <Grid container direction={underMD ? "column" : "center"}
-                                      alignItems={underMD ? "center" : "flex-start"}
-                                      justifyContent={underMD && "center"}>
-                                    <Grid item>
-                                        <CarCardMedia
-                                            component="img"
-                                            image={`${vehicle['preview']}`}
-                                            alt={vehicle.manufacture+" "+vehicle.model}
-                                        />
-                                    </Grid>
-
-                                    <Grid item>
-                                        <CarCardContent>
-                                            <Grid container direction="column" justifyContent="center">
-                                                <Grid container direction="row" spacing={2}>
-                                                    <Grid item><Typography variant="h4">Alvázszám:</Typography></Grid>
-                                                    <Grid item><Typography
-                                                        variant="h4">{vehicle.vin}</Typography></Grid>
-                                                </Grid>
-
-                                                <Grid container direction="row" spacing={2}>
-                                                    <Grid item><Typography variant="h4">Rendszám:</Typography></Grid>
-                                                    <Grid item><Typography
-                                                        variant="h4">{vehicle.licenseNumber}</Typography></Grid>
-                                                </Grid>
-
-                                                { vehicle.serviceEntries && <Grid container direction="row" spacing={2}>
-                                                    <Grid item><Typography variant="h4">Bejegyzett
-                                                        szervízek:</Typography></Grid>
-                                                    <Grid item><Typography
-                                                        variant="h4">{vehicle.serviceEntries.length}</Typography></Grid>
-                                                </Grid> }
-                                            </Grid>
-                                        </CarCardContent>
-                                    </Grid>
-                                </Grid>
-
-                                <CarCardActions>
-                                    {
-                                        underMD
-                                            ?
-                                            <Chip label={moment(vehicle.vintage).format("YYYY")} variant="outlined"/>
-                                            :
-                                            <><Chip label={moment(vehicle.vintage).format("YYYY")} variant="outlined"/>
-                                                <Chip label={`${vehicle.mileage} km`} variant="outlined"/>
-                                                <Chip label={`${vehicle.performanceLE} LE`} variant="outlined"/></>
-                                    }
-                                    <ViewButton sx={{marginLeft: "auto"}} component={Link}
-                                                to={`/jarmuveim/${vehicle.id}`} onClick={e => {
-                                        handleChangeTab(1)
-                                    }}>Megtekintem</ViewButton>
-                                </CarCardActions>
-                            </CarCard>
-                        </Grid>
-                    </Grid>
-
-                    <CarOptionsMenu
-                        id="basic-menu"
-                        anchorEl={carAnchorEl}
-                        open={openCarOptions}
-                        onClose={e => changeCarOptions(!openCarOptions)}
-                        MenuListProps={{
-                            'aria-labelledby': 'basic-button',
-                        }}
-                    >
-                        <Divider/>
-                        <Button startIcon={<DoNotDisturbOnOutlinedIcon sx={{color: "red"}}/>}>
-                            <MenuText variant="h4" onClick={async (e) => {
-                                setCarModal(true);
-                                changeCarOptions(false)
-                                setCurrentDeletedVehicleID(vehicle.id+"");
-                                findVehicleNameById(vehicle.id);
-                            }}>Törlés</MenuText>
-                        </Button>
-                        <Divider/>
-                        <Tooltip
-                            PopperProps={{
-                                disablePortal: true,
-                            }}
-                            open={openCopyToolTip}
-                            onClick={e => setOpenCopyToolTip(!openCopyToolTip)}
-                            onClose={e => setOpenCopyToolTip(!openCopyToolTip)}
-                            title="Másolva a vágólapodra!"
-                        >
-                            <Button startIcon={<ShareOutlinedIcon/>}>
-                                <MenuText variant="h4"
-                                          onClick={e => CopyToClipBoard(`${process.env.REACT_APP_CLIENT_URL}/jarmuveim/${vehicle.id}`)}>Megosztás</MenuText>
-                            </Button>
-                        </Tooltip>
-                    </CarOptionsMenu>
-                </ContentBox>
+                return <VehicleCard vehicle={vehicle} i={i} handleChangeTab={handleChangeTab}  />
             })
         }
-
-        <CarDialog
-            open={carModal}
-            onClose={e=>setCarModal(!carModal)}
-            aria-labelledby="parent-modal-title"
-            aria-describedby="parent-modal-description"
-            >
-            <DialogTitle id="alert-dialog-title">
-                <Typography variant="h2">Figyelmeztetés</Typography>
-            </DialogTitle>
-
-            <DialogContent>
-                <CarDialogText id="alert-dialog-description">
-                    Biztosan törölni kívánja az alábbi elemet?
-                    ( <b>{currentDeletedVehicleName}</b> )
-                </CarDialogText>
-            </DialogContent>
-
-            <DialogActions>
-                <Button onClick={e=>setCarModal(!carModal)} variant="contained" color="success">Mégsem</Button>
-                <Button onClick={e=>{deleteVehicle(currentDeletedVehicleId); setCarModal(!carModal); setIsSnackOpen(!isSnackOpen)}} variant="contained" color="error" autoFocus>
-                Törlés
-                </Button>
-            </DialogActions>
-        </CarDialog>
-
-        <Snackbar open={isSnackOpen} autoHideDuration={6000} onClose={e=>setIsSnackOpen(!isSnackOpen)}>
-            <Alert onClose={e=>setIsSnackOpen(!isSnackOpen)} severity={ successVehicleDelete ? "success" : "error" } sx={{ width: '100%' }}>
-                { successVehicleDelete ? `Sikeresen törölted az alábbi elemet (${currentDeletedVehicleName})!` : `Az alábbi elem
-                ${currentDeletedVehicleName} törlése sikertelen volt!` }
-            </Alert>
-        </Snackbar>
     </React.Fragment>)
 }
 

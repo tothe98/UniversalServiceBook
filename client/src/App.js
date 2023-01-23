@@ -4,38 +4,37 @@ import {
   Routes,
   Route
 } from "react-router-dom";
+import {
+    axios
+} from './lib/GlobalImports'
+import {
+    axiosInstance
+} from './lib/GlobalConfigs'
 import React, {Component, useEffect, useState} from 'react';
 import theme from './themes/theme'
 import {ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css'
-import RequireAuth from "./components/RequireAuth";
 import Home from './pages/Home';
-import Header from "./global/Header";
-import PageSelector from "./global/PageSelector";
-import Footer from "./global/Footer";
 import Error from "./pages/Error";
-import Profile from "./global/Profile";
 import Garage from "./pages/Garage";
-import Mails from "./pages/Mails";
 import Settings from "./pages/Settings";
 import GarageVehiclePreview from "./pages/GarageVehiclePreview";
-import MailPreview from "./pages/MailPreview";
 import Login from "./pages/Login";
-import axios from "axios";
 import Registration from "./pages/Registration";
 import MechanicWorkshop from "./pages/MechanicWorkshop";
 import EmailVerification from "./pages/EmailVerification";
 import AdminPage from "./pages/AdminPage";
-import { AuthProvider } from './context/AuthProvider';
 import Layout from './components/Layout.component';
 import OwnerPage from './pages/OwnerPage';
 import Unauthorized from './pages/Unauthorized';
-import Roles from '../src/components/Roles'
+import Roles from './lib/Roles'
 import useAuth from './hooks/useAuth';
+import RequireAuth from "./context/RequireAuth"
 
 function App() {
     const { auth, setAuth } = useAuth();
     const [activePage, setActivePage] = useState(1);
+
     const handleChangeTab = (newValue) => {
         setActivePage(newValue);
     }
@@ -165,9 +164,6 @@ function App() {
     }, [activePage, routes])
 
     const getUserDatas = async (token) => {
-        const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_BACKEND_URL
-        })
         const response = await axiosInstance.get("getUserData", {
             headers: {
                 "x-access-token": token

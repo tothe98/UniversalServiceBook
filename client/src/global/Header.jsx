@@ -1,3 +1,4 @@
+import React, {Component, useState} from 'react';
 import {
     Avatar,
     Divider,
@@ -10,20 +11,30 @@ import {
     styled,
     Toolbar,
     Typography,
-    useMediaQuery
-} from '@mui/material';
-import React, {Component, useState} from 'react';
-import { Link } from 'react-router-dom';
-import theme from "../themes/theme";
-import MenuIcon from "@mui/icons-material/MenuOutlined";
-import HelpIcon from '@mui/icons-material/HelpOutlineOutlined';
-import GavelIcon from '@mui/icons-material/GavelOutlined';
-import HomeIcon from '@mui/icons-material/CottageOutlined';
-import GarageIcon from '@mui/icons-material/BuildOutlined';
-import MailsIcon from '@mui/icons-material/EmailOutlined';
-import AlternateEmailIcon from '@mui/icons-material/AlternateEmailOutlined';
-import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
-import {toast} from "react-toastify";
+    useMediaQuery,
+    Link,
+    theme,
+    toast
+} from '../lib/GlobalImports';
+import {
+    Title,
+    SideMenu,
+    MyDrawer,
+    MarginDiv,
+    MyAvatar,
+    MyDivider,
+    SpaceInList
+} from '../lib/StyledComponents'
+import {
+    MenuIcon,
+    HelpIcon,
+    GavelIcon,
+    HomeIcon,
+    GarageIcon,
+    MailsIcon,
+    AlternateEmailIcon,
+    LogoutOutlinedIcon
+} from '../lib/GlobalIcons'
 import useAuth from '../hooks/useAuth';
 
 const MAX_HEIGHT = '100px';
@@ -37,42 +48,6 @@ const Wrapper = styled('div')(({theme}) => ({
     paddingRight: theme.global.basePadding,
     zIndex: theme.zIndex.drawer + 1,
     position: "relative"
-}))
-
-const Title = styled(Typography)(({theme}) => ({
-    ...theme.typography.link
-}))
-
-const SideMenu = styled(Grid)(({theme}) => ({
-    marginLeft: "auto"
-}))
-
-const MyDrawer = styled(Drawer)(({theme}) => ({
-    marginTop: "6.25rem",
-    "& 	.MuiDrawer-paper": {
-        backgroundColor: "rgba(36, 41, 47, 0.946555)",
-        color: theme.palette.common.white
-    }
-}))
-
-const MarginDiv = styled('div')(({theme}) => ({
-    marginTop: "7.0rem"
-}))
-
-const MyAvatar = styled(Avatar)(({theme}) => ({
-    color: theme.palette.common.white,
-    background: "none",
-    marginRight: "1em"
-}))
-
-const MyDivider = styled(Divider)(({theme}) => ({
-    "& 	.MuiDivider-root": {
-        color: theme.palette.common.gray
-    }
-}))
-
-const SpaceInList = styled('div')(({theme}) => ({
-    marginTop: "2rem"
 }))
 
 function Header({handleChangeTab}) {
