@@ -1,11 +1,17 @@
 import React, {useState} from "react";
-import {Button, Grid, styled, TextField, Typography} from "@mui/material";
-import axios from "axios";
-import {toast} from "react-toastify";
-import {Link, useNavigate, useLocation} from "react-router-dom";
-import AuthContext from "../context/AuthProvider";
-import useAuth from "../hooks/useAuth";
 import { useEffect } from "react";
+import { axiosInstance } from "../lib/GlobalConfigs"
+import {
+    Button,
+    Grid,
+    styled,
+    TextField,
+    Typography,
+    axios,
+    toast
+} from "../lib/GlobalImports";
+import {Link, useNavigate, useLocation} from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     marginBottom: "2rem"
@@ -27,10 +33,6 @@ function Login() {
 
     const sendLogin = async (e) => {
         e.preventDefault();
-        const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_BACKEND_URL
-        })
-        
         await axiosInstance.post("signin", {
             email: email,
             password: password
@@ -102,7 +104,6 @@ function Login() {
             <Grid container direction="column" spacing={1.5}>
                 <Grid item>
                     <TextField
-                        id="outlined"
                         label="Email cím"
                         type="email"
                         onChange={e=>handleEmailChange(e)}
@@ -111,7 +112,6 @@ function Login() {
 
                 <Grid item>
                     <TextField
-                        id="outlined"
                         label="Jelszó"
                         type="password"
                         onChange={e=>handlePasswordChange(e)}

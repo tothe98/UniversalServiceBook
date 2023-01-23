@@ -29,8 +29,20 @@ import GarageIcon from '@mui/icons-material/BuildOutlined';
 import MailsIcon from '@mui/icons-material/EmailOutlined';
 import AlternateEmailIcon from '@mui/icons-material/AlternateEmailOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
+import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import SuccessIcon from "../global/successIcon.png"
+import NotActivatedIcon from "../global/notActivatedIcon.png"
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 
 export {
+    AutoAwesomeIcon,
+    SuccessIcon,
+    NotActivatedIcon,
+    SearchOutlinedIcon,
+    ExpandMoreIcon,
+    KeyboardBackspaceOutlinedIcon,
     HelpIcon,
     GavelIcon,
     HomeIcon,

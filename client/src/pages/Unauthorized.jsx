@@ -1,12 +1,13 @@
 import styled from '@emotion/styled';
-import { Button, Typography } from '@mui/material';
+import {
+    Button,
+    Typography
+} from '../lib/GlobalImports';
+import {
+    SubTitle
+} from '../lib/StyledComponents';
 import React, { Component } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-const SubTitle = styled(Typography)(({theme}) => ({
-    ...theme.typography.link,
-    marginBottom: "2rem"
-}))
 
 const Unauthorized = () => {
     const navigate = useNavigate();

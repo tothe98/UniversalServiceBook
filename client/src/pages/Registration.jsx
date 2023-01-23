@@ -1,16 +1,21 @@
 import React, {useState} from "react";
-import {Button, Grid, styled, TextField, Typography} from "@mui/material";
-import axios from "axios";
-import {toast} from "react-toastify";
-import {Link} from "react-router-dom";
-
-const SubTitle = styled(Typography)(({theme}) => ({
-    marginBottom: "2rem"
-}))
-
-const SendButton = styled(Button)(({theme}) => ({
-    ...theme.mixins.button,
-}))
+import {
+    Button,
+    Grid,
+    styled,
+    TextField,
+    Typography,
+    axios,
+    toast,
+    Link
+} from "../lib/GlobalImports";
+import {
+    SubTitle,
+    SendButton
+} from "../lib/StyledComponents"
+import {
+    axiosInstance
+} from "../lib/GlobalConfigs"
 
 function Registration() {
     const [firstName, setFirstName] = useState("");
@@ -21,9 +26,6 @@ function Registration() {
 
     const sendRegistration = async (e) => {
         e.preventDefault();
-        const axiosInstance = axios.create({
-            baseURL: process.env.REACT_APP_BACKEND_URL
-        })
         const response = await axiosInstance.post("signup", {
             fName: firstName,
             lName: lastName,
@@ -49,7 +51,6 @@ function Registration() {
             <Grid container direction="column" spacing={1.5}>
                 <Grid item>
                     <TextField
-                        id="outlined"
                         label="Kereszt név "
                         type="text"
                         onChange={e=>setFirstName(e.target.value)}
@@ -58,7 +59,6 @@ function Registration() {
                 </Grid>
                 <Grid item>
                     <TextField
-                        id="outlined"
                         label="Család név "
                         type="text"
                         onChange={e=>setLastName(e.target.value)}
@@ -67,7 +67,6 @@ function Registration() {
                 </Grid>
                 <Grid item>
                     <TextField
-                        id="outlined"
                         label="Email cím "
                         type="email"
                         onChange={e=>setEmail(e.target.value)}
@@ -77,7 +76,6 @@ function Registration() {
 
                 <Grid item>
                     <TextField
-                        id="outlined"
                         label="Jelszó "
                         type="password"
                         onChange={e=>setPassword(e.target.value)}
@@ -87,7 +85,6 @@ function Registration() {
 
                 <Grid item>
                     <TextField
-                        id="outlined"
                         label="Telefonszám"
                         type="tel"
                         onChange={e=>setPhoneNumber(e.target.value)}
