@@ -41,8 +41,7 @@ const { getServiceInformation, getLastViewed } = require('../controllers/RecentA
 //AuthController
 router.post('/signup', signup)
 router.post('/signin', signin)
-router.get('/emailConfirmation/:token', confirmEmail)
-router.get('/isValidToken/:token', isValidToken)
+router.post('/emailConfirmation', confirmEmail)
 router.get('/isLoggedIn', authorize(ROLES.User), (req, res) => {
     res.status(200).json({ message: 'ok', data: {} })
 })
