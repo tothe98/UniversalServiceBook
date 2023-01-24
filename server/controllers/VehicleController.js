@@ -420,5 +420,83 @@ exports.deleteVehicle = async (req, res) => {
 
 }
 
+exports.shareVehicle = async (req, res) => {
+    try {
+        const { id } = req.params
+        const vehicle = await Vehicles.findOne({ _id: id, _userId: req.userId })
+        if (!vehicle) {
+            logger.warn("Sikertelen jármű státusz módosítás! Exception: Nem létezik az autó! ", { user: req.userId, data: JSON.stringify(req.params) })
+            return res.status(404).json({ message: 'NotFoundVehicle', data: {} })
+        }
+        vehicle.shared = vehicle.shared ? !vehicle.shared : true
+        await vehicle.save()
+        logger.info("Sikeres jármű státusz módosítás!", { user: req.userId, data: JSON.stringify(vehicle) })
+        return res.status(202).json({ message: '', data: { vehicle: vehicle } })
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a jármű státusz módosítása során!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({ message: 'error', data: { error: error } })
+    }
+
+}
+
+exports.getPublicVehicle = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id) {
+            logger.warn(`Sikertelen jármű listázás! Exception: Id paraméter hiányzik!`, {
+                user: 'PublicVehicle',
+                data: JSON.stringify(req.params)
+            })
+            return res.status(422).json({ message: "IdIsNotExists", data: {} })
+        }
+
+        const isExist = await Vehicles.findOne({ _id: id, isActive: true, shared: true })
+        if (!isExist) {
+            logger.warn(`Sikertelen jármű listázás! Exception: Jármű nem található!`, {
+                user: 'PublicVehicle',
+                data: JSON.stringify(req.params)
+            })
+            return res.status(404).json({ message: "VehicleNotFound", data: {} })
+        }
+
+        const resFromDB = await Vehicles.findOne({ _id: id, shared: true })
+            .populate('_manufacture')
+            .populate('_model')
+            .populate('_fuel')
+            .populate('_driveType')
+            .populate('_designType')
+            .populate('_transmission')
+            .populate('pictures')
+            .populate('preview')
+
+        const resFromDBServices = await ServiceEntries.find({ _vehicle: id, isDelete: false })
+            .populate("_workshop")
+            .populate("pictures")
+            .populate('_mechanicer')
+            .sort({ createdAt: -1 })
+
+
+        let responseData = []
+        resFromDBServices.forEach((service) => {
+            responseData.push(service.getServices)
+        })
+
+        const currentMaxMileage = await getMileageFromServices(resFromDB._id)
+        resFromDB.mileage = currentMaxMileage ? currentMaxMileage : resFromDB.mileage
+
+        return res.status(200).json({
+            message: '', data: { vehicle: resFromDB.getVehicleDataById, serviceEntries: responseData || [] }
+        })
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a jármű listázása során!", {
+            user: 'PublicVehicle',
+            data: JSON.stringify(error)
+        })
+        return res.status(500).json({ message: 'error', data: { error: error } })
+    }
+}
 
 

@@ -91,8 +91,11 @@ const VehiclesSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
         default: true
+    },
+    shared: {
+        type: Boolean,
+        default: false
     }
-
 },
     {
         collection: 'Vehicles',
