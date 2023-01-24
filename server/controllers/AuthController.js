@@ -1,29 +1,39 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const moment = require("moment")
 const sendEmail = require("../core/Mailer")
 const confirmationEmail = require('../core/MailViews')
 const ROLES = require('../core/Role')
-const {Users} = require('../core/DatabaseInitialization')
-const {authSignUpValidate, authSignInValidate} = require("../models/ValidationSchema");
-const {logger} = require("../config/logger");
+const { Users, EmailConfirmation } = require('../core/DatabaseInitialization')
+const { authSignUpValidate, authSignInValidate } = require("../models/ValidationSchema")
+const { logger } = require("../config/logger")
 
+const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+const generateString = (length) => {
+    let result = '';
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
 
 exports.signup = async (req, res) => {
-    const {value, error} = authSignUpValidate(req.body)
+    const { value, error } = authSignUpValidate(req.body)
     if (error) {
         req.body.password = ""
         logger.warn(`Sikertelen regisztráció! Exception: ${error.details[0].message}`, {
             user: 'System',
             data: JSON.stringify(req.body)
         })
-        return res.status(422).json({message: error.details[0].message, data: {}})
+        return res.status(422).json({ message: error.details[0].message, data: {} })
     }
 
     const salt = bcrypt.genSaltSync(10);
     const encryptedPassword = bcrypt.hashSync(value.password, salt);
 
     try {
-        const isExistEmail = await Users.findOne({email: value.email})
+        const isExistEmail = await Users.findOne({ email: value.email })
 
         if (isExistEmail) {
             req.body.password = ""
@@ -31,7 +41,7 @@ exports.signup = async (req, res) => {
                 user: 'System',
                 data: JSON.stringify(req.body)
             })
-            return res.status(409).json({message: 'EmailIsExists', data: {}})
+            return res.status(409).json({ message: 'EmailIsExists', data: {} })
         }
         let createdUser = await Users.create({
             fName: value.fName,
@@ -43,41 +53,49 @@ exports.signup = async (req, res) => {
         })
         createdUser = createdUser.toJSON()
 
-        const token = jwt.sign({
-            userId: createdUser["_id"],
-            email: createdUser["email"]
-        }, process.env.JWT_SECRET, {expiresIn: '7d'})
-
-        await sendEmail(createdUser["email"], "Email megerősítés",
-            confirmationEmail(`http://127.0.0.1:3000/aktivalas/${token}`)
-        )
-        createdUser.password = ""
-        logger.info('Sikeres regisztráció', {user: 'System', data: JSON.stringify(createdUser)})
-        return res.status(201).json({message: 'success', data: {}})
+        const verificationCode = generateString(20)
+        const userId = createdUser['_id']
+        console.log(verificationCode);
+        console.log(userId);
+        await EmailConfirmation.create({
+            verificationCode: verificationCode,
+            userId: userId,
+            category: 'email'
+        }).then(async (response) => {
+            await sendEmail(createdUser["email"], "Email megerősítés",
+                confirmationEmail(`${process.env.CLIENT_URL}/aktivalas/${userId}/${verificationCode}`)
+            )
+            createdUser.password = ""
+            logger.info('Sikeres regisztráció', { user: 'System', data: JSON.stringify(createdUser) })
+            return res.status(201).json({ message: 'success', data: {} })
+        }).catch((error) => {
+            logger.error(`Sikertelen regisztráció! Execeptions: Kérés nem lett hozzáadva!`, { user: 'System', data: JSON.stringify(error) })
+            return res.status(400).json({ message: 'EmailIsNotSend', data: { error } })
+        })
     } catch (error) {
-        logger.error("[SERVER] Hiba történt regisztráció során!", {user: 'System', data: JSON.stringify(error)})
-        return res.status(500).json({message: 'error', data: {error}})
+        logger.error("[SERVER] Hiba történt regisztráció során!", { user: 'System', data: JSON.stringify(error) })
+        return res.status(500).json({ message: 'error', data: { error } })
     }
 }
 
 exports.signin = async (req, res) => {
-    const {value, error} = authSignInValidate(req.body)
+    const { value, error } = authSignInValidate(req.body)
     if (error) {
         req.body.password = ""
         logger.warn(`Sikertelen bejelentkezés! Exception: ${error.details[0].message}`, {
             user: 'System',
             data: JSON.stringify(req.body)
         })
-        return res.status(422).json({message: error.details[0].message, data: {}})
+        return res.status(422).json({ message: error.details[0].message, data: {} })
     }
-    const emailIsExist = await Users.findOne({email: value.email})
+    const emailIsExist = await Users.findOne({ email: value.email })
     if (!emailIsExist) {
         req.body.password = ""
         logger.warn(`Sikertelen bejelentkezés! Exception: Felhasználó nem létezik! Email: ${value.email}`, {
             user: 'System',
             data: JSON.stringify(req.body)
         })
-        return res.status(422).json({message: 'error', data: {}})
+        return res.status(422).json({ message: 'error', data: {} })
     }
     if (!emailIsExist.isActive) {
         req.body.password = ""
@@ -85,7 +103,7 @@ exports.signin = async (req, res) => {
             user: 'System',
             data: JSON.stringify(req.body)
         })
-        return res.status(403).json({message: 'Forbidden', data: {}})
+        return res.status(403).json({ message: 'Forbidden', data: {} })
     }
     if (await bcrypt.compare(value.password, emailIsExist.password)) {
         try {
@@ -96,11 +114,11 @@ exports.signin = async (req, res) => {
             }, process.env.JWT_SECRET)
 
             emailIsExist.password = ""
-            logger.info('Sikeres bejelentkezés!', {user: 'System', data: JSON.stringify(emailIsExist)})
-            return res.status(200).json({message: 'success', data: {token: token}})
+            logger.info('Sikeres bejelentkezés!', { user: 'System', data: JSON.stringify(emailIsExist) })
+            return res.status(200).json({ message: 'success', data: { token: token } })
         } catch (error) {
-            logger.error("[SERVER] Hiba történt bejelentkezés során!", {user: 'System', data: JSON.stringify(error)})
-            return res.status(500).json({message: 'error', data: {error}})
+            logger.error("[SERVER] Hiba történt bejelentkezés során!", { user: 'System', data: JSON.stringify(error) })
+            return res.status(500).json({ message: 'error', data: { error } })
         }
     } else {
         req.body.password = ""
@@ -108,69 +126,60 @@ exports.signin = async (req, res) => {
             user: 'System',
             data: JSON.stringify(req.body)
         })
-        return res.status(422).json({message: 'error', data: {}})
+        return res.status(422).json({ message: 'error', data: {} })
     }
 
 }
 
 exports.confirmEmail = async (req, res) => {
-    const {token} = req.params
-    if (!token) {
-        logger.warn(`Sikertelen email megerősítés! Exception: Nem található a token!`, {
-            user: 'System',
-            data: ''
-        })
-        return res.status(404).json({message: 'TokenIsNotFound', data: []})
-    } else {
-        jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
-            if (err) {
-                logger.warn(`Sikertelen email megerősítés! Exception: Lejárt a token!`, {
-                    user: 'System',
-                    data: ''
-                })
-                return res.status(409).json({message: 'TokenIsExpired', data: []})
-            } else {
-                try {
-                    const findUser = await Users.findOne({_id: decoded.userId, email: decoded.email})
-                    if (findUser) {
-                        findUser.isActive = true
-                        await findUser.save()
-                        findUser.password = ""
-                        logger.info('Sikeres email megerősítés!', {user: 'System', data: JSON.stringify(findUser)})
-                        return res.status(202).json({message: "success", data: []})
-                    } else {
-                        logger.warn(`Sikertelen email megerősítés! Exception: Nem található a felhasználó!`, {
-                            user: 'System',
-                            data: ''
-                        })
-                        return res.status(404).json({message: 'UserIsNotFound', data: []})
-                    }
-                } catch (error) {
-                    logger.error("[SERVER] Hiba történt email megerősítés során!", {
-                        user: 'System',
-                        data: JSON.stringify(error)
-                    })
-                    return res.status(500).json({message: '', data: {}})
-                }
-            }
-        })
-    }
-}
+    try {
+        const { verificationCode, userId } = req.body
+        if (!verificationCode || !userId) {
+            logger.warn(`Sikertelen email megerősítés! Exception: Nem találhatóak az adatok!`, {
+                user: 'System',
+                data: JSON.stringify(req.body)
+            })
+            return res.status(422).json({ message: 'MissingData', data: {} })
+        }
+        const isValidCode = await EmailConfirmation.findOne({ verificationCode: verificationCode, userId: userId, isActive: true, category: 'email' })
+        if (!isValidCode) {
+            console.log(isValidCode);
+            logger.warn(`Sikertelen email megerősítés! Exception: Nem létezik ilyen megerősítés a rendszerben!`, {
+                user: 'System',
+                data: JSON.stringify(req.body)
+            })
+            return res.status(404).json({ message: 'NotValidCode', data: [] })
+        }
+        if (moment(isValidCode.expireDate).diff(moment(), 'days') < 1) {
+            logger.warn(`Sikertelen email megerősítés! Exception: Lejárt a megerősítési kód!`, {
+                user: 'System',
+                data: JSON.stringify(isValidCode)
+            })
+            return res.status(409).json({ message: 'CodeIsExpired', data: [] })
+        }
+        const isExistsUser = await Users.findOne({ _id: isValidCode.userId, isActive: false })
+        if (!isExistsUser) {
+            logger.warn(`Sikertelen email megerősítés! Exception: Nem található a felhasználó!`, {
+                user: 'System',
+                data: JSON.stringify(isValidCode)
+            })
+            return res.status(404).json({ message: 'UserNotFound', data: [] })
+        }
+        isExistsUser.isActive = true
+        await isExistsUser.save()
 
-exports.isValidToken = async (req, res) => {
-    const {token} = req.params
-    if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-            if (err) {
-                return res.status(409).json({message: "TokenIsExpired", data: {}})
-            } else {
-                if (decoded.exp * 1000 < Date.now()) {
-                    return res.status(409).json({message: "TokenIsExpired", data: {}})
-                }
-            }
-            return res.status(200).json({message: "Valid", data: {}})
+        isValidCode.isActive = false
+        await isValidCode.save()
+
+        isExistsUser.password = ""
+        logger.info('Sikeres email megerősítés!', { user: 'System', data: JSON.stringify(isExistsUser) })
+        return res.status(202).json({ message: "success", data: {} })
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt email megerősítés során!", {
+            user: 'System',
+            data: JSON.stringify(error)
         })
-    } else {
-        return res.status(404).json({message: "NotFound", data: {}})
+        return res.status(500).json({ message: '', data: {} })
     }
+
 }

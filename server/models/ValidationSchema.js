@@ -1,12 +1,12 @@
 const Joi = require("joi");
-const {ref} = require("joi");
+const { ref } = require("joi");
 
 const authSignUpValidate = (data) => {
     const schema = Joi.object({
         fName: Joi.string().required().label("First Name"),
         lName: Joi.string().required().label("Last Name"),
         email: Joi.string().email().required().label("Email"),
-        phone: Joi.string().required().label("Phone Number"),
+        phone: Joi.string().label("Phone Number"),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).min(8).required().label('Password')
     })
     return schema.validate(data)
@@ -22,7 +22,8 @@ const authSignInValidate = (data) => {
 
 const newPasswordValidate = (data) => {
     const schema = Joi.object({
-        token: Joi.string().required().label('Token'),
+        userId: Joi.string().required().label('UserId'),
+        verificationCode: Joi.string().required().label('Verification Code'),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).min(8).required().label('Password'),
         cpassword: ref('password')
     })

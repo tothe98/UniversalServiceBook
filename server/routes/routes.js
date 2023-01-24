@@ -4,7 +4,7 @@ const { authorize } = require('../core/Auth')
 const ROLES = require('../core/Role')
 
 const { signup, signin, confirmEmail, isValidToken } = require('../controllers/AuthController')
-const { addVehicle, getVehicles, getVehicle, updateVehicle, deleteVehicle } = require('../controllers/VehicleController')
+const { addVehicle, getVehicles, getVehicle, updateVehicle, deleteVehicle, shareVehicle, getPublicVehicle } = require('../controllers/VehicleController')
 const { getUser, updateUser, forgotPassword, newPassword } = require('../controllers/UserController')
 
 const {
@@ -41,8 +41,7 @@ const { getServiceInformation, getLastViewed } = require('../controllers/RecentA
 //AuthController
 router.post('/signup', signup)
 router.post('/signin', signin)
-router.get('/emailConfirmation/:token', confirmEmail)
-router.get('/isValidToken/:token', isValidToken)
+router.post('/emailConfirmation', confirmEmail)
 router.get('/isLoggedIn', authorize(ROLES.User), (req, res) => {
     res.status(200).json({ message: 'ok', data: {} })
 })
@@ -75,6 +74,8 @@ router.get('/getVehicles', authorize(ROLES.User), getVehicles)
 router.get('/getVehicle/:id', authorize(ROLES.User), getVehicle)
 router.put('/updateVehicle/:id', authorize(ROLES.User), updateVehicle)
 router.delete('/deleteVehicle/:id', authorize(ROLES.User), deleteVehicle)
+router.post('/shareVehicle/:id', authorize(ROLES.User), shareVehicle)
+router.get('/getPublicVehicle/:id', getPublicVehicle)
 
 //WorkshopController
 router.get('/getWorkshops', authorize(ROLES.Admin), getWorkshops)
