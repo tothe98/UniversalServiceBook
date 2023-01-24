@@ -121,11 +121,6 @@ exports.forgotPassword = async (req, res) => {
             return res.status(404).json({ message: 'UserIsNotFound', data: {} })
         }
 
-        const token = jwt.sign({
-            userId: findUser._id,
-            email: findUser.email
-        }, process.env.JWT_SECRET, { expiresIn: '15m' })
-
         const verificationCode = generateString(25)
         const userId = findUser._id
         const isAlreadyRequest = await EmailConfirmation.findOne({ userId: userId, isActive: true })
@@ -172,24 +167,23 @@ exports.newPassword = async (req, res) => {
         })
         return res.status(422).json({ message: error.details[0].message, data: {} })
     }
-
-    jwt.verify(value.token, process.env.JWT_SECRET, async (err, decoded) => {
-        if (err) {
-            logger.warn(`Sikertelen új jelszó létrehozás! Exception: A token lejárt!`, {
-                user: 'System',
-                data: JSON.stringify(err)
-            })
-            return res.status(409).json({ message: 'TokenIsExpired', data: { err } })
-        }
-        try {
+    const isValidCode = await EmailConfirmation.findOne({ userId: value.userId, verificationCode: value.verificationCode, isActive: true, category: 'password' })
+    if (isValidCode) {
+        if (moment(isValidCode.expireDate).diff(moment(), 'minutes') > 0) {
+            const isExistsUser = await Users.findOne({ _id: isValidCode.userId })
+            if (!isExistsUser) {
+                logger.warn(`Sikertelen új jelszó létrehozás! Exception: User nem található!`, { user: 'System', data: JSON.stringify(isValidCode) })
+                return res.status(404).json({ message: 'UserNotFound', data: {} })
+            }
             if (value.password === value.cpassword) {
-                const updateUser = await Users.findOne({ _id: decoded.userId, email: decoded.email })
+                isValidCode.isActive = false
+                await isValidCode.save()
                 const salt = bcrypt.genSaltSync(10)
                 const updatePsw = bcrypt.hashSync(value.password, salt)
-                updateUser.password = updatePsw
-                await updateUser.save()
-                updateUser.password = ""
-                logger.info(`Sikeres új jelszó létrehozás!`, { user: 'System', data: JSON.stringify(updateUser) })
+                isExistsUser.password = updatePsw
+                await isExistsUser.save()
+                isExistsUser.password = ""
+                logger.info(`Sikeres új jelszó létrehozás!`, { user: 'System', data: JSON.stringify(isExistsUser) })
                 return res.status(201).json({ message: 'success', data: {} })
             } else {
                 logger.warn(`Sikertelen új jelszó létrehozás! Exception: A két jelszó nem egyezik!`, {
@@ -198,12 +192,18 @@ exports.newPassword = async (req, res) => {
                 })
                 return res.status(422).json({ message: 'PasswordIsNotEqual', data: {} })
             }
-        } catch (error) {
-            logger.error("[SERVER] Hiba történt a új jelszó létrehozásánál!", {
+        } else {
+            logger.warn(`Sikertelen új jelszó létrehozás! Exception: Lejárt a code`, {
                 user: 'System',
-                data: JSON.stringify(error)
+                data: JSON.stringify(isValidCode)
             })
-            return res.status(500).json({ message: 'error', data: { error } })
+            return res.status(409).json({ message: 'NotValidCoce', data: {} })
         }
-    })
+    } else {
+        logger.warn(`Sikertelen új jelszó létrehozás! Exception: Nem található newPassord kérés`, {
+            user: 'System',
+            data: JSON.stringify(value)
+        })
+        return res.status(404).json({ message: 'NotFoundCode', data: {} })
+    }
 }

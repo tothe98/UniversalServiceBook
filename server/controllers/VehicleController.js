@@ -261,7 +261,7 @@ exports.getVehicle = async (req, res) => {
             .populate("_workshop")
             .populate("pictures")
             .populate('_mechanicer')
-            .sort({ createdAt: 1 })
+            .sort({ createdAt: -1 })
 
 
         let responseData = []
@@ -406,6 +406,7 @@ exports.deleteVehicle = async (req, res) => {
             })
             return res.status(404).json({ message: "VehicleNotFound", data: {} })
         }
+        await RecentActivations.updateMany({ vehicleId: id }, { isActive: false });
         vehicle.isActive = false
         await vehicle.save()
         return res.status(204).json({ message: '', data: {} })

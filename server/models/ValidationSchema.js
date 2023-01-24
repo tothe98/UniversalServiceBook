@@ -1,5 +1,5 @@
 const Joi = require("joi");
-const {ref} = require("joi");
+const { ref } = require("joi");
 
 const authSignUpValidate = (data) => {
     const schema = Joi.object({
@@ -22,7 +22,8 @@ const authSignInValidate = (data) => {
 
 const newPasswordValidate = (data) => {
     const schema = Joi.object({
-        token: Joi.string().required().label('Token'),
+        userId: Joi.string().required().label('UserId'),
+        verificationCode: Joi.string().required().label('Verification Code'),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).min(8).required().label('Password'),
         cpassword: ref('password')
     })

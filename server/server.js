@@ -21,6 +21,8 @@ if (process.env.NODE_ENV === 'dev') {
     )
 } else if (process.env.NODE_ENV === 'prod') {
     app.use(cors());
+} else {
+    app.use(cors());
 }
 app.use(cookieParser())
 app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' }))
