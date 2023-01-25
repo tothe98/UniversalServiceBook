@@ -35,8 +35,10 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import SuccessIcon from "../global/successIcon.png"
 import NotActivatedIcon from "../global/notActivatedIcon.png"
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
+import EditIcon from '@mui/icons-material/Edit';
 
 export {
+    EditIcon,
     AutoAwesomeIcon,
     SuccessIcon,
     NotActivatedIcon,

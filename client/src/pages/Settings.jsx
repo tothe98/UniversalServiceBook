@@ -259,14 +259,14 @@ function Settings({handleChangeTab}) {
 
                         <Grid item><TextField
                             fullWidth
-                            label="Kereszt név:"
+                            label="Keresztnév:"
                             defaultValue={firstName}
                             onChange={e=>setFirstName(e.target.value)}
                         /></Grid>
 
                         <Grid item><TextField
                             fullWidth
-                            label="Család név:"
+                            label="Családnév:"
                             defaultValue={lastName}
                             onChange={e=>setLastName(e.target.value)}
                         /></Grid>

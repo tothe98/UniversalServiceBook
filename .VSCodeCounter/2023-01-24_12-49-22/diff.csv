@@ -1,0 +1,47 @@
+"filename", "language", "JSON", "JavaScript", "JavaScript React", "HTML", "Properties", "comment", "blank", "total"
+"d:\Web Projects\UniversalServiceBook\client\.env", "Properties", 0, 0, 0, 0, 1, 0, 0, 1
+"d:\Web Projects\UniversalServiceBook\client\package.json", "JSON", 1, 0, 0, 0, 0, 0, 0, 1
+"d:\Web Projects\UniversalServiceBook\client\public\index.html", "HTML", 0, 0, 0, 14, 0, 1, 1, 16
+"d:\Web Projects\UniversalServiceBook\client\src\App.js", "JavaScript", 0, -5, 0, 0, 0, 0, 1, -4
+"d:\Web Projects\UniversalServiceBook\client\src\components\InformationCard.component.jsx", "JavaScript React", 0, 0, 48, 0, 0, 0, 5, 53
+"d:\Web Projects\UniversalServiceBook\client\src\components\Layout.component.jsx", "JavaScript React", 0, 0, 50, 0, 0, 0, 6, 56
+"d:\Web Projects\UniversalServiceBook\client\src\components\Layout.jsx", "JavaScript React", 0, 0, -47, 0, 0, 0, -6, -53
+"d:\Web Projects\UniversalServiceBook\client\src\components\RequireAuth.js", "JavaScript", 0, -18, 0, 0, 0, -1, -5, -24
+"d:\Web Projects\UniversalServiceBook\client\src\components\Roles.js", "JavaScript", 0, -7, 0, 0, 0, 0, -1, -8
+"d:\Web Projects\UniversalServiceBook\client\src\components\VehicleCard.component.jsx", "JavaScript React", 0, 0, 94, 0, 0, 0, 8, 102
+"d:\Web Projects\UniversalServiceBook\client\src\context\RequireAuth.js", "JavaScript", 0, 33, 0, 0, 0, 9, 6, 48
+"d:\Web Projects\UniversalServiceBook\client\src\global\Footer.jsx", "JavaScript React", 0, 0, -15, 0, 0, 0, -6, -21
+"d:\Web Projects\UniversalServiceBook\client\src\global\Header.jsx", "JavaScript React", 0, 0, -40, 0, 0, 0, -18, -58
+"d:\Web Projects\UniversalServiceBook\client\src\global\PageSelector.jsx", "JavaScript React", 0, 0, 2, 0, 0, 0, -1, 1
+"d:\Web Projects\UniversalServiceBook\client\src\global\Profile.jsx", "JavaScript React", 0, 0, -14, 0, 0, -5, -4, -23
+"d:\Web Projects\UniversalServiceBook\client\src\lib\GlobalConfigs.js", "JavaScript", 0, 9, 0, 0, 0, 0, 2, 11
+"d:\Web Projects\UniversalServiceBook\client\src\lib\GlobalFunctions.js", "JavaScript", 0, 6, 0, 0, 0, 0, 1, 7
+"d:\Web Projects\UniversalServiceBook\client\src\lib\GlobalIcons.js", "JavaScript", 0, 78, 0, 0, 0, 0, 1, 79
+"d:\Web Projects\UniversalServiceBook\client\src\lib\GlobalImports.js", "JavaScript", 0, 111, 0, 0, 0, 0, 1, 112
+"d:\Web Projects\UniversalServiceBook\client\src\lib\Roles.js", "JavaScript", 0, 7, 0, 0, 0, 0, 1, 8
+"d:\Web Projects\UniversalServiceBook\client\src\lib\StyledComponents.js", "JavaScript", 0, 372, 0, 0, 0, 11, 54, 437
+"d:\Web Projects\UniversalServiceBook\client\src\pages\AdminPage.jsx", "JavaScript React", 0, 0, -49, 0, 0, -2, -5, -56
+"d:\Web Projects\UniversalServiceBook\client\src\pages\EmailVerification.jsx", "JavaScript React", 0, 0, 7, 0, 0, 0, -1, 6
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Error.jsx", "JavaScript React", 0, 0, 3, 0, 0, 0, 0, 3
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Garage.jsx", "JavaScript React", 0, 0, -234, 0, 0, -11, -31, -276
+"d:\Web Projects\UniversalServiceBook\client\src\pages\GarageVehiclePreview.jsx", "JavaScript React", 0, 0, -16, 0, 0, -1, -11, -28
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Home.jsx", "JavaScript React", 0, 0, -247, 0, 0, -11, -30, -288
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Login.jsx", "JavaScript React", 0, 0, 1, 0, 0, 0, -1, 0
+"d:\Web Projects\UniversalServiceBook\client\src\pages\MailPreview.jsx", "JavaScript React", 0, 0, -180, 0, 0, -1, -20, -201
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Mails.jsx", "JavaScript React", 0, 0, -148, 0, 0, 0, -18, -166
+"d:\Web Projects\UniversalServiceBook\client\src\pages\MechanicWorkshop.jsx", "JavaScript React", 0, 0, -23, 0, 0, -1, -6, -30
+"d:\Web Projects\UniversalServiceBook\client\src\pages\OwnerPage.jsx", "JavaScript React", 0, 0, 0, 0, 0, 0, -5, -5
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Registration.jsx", "JavaScript React", 0, 0, 7, 0, 0, 0, -2, 5
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Settings.jsx", "JavaScript React", 0, 0, -10, 0, 0, -7, -8, -25
+"d:\Web Projects\UniversalServiceBook\client\src\pages\Unauthorized.jsx", "JavaScript React", 0, 0, 2, 0, 0, 0, -1, 1
+"d:\Web Projects\UniversalServiceBook\server\controllers\RecentActivationController.js", "JavaScript", 0, 49, 0, 0, 0, 0, 3, 52
+"d:\Web Projects\UniversalServiceBook\server\controllers\VehicleController.js", "JavaScript", 0, 12, 0, 0, 0, 0, 2, 14
+"d:\Web Projects\UniversalServiceBook\server\controllers\WorkshopController.js", "JavaScript", 0, 14, 0, 0, 0, 0, 0, 14
+"d:\Web Projects\UniversalServiceBook\server\core\CronService.js", "JavaScript", 0, 50, 0, 0, 0, 0, 3, 53
+"d:\Web Projects\UniversalServiceBook\server\core\DatabaseInitialization.js", "JavaScript", 0, 3, 0, 0, 0, 0, 0, 3
+"d:\Web Projects\UniversalServiceBook\server\models\RecentActivationModel.js", "JavaScript", 0, 50, 0, 0, 0, 0, 3, 53
+"d:\Web Projects\UniversalServiceBook\server\package-lock.json", "JSON", 33, 0, 0, 0, 0, 0, 0, 33
+"d:\Web Projects\UniversalServiceBook\server\package.json", "JSON", 1, 0, 0, 0, 0, 0, 0, 1
+"d:\Web Projects\UniversalServiceBook\server\routes\routes.js", "JavaScript", 0, 3, 0, 0, 0, 1, 1, 5
+"d:\Web Projects\UniversalServiceBook\server\server.js", "JavaScript", 0, 2, 0, 0, 0, 0, 0, 2
+"Total", "-", 35, 769, -809, 14, 1, -18, -81, -89

@@ -10,16 +10,22 @@ const { logger } = require("./config/logger");
 const { initScheduledJobs } = require('./core/CronService')
 
 const app = express()
-app.use(express.json({ limit: '100mb' }))
-app.use(
-    cors({
-        origin: ['http://localhost:3000'],
-        methods: ['GET', 'POST', 'PUT', 'PATH', 'DELETE'],
-        credentials: true
-    })
-)
+app.use(express.json({ limit: '500mb' }))
+if (process.env.NODE_ENV === 'dev') {
+    app.use(
+        cors({
+            origin: ['http://localhost:3000'],
+            methods: ['GET', 'POST', 'PUT', 'PATH', 'DELETE'],
+            credentials: true
+        })
+    )
+} else if (process.env.NODE_ENV === 'prod') {
+    app.use(cors());
+} else {
+    app.use(cors());
+}
 app.use(cookieParser())
-app.use(bodyParser.urlencoded({ extended: true, limit: '100mb' }))
+app.use(bodyParser.urlencoded({ extended: true, limit: '500mb' }))
 app.use('/uploads', express.static('uploads'))
 app.use(
     session({
