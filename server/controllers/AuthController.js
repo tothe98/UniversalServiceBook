@@ -2,7 +2,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const moment = require("moment")
 const sendEmail = require("../core/Mailer")
-const confirmationEmail = require('../core/MailViews')
+const { confirmationEmail } = require('../core/MailViews')
 const ROLES = require('../core/Role')
 const { Users, EmailConfirmation } = require('../core/DatabaseInitialization')
 const { authSignUpValidate, authSignInValidate } = require("../models/ValidationSchema")
@@ -57,21 +57,23 @@ exports.signup = async (req, res) => {
         const userId = createdUser['_id']
         console.log(verificationCode);
         console.log(userId);
-        await EmailConfirmation.create({
+        const activationReguest = await EmailConfirmation.create({
             verificationCode: verificationCode,
             userId: userId,
             category: 'email'
-        }).then(async (response) => {
+        })
+        if (activationReguest) {
             await sendEmail(createdUser["email"], "Email megerősítés",
                 confirmationEmail(`${process.env.CLIENT_URL}/aktivalas/${userId}/${verificationCode}`)
             )
             createdUser.password = ""
             logger.info('Sikeres regisztráció', { user: 'System', data: JSON.stringify(createdUser) })
             return res.status(201).json({ message: 'success', data: {} })
-        }).catch((error) => {
+
+        } else {
             logger.error(`Sikertelen regisztráció! Execeptions: Kérés nem lett hozzáadva!`, { user: 'System', data: JSON.stringify(error) })
             return res.status(400).json({ message: 'EmailIsNotSend', data: { error } })
-        })
+        }
     } catch (error) {
         logger.error("[SERVER] Hiba történt regisztráció során!", { user: 'System', data: JSON.stringify(error) })
         return res.status(500).json({ message: 'error', data: { error } })
@@ -181,5 +183,22 @@ exports.confirmEmail = async (req, res) => {
         })
         return res.status(500).json({ message: '', data: {} })
     }
+}
 
+exports.isValidToken = async (req, res) => {
+    const { token } = req.body
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(409).json({ message: "TokenIsExpired", data: {} })
+            } else {
+                if (decoded.exp * 1000 < Date.now()) {
+                    return res.status(409).json({ message: "TokenIsExpired", data: {} })
+                }
+            }
+            return res.status(200).json({ message: "Valid", data: {} })
+        })
+    } else {
+        return res.status(404).json({ message: "NotFound", data: {} })
+    }
 }

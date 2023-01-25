@@ -145,6 +145,7 @@ VehiclesSchema.virtual("getVehicleDataById").get(function () {
         "nod": this.nod,
         "mot": (this.mot ? moment(this.mot).format('YYYY-MM-DD') : undefined),
         "mileage": this.mileage,
+        "shared": this.shared ? this.shared : false,
         "pictures": picturesToArray(this.pictures.picture, this.preview.picture),
     }
 })
