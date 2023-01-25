@@ -35,8 +35,8 @@ function EmailVerification() {
 
     useEffect(() => {
         axiosInstance.post(`/emailConfirmation/`, {
-            userid: userid,
-            token: token
+            userId: userid,
+            verificationCode: token
         })
         .then(response => {
             setVerificationStatus(1);

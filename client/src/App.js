@@ -30,6 +30,8 @@ import Unauthorized from './pages/Unauthorized';
 import Roles from './lib/Roles'
 import useAuth from './hooks/useAuth';
 import RequireAuth from "./context/RequireAuth"
+import ForgotPassword from './pages/ForgotPassword';
+import NewPassword from './pages/NewPassword';
 
 function App() {
     const { auth, setAuth } = useAuth();
@@ -195,6 +197,8 @@ function App() {
             <Route path='/bejelentkezes' element={<Login />} />
             <Route path='/regisztracio' element={<Registration />} />
             <Route path='/aktivalas/:userid/:token' element={<EmailVerification />} />   
+            <Route path='/ujjelszo' element={<ForgotPassword />} />
+            <Route path='/elfelejtett/:userid/:verificationCode' element={<NewPassword />} />
 
             { /*Protected routes*/ }
             <Route element={<RequireAuth allowedRoles={[Roles.User, Roles.Employee, Roles.Admin, Roles.Owner]} />}>

@@ -207,6 +207,10 @@ function Garage({handleChangeTab}) {
                             toast.success("Sikeresen hozzáadtál egy új járművet!");
                             setIsAdding(false);
                             setIsModified(true);
+
+                            // TODO: remove old state values
+
+                            window.location.reload();
                         })
                         .catch((error) => {
                             if (error.response.status == 422) {
@@ -865,7 +869,7 @@ function Garage({handleChangeTab}) {
                                             <MyTextField
                                                 fullWidth
                                                 id="outlined-disabled"
-                                                label="Saját tömeg (kg)"
+                                                label="Saját tömeg"
                                                 InputProps={{
                                                     endAdornment: <InputAdornment position="start">kg</InputAdornment>,
                                                 }}
@@ -1150,8 +1154,6 @@ function Garage({handleChangeTab}) {
                                     <AddCarSubTitle variant="h4">
                                         Kép Galléria
                                     </AddCarSubTitle>
-
-                                    { /* TODO: I can't delete the gallery image. */ }
 
                                     <Grid container direction="row" spacing={0} wrap="nowrap" alignItems="center" justifyContent="center">
                                         <Grid item xs={1}>
