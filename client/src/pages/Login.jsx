@@ -118,7 +118,16 @@ function Login() {
                     />
                 </Grid>
 
-                <Grid item><Typography component={Link} to="/regisztracio">Nincs még fiókod?</Typography></Grid>
+                <Grid item>
+                    <Grid container direction="column" justifyContent="space-between">
+                        <Grid item>
+                            <Typography component={Link} to="/regisztracio">Nincs még fiókod?</Typography>
+                        </Grid>
+                        <Grid item>
+                            <Typography component={Link} to="/ujjelszo">Elfelejtett jelszó</Typography>
+                        </Grid>
+                    </Grid>
+                </Grid>
 
                 <Grid item><SendButton type="submit">Belépés</SendButton></Grid>
             </Grid>

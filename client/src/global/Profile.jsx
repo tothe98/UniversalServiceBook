@@ -131,7 +131,7 @@ function Profile({handleChangeTab, loggedIn}) {
                                 <Typography variant="h2" align="center">
                                 {
                                     auth.user && (
-                                    auth.user.fName + " " + auth.user.lName
+                                    auth.user.lName + " " + auth.user.fName
                                 )}
                                 </Typography>
                             </Grid>
@@ -147,7 +147,7 @@ function Profile({handleChangeTab, loggedIn}) {
                         <Typography align="center" variant="h2">
                             {
                             auth.user && (
-                            auth.user.fName + " " + auth.user.lName
+                            auth.user.lName + " " + auth.user.fName
                             )}
                         </Typography>
                     </Grid>

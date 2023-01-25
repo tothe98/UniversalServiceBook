@@ -34,9 +34,17 @@ function Registration() {
             phone: phoneNumber ? phoneNumber : ""
         }, { headers: { "x-access-token": localStorage.getItem("token") }});
         const data = await response.data;
-        if (response.status == 200)
+        if (response.status >= 200 && response.status < 300) 
         {
             toast.success("Sikeres regisztráció!")
+        }
+        else if (response.status == 422)
+        {
+            toast.error("Opss! Valamit nem töltöttél ki!")
+        }
+        else if (response.status == 409)
+        {
+            toast.error("Opss! Ezzel az e-mail címmel már létezik egy felhasználó!")
         }
         else
         {
@@ -51,7 +59,7 @@ function Registration() {
             <Grid container direction="column" spacing={1.5}>
                 <Grid item>
                     <TextField
-                        label="Kereszt név "
+                        label="Keresztnév "
                         type="text"
                         onChange={e=>setFirstName(e.target.value)}
                         required
@@ -59,7 +67,7 @@ function Registration() {
                 </Grid>
                 <Grid item>
                     <TextField
-                        label="Család név "
+                        label="Családnév "
                         type="text"
                         onChange={e=>setLastName(e.target.value)}
                         required
