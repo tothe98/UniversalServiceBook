@@ -8,6 +8,9 @@ import { useTheme } from '@emotion/react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { DataGrid } from '@mui/x-data-grid';
+import {
+    axiosInstance
+} from "../lib/GlobalConfigs"
 
 const SubTitle = styled(Typography)(({theme}) => ({
     ...theme.typography.link,
@@ -43,6 +46,7 @@ const CarDialogText = styled(DialogContentText)(({theme}) => ({
 function AdminPage() {
     const theme = useTheme();
     const [isLoading, setIsLoading] = useState(true);
+    const [isSent, setIsSent] = useState(false);
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
     /* datas */
@@ -66,10 +70,6 @@ function AdminPage() {
     const [isAdding, setIsAdding] = useState(false);
     const [isAddingProcessing, setIsAddingProcessing] = useState(false);
 
-    const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_BACKEND_URL
-    })
-
     /* main data table */
     const columns = [
         { field: 'id', headerName: 'Sorszám', width: 70 },
@@ -86,6 +86,11 @@ function AdminPage() {
     ];
 
     const handleWorkshopAddition = async (e) => {
+        setIsSent(true)
+        setTimeout(() => {
+            setIsSent(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+        
         await axiosInstance.post('/addNewWorkshop', {
             name: newWorkshopName,
             country: newWorkshopCountry,

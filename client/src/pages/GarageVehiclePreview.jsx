@@ -68,6 +68,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
     const [isVehicleDelete, setIsVehicleDelete] = useState(false);
     const [isVehicleEdit, setIsVehicleEdit] = useState(false);
     const [isShared, setIsShared] = useState(false);
+    const [isShareClick, setIsShareClick] = useState(false);
     const [updatedOwnmass, setUpdatedOwnmass] = useState(100);
     const [updatedFullmass, setUpdatedFullmass] = useState(100);
     const [updatedPerformanceLE, setUpdatedPerformanceLE] = useState(100);
@@ -198,6 +199,11 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
     }
 
     const handleVehicleShare = async () => {
+        setIsShareClick(true);
+        setTimeout(() => {
+            setIsShareClick(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+
         await axiosInstance.post(`/shareVehicle/${id}`, {},
         {
             headers: {
@@ -575,9 +581,17 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                 </IconButton>
             </Grid>
             <Grid item>
-                <IconButton onClick={e=>handleVehicleShare()} title={isShared ? "Megosztva!" : "Megosztás!"}>
-                    <ShareOutlinedIcon sx={{ color: isShared ? "green" : "blue" }} />
-                </IconButton>
+                {
+                    isShareClick
+                    ?
+                    <IconButton title={isShared ? "Megosztva!" : "Megosztás!"} disabled>
+                        <ShareOutlinedIcon sx={{ color: isShared ? "green" : "blue" }} />
+                    </IconButton>
+                    :
+                    <IconButton onClick={e=>handleVehicleShare()} title={isShared ? "Megosztva!" : "Megosztás!"}>
+                        <ShareOutlinedIcon sx={{ color: isShared ? "green" : "blue" }} />
+                    </IconButton>
+                }
             </Grid>
         </Grid>
 

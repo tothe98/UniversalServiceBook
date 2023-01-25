@@ -7,10 +7,16 @@ import { MyTextField, SendButton, SubTitle } from '../lib/StyledComponents';
 
 function NewPassword({}) {
     const { userid, verificationCode } = useParams();
+    const [isSent, setIsSent] = useState(false);
     const [newPassword, setNewPassword] = useState("");
     const [newRePassword, setNewRePassword] = useState("");
 
     const sendNewPasswordRequest = async () => {
+        setIsSent(true);
+        setTimeout(() => {
+            setIsSent(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+        
         await axiosInstance.post(`/newPassword`, {
             userId: userid,
             verificationCode: verificationCode,
@@ -27,7 +33,13 @@ function NewPassword({}) {
         })
         .catch(err => {
             if (err.response.status == 422) {
-                toast.error("Nem töltött ki valamit!");
+                if (newPassword.length == 0 || newPassword.length == 0) {
+                    toast.error("Nem töltött ki valamit!");
+                }
+                else
+                {
+                    toast.error("A jelszónak legalább 8 karakternek kell lennie!")
+                }
             }
             if (err.response.status == 409) {
                 toast.error("Lejárt a jelszóváltoztatási ideje!");
@@ -56,7 +68,13 @@ function NewPassword({}) {
             type="password"
             onChange={e=>{setNewRePassword(e.target.value)}}
         />
-        <SendButton sx={{ background: "green", color: "white" }} onClick={sendNewPasswordRequest}>Mentés</SendButton>
+        {
+            isSent
+            ?
+            <SendButton sx={{ background: "green", color: "white" }} onClick={sendNewPasswordRequest}>Mentés</SendButton>
+            :
+            <SendButton sx={{ background: "green", color: "white" }} disabled>Mentés</SendButton>
+        }
     </>
 }
 

@@ -67,11 +67,15 @@ function OwnerPage() {
     ];
 
     const handleEmployeeAddition = async (e) => {
+        setIsAdding(true);
+        setTimeout(() => {
+            setIsAdding(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+
         await axiosInstance.post('/addEmployee', { email: employeeID  }, { headers: { 'x-access-token': localStorage.getItem("token") }})
             .then(response => {
                 toast.success("Sikeresen hozzáadtad a felhasználót!");
                 setEmployeeID("");
-                setIsAddingProcessing(false);
                 setModified(true);
             })
             .catch(err => {

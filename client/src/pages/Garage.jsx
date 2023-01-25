@@ -109,6 +109,7 @@ function Garage({handleChangeTab}) {
     /* new vehicle datas */
     /* these variables stores the new car datas */
     const [isAdding, setIsAdding] = useState(false);
+    const [isSent, setIsSent] = useState(false);
     const [newVehicleWallpaperInBase64, setNewVehicleWallpaperInBase64] = useState("");
     const [newVehicleWallpaper, setNewVehicleWallpaper] = useState("");
     const [newVehicleVin, setNewVehicleVin] = useState("");
@@ -158,6 +159,10 @@ function Garage({handleChangeTab}) {
 
     /* handle add new car */
     const handleNewVehicle = async () => {
+        setIsSent(true);
+        setTimeout(() => {
+            setIsSent(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
         const body = {
             manufacture: newVehicleManufacture['id'],
             model: newVehicleModel['id'],
@@ -1206,7 +1211,13 @@ function Garage({handleChangeTab}) {
 
                                 <CarCardActions>
                                     <Button sx={{marginLeft: "auto"}} variant="contained" color="warning" onClick={e=>setIsAdding(false)}>Mégsem</Button>
-                                    <Button variant="contained" color="success" onClick={e=>handleNewVehicle(e)}>Mentés</Button>
+                                    {
+                                        isSent
+                                        ?
+                                        <Button variant="contained" disabled>Mentés</Button>
+                                        :
+                                        <Button variant="contained" color="success" onClick={e=>handleNewVehicle(e)}>Mentés</Button>
+                                    }
                                 </CarCardActions>
                             </CarCard>
                         </Grid>

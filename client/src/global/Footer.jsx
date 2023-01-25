@@ -36,15 +36,7 @@ function Footer() {
                     <Typography variant="h6">(C) Minden jog fenntartva.</Typography>
 
                     <SubMenuContainer>
-                        {
-                            underMD
-                                ?
-                                <FooterElement><IconButton><MenuIcon onClick={e=>setOpen(true)} /></IconButton></FooterElement>
-                                :
-                                <>
-                                    <FooterElement variant='h6'>Molnár Dániel & Tóth Erik</FooterElement>
-                                </>
-                        }
+                        <FooterElement variant='h6'>Molnár Dániel & Tóth Erik</FooterElement>
                     </SubMenuContainer>
                 </FooterText>
             </Grid>

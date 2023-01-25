@@ -23,15 +23,21 @@ function Registration() {
     const [email, setEmail] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [password, setPassword] = useState("");
+    const [isSent, setIsSent] = useState(false);
 
     const sendRegistration = async (e) => {
+        setIsSent(true);
+        setTimeout(() => {
+            setIsSent(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+        
         e.preventDefault();
         const response = await axiosInstance.post("signup", {
             fName: firstName,
             lName: lastName,
             email: email,
             password: password,
-            phone: phoneNumber ? phoneNumber : ""
+            phone: phoneNumber ? phoneNumber : "00"
         }, { headers: { "x-access-token": localStorage.getItem("token") }});
         const data = await response.data;
         if (response.status >= 200 && response.status < 300) 
@@ -103,7 +109,15 @@ function Registration() {
 
                 <Grid item><Typography component={Link} to="/bejelentkezes">Van már fiókod?</Typography></Grid>
 
-                <Grid item><SendButton type="submit">Regisztálok!</SendButton></Grid>
+                <Grid item>
+                    {
+                        isSent
+                        ?
+                        <SendButton disabled>Regisztálok!</SendButton>
+                        :
+                        <SendButton type="submit">Regisztálok!</SendButton>
+                    }
+                </Grid>
             </Grid>
         </form>
     </React.Fragment>

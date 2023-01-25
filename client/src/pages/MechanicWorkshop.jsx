@@ -51,6 +51,7 @@ function MechanicWorkshop({handleChangeTab}) {
     const { auth } = useAuth();
 
     const [isLoading, setIsLoading] = useState(true);
+    const [isSent, setIsSent] = useState(false);
     const [isFinded, setIsFinded] = useState(false);
     const [findedVehicle, setFindedVehicle] = useState({});
     const [findedVehicleServiceEntriesCount, setFindedVehicleServiceEntriesCount] = useState(0);
@@ -104,6 +105,10 @@ function MechanicWorkshop({handleChangeTab}) {
     }
 
     const handleNewServiceMessage = () => {
+        setIsSent(true);
+        setTimeout(() => {
+            setIsSent(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
         /* it is a plain html text */
         let textEditorContent = serviceMessageHTML.current.getContent();
 
@@ -356,9 +361,18 @@ function MechanicWorkshop({handleChangeTab}) {
                     }}
                 />
 
-                <UploadButton variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} onClick={e=>handleNewServiceMessage(e)}>
-                    Feltöltés
-                </UploadButton>
+                {
+                    isSent
+                    ?
+                    <UploadButton variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} disabled>
+                        Feltöltés
+                    </UploadButton>
+                    :
+                    <UploadButton variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} onClick={e=>handleNewServiceMessage(e)}>
+                        Feltöltés
+                    </UploadButton>
+                }
+
             </React.Fragment>
         }
     </>

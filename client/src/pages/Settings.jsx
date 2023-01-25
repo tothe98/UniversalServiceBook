@@ -33,6 +33,7 @@ function Settings({handleChangeTab}) {
 
     /* loading screen variables */
     const [isLoading, setIsLoading] = useState(true);
+    const [isSent, setIsSent] = useState(false);
 
     const [picture, setPicture] = useState("");
     const [pictureInBase64, setPictureInBase64] = useState("");
@@ -106,6 +107,10 @@ function Settings({handleChangeTab}) {
     }
 
     const handleUpdateUser = async (e) => {
+        setIsSent(true);
+        setTimeout(() => {
+            setIsSent(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
         e.preventDefault()
         if (formUnderProcessing) return;
 
@@ -120,6 +125,11 @@ function Settings({handleChangeTab}) {
             if (newPassword !== reNewPassword) {
                 setChangePasswordError("A két jelszó nem stimmel!");
                 toast.error(changePasswordError)
+                return;
+            }
+
+            if (newPassword.length >= 8 && reNewPassword.length >= 8) {
+                toast.error("A jelszónak legalább 8 karakternek kell lennie!")
                 return;
             }
 
@@ -171,7 +181,6 @@ function Settings({handleChangeTab}) {
             await getUserDatas(localStorage.getItem("token"));
 
             toast.success("Sikeresen frissítetted a fiókodat!")
-            global.location.reload()
         }
     }
 
@@ -232,7 +241,17 @@ function Settings({handleChangeTab}) {
                 <MyGridItem item>
                     <Grid container direction="row" spacing={1.5}>
                         <Grid item id="WallpaperItem">
-                            <AvatarImage src={picture} alt="profile image" id="wallpaperIMG" />
+                            <AvatarImage src={
+                                picture 
+                                ? 
+                                picture
+                                :
+                                pictureInBase64 
+                                    ?
+                                    pictureInBase64
+                                    :
+                                    'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='
+                            } alt="profile image" id="wallpaperIMG" />
                         </Grid>
 
                         <Grid item>
@@ -355,7 +374,15 @@ function Settings({handleChangeTab}) {
 
                 <MyGridItem item>
                     <Grid container direction="row" spacing={1.5} justifyContent="flex-end">
-                        <Grid item><FormActionButton type="submit">Mentés</FormActionButton></Grid>
+                        <Grid item>
+                            {
+                                isSent
+                                ?
+                                <FormActionButton disabled>Mentés</FormActionButton>
+                                :
+                                <FormActionButton type="submit">Mentés</FormActionButton>
+                            }
+                            </Grid>
                         <Grid item><FormCancelButton variant="contained" component={Link} to="/"  onClick={e=>{handleChangeTab(0)}} >Elvetés</FormCancelButton></Grid>
                     </Grid>
                 </MyGridItem>

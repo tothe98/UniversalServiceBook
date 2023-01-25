@@ -28,11 +28,17 @@ function Login() {
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
 
+    const [isSent, setIsSent] = useState(false);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const sendLogin = async (e) => {
+        setIsSent(true);
+        setTimeout(() => {
+            setIsSent(false);
+        }, 3000);
         e.preventDefault();
+        
         await axiosInstance.post("signin", {
             email: email,
             password: password
@@ -129,7 +135,15 @@ function Login() {
                     </Grid>
                 </Grid>
 
-                <Grid item><SendButton type="submit">Belépés</SendButton></Grid>
+                <Grid item>
+                    {
+                        isSent
+                        ?
+                        <SendButton disabled>Belépés</SendButton>
+                        :
+                        <SendButton type="submit">Belépés</SendButton>
+                    }
+                </Grid>
             </Grid>
         </form>
     </React.Fragment>

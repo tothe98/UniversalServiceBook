@@ -14,8 +14,14 @@ import {
 
 function ForgotPassword() {
     const [email, setEmail] = useState("");
+    const [isSent, setIsSent] = useState(false);
 
     const sendForgotPasswordRequest = async () => {
+        setIsSent(true);
+        setTimeout(() => {
+            setIsSent(false);
+        }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+        
         await axiosInstance.post("/forgotPassword", { email: email })
             .then(res => {
                 if (res.status == 200) {
@@ -47,7 +53,13 @@ function ForgotPassword() {
             type="email"
             onChange={e=>{setEmail(e.target.value)}}
         />
-        <SendButton onClick={sendForgotPasswordRequest}>Küldés</SendButton>
+        {
+            isSent
+            ?
+            <SendButton disabled>Küldés</SendButton>
+            :
+            <SendButton onClick={sendForgotPasswordRequest}>Küldés</SendButton>
+        }
     </>
 }
 
