@@ -12,7 +12,7 @@ const getMileageFromServices = async (vehicleID) => {
 
 exports.getServiceInformation = async (req, res) => {
     try {
-        const serviceInformation = await RecentActivations.find({ userId: req.userId, isActive: true, category: { $ne: 'vehicle' } }).sort({ data: -1 }).limit(5)
+        const serviceInformation = await RecentActivations.find({ userId: req.userId, isActive: true, category: { $ne: 'vehicle' } }).sort({ date: -1 }).limit(5)
         return res.status(200).json({ message: '', data: { servceInformation: serviceInformation } })
     } catch (error) {
         logger.error("[SERVER] Hiba történt a szerviz információk lekérése során!", {
