@@ -7,7 +7,7 @@ const authSignUpValidate = (data) => {
         lName: Joi.string().required().label("Last Name"),
         email: Joi.string().email().required().label("Email"),
         phone: Joi.string().optional().label("Phone Number"),
-        password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).min(8).required().label('Password')
+        password: Joi.string().min(8).required().label('Password')
     })
     return schema.validate(data)
 }
@@ -24,7 +24,7 @@ const newPasswordValidate = (data) => {
     const schema = Joi.object({
         userId: Joi.string().required().label('UserId'),
         verificationCode: Joi.string().required().label('Verification Code'),
-        password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).min(8).required().label('Password'),
+        password: Joi.string().required().label('Password'),
         cpassword: ref('password')
     })
     return schema.validate(data)
@@ -39,7 +39,7 @@ const addVehicleValidate = (data) => {
         designType: Joi.string().hex().length(24).required().label("DesignType"),
         transmission: Joi.string().hex().length(24).required().label("Transmission"),
         licenseNumber: Joi.string().optional().label("LicenseNumber"),
-        vin: Joi.string().min(3).max(18).required().label("VIN"),
+        vin: Joi.string().min(3).max(18).required().label("VIN"), //^[A-HJ-NPR-Za-hj-npr-z\d]{8}[\dX][A-HJ-NPR-Za-hj-npr-z\d]{2}\d{6}$
         vintage: Joi.string().required().label("Vintage"),
         ownMass: Joi.required().label("Own Mass"),
         fullMass: Joi.required().label("Full Mass"),
