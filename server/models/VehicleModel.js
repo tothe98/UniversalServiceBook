@@ -173,6 +173,7 @@ function picturesToArray(pictures, prev = null) {
     returnPictureArray = []
     returnPictureArray[0] = prev
     pictures.split("@").map((s) => { returnPictureArray.push(s) })
+    returnPictureArray = returnPictureArray.filter(p => p != "")
     return returnPictureArray
 }
 

@@ -170,15 +170,15 @@ exports.addVehicle = (req, res) => {
                 _driveType: value.driveType,
                 _designType: value.designType,
                 _transmission: value.transmission,
-                licenseNumber: value.licenseNumber,
-                vin: value.vin,
+                licenseNumber: value.licenseNumber.toUpperCase(),
+                vin: value.vin.toUpperCase(),
                 vintage: value.vintage,
                 ownMass: value.ownMass,
                 fullMass: value.fullMass,
                 cylinderCapacity: value.cylinderCapacity,
                 performance: value.performance,
                 mot: value.mot,
-                nod: value.nod,
+                nod: value.nod.toUpperCase(),
                 mileage: value.mileage,
                 pictures: uploadedImg,
                 preview: previewImg
@@ -280,6 +280,9 @@ exports.getVehicle = async (req, res) => {
                 expireDate: moment().add(1, 'days').format(),
                 category: "vehicle",
             })
+        } else {
+            isRecentActivationExists.date = moment().format()
+            await isRecentActivationExists.save()
         }
 
         return res.status(200).json({
@@ -370,8 +373,8 @@ exports.updateVehicle = async (req, res) => {
             vehicle.ownMass = ownMass ? ownMass : vehicle.ownMass
             vehicle.fullMass = fullMass ? fullMass : vehicle.fullMass
             vehicle.performance = performance ? performance : vehicle.performance
-            vehicle.nod = nod ? nod : vehicle.nod
-            vehicle.licenseNumber = licenseNumber ? licenseNumber : vehicle.licenseNumber
+            vehicle.nod = nod ? nod : vehicle.nod.toUpperCase()
+            vehicle.licenseNumber = licenseNumber ? licenseNumber : vehicle.licenseNumber.toUpperCase()
             vehicle.mot = mot ? mot : vehicle.mot
             await vehicle.save()
 
