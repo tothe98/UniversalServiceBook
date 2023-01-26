@@ -25,6 +25,10 @@ const getMileageFromServices = async (vehicleID) => {
     return currentMaxMileage
 }
 
+const replaceDenyCharacter = (s) => {
+    return s.replaceAll('-', '').replaceAll(' ', '')
+}
+
 exports.addVehicle = (req, res) => {
     uploadVehicle(req, res, async function (err) {
         if (err instanceof multer.MulterError) {
@@ -170,8 +174,8 @@ exports.addVehicle = (req, res) => {
                 _driveType: value.driveType,
                 _designType: value.designType,
                 _transmission: value.transmission,
-                licenseNumber: value.licenseNumber.toUpperCase(),
-                vin: value.vin.toUpperCase(),
+                licenseNumber: replaceDenyCharacter(value.licenseNumber.toUpperCase()),
+                vin: replaceDenyCharacter(value.vin.toUpperCase()),
                 vintage: value.vintage,
                 ownMass: value.ownMass,
                 fullMass: value.fullMass,
@@ -373,8 +377,8 @@ exports.updateVehicle = async (req, res) => {
             vehicle.ownMass = ownMass ? ownMass : vehicle.ownMass
             vehicle.fullMass = fullMass ? fullMass : vehicle.fullMass
             vehicle.performance = performance ? performance : vehicle.performance
-            vehicle.nod = nod ? nod : vehicle.nod.toUpperCase()
-            vehicle.licenseNumber = licenseNumber ? licenseNumber : vehicle.licenseNumber.toUpperCase()
+            vehicle.nod = nod ? nod.toUpperCase() : vehicle.nod
+            vehicle.licenseNumber = licenseNumber ? replaceDenyCharacter(licenseNumber.toUpperCase()) : vehicle.licenseNumber
             vehicle.mot = mot ? mot : vehicle.mot
             await vehicle.save()
 

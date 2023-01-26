@@ -6,7 +6,7 @@ const authSignUpValidate = (data) => {
         fName: Joi.string().required().label("First Name"),
         lName: Joi.string().required().label("Last Name"),
         email: Joi.string().email().required().label("Email"),
-        phone: Joi.string().label("Phone Number"),
+        phone: Joi.string().optional().label("Phone Number"),
         password: Joi.string().pattern(new RegExp('^[a-zA-Z0-9]{3,30}$')).min(8).required().label('Password')
     })
     return schema.validate(data)
@@ -38,14 +38,14 @@ const addVehicleValidate = (data) => {
         driveType: Joi.string().hex().length(24).required().label("DriveType"),
         designType: Joi.string().hex().length(24).required().label("DesignType"),
         transmission: Joi.string().hex().length(24).required().label("Transmission"),
-        licenseNumber: Joi.string().label("LicenseNumber"),
-        vin: Joi.string().required().label("VIN"),
+        licenseNumber: Joi.string().optional().label("LicenseNumber"),
+        vin: Joi.string().min(3).max(18).required().label("VIN"),
         vintage: Joi.string().required().label("Vintage"),
         ownMass: Joi.required().label("Own Mass"),
         fullMass: Joi.required().label("Full Mass"),
         cylinderCapacity: Joi.required().label("Cylinder Capacity"),
         performance: Joi.required().label("Performance in PH"),
-        mot: Joi.string().label("Document Validity"),
+        mot: Joi.string().optional().label("Document Validity"),
         nod: Joi.required().label("Nationaly Of Document"),
         mileage: Joi.required().label("Mileage"),
     })
