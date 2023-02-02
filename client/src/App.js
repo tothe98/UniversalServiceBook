@@ -2,7 +2,8 @@ import {Box, Grid, styled, ThemeProvider, Typography, useMediaQuery} from '@mui/
 import {
   BrowserRouter,
   Routes,
-  Route
+  Route,
+  Navigate
 } from "react-router-dom";
 import {
     axios
@@ -36,7 +37,7 @@ import NewPassword from './pages/NewPassword';
 function App() {
     const { auth, setAuth } = useAuth();
     const [activePage, setActivePage] = useState(1);
-
+    
     const handleChangeTab = (newValue) => {
         setActivePage(newValue);
     }
@@ -164,29 +165,6 @@ function App() {
                 break;
         }
     }, [activePage, routes])
-
-    const getUserDatas = async (token) => {
-        const response = await axiosInstance.get("getUserData", {
-            headers: {
-                "x-access-token": token
-            }
-        });
-        const user = response.data.data.user;
-        let highestRole = 2001;
-        Array.from(user.roles).forEach(role => {
-            if (role > highestRole) {
-                highestRole = role;
-            }
-        })
-        const role = highestRole;
-        setAuth({ user, token, role });
-    }
-
-    useEffect(() => {
-        if (localStorage.getItem("token")) {
-            getUserDatas(localStorage.getItem("token"))
-        }
-    }, []);
 
     return (
     <ThemeProvider theme={theme}>

@@ -175,7 +175,7 @@ function OwnerPage() {
                     <Typography variant="h4" >Ország: <strong>{ employeeWorkshop['country'] }</strong></Typography>
                     <Typography variant="h4" >Tulajdonos: <strong>{ employeeWorkshop['owner'] }</strong></Typography>
                     <Typography variant="h4" >Email cím: <strong>{ employeeWorkshop['email'] }</strong></Typography>
-                    <Typography variant="h4" >Telefonszám:: <strong>{ employeeWorkshop['phone'] }</strong></Typography>
+                    <Typography variant="h4" >Telefonszám: <strong>{ employeeWorkshop['phone'] }</strong></Typography>
                 </dd>
             </dl>
         }

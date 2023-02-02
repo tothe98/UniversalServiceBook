@@ -34,6 +34,7 @@ function EmailVerification() {
     const { userid, token } = useParams();
 
     useEffect(() => {
+        setVerificationStatus(3);
         axiosInstance.post(`/emailConfirmation/`, {
             userId: userid,
             verificationCode: token
@@ -70,7 +71,7 @@ function EmailVerification() {
                     verificationStatus == 2 && <Typography variant="h4" color="success">Aktiválás sikertelen (hibás eljárás)!</Typography>
                 }
                 {
-                    verificationStatus == 3 && <Typography variant="h4" color="success">Aktiválás sikertelen (lejárt token)!</Typography>
+                    verificationStatus == 3 && <Typography variant="h4" color="success">Aktiválás sikertelen (lejárt aktiválási kód)!</Typography>
                 }
             </Grid>
         </Grid>

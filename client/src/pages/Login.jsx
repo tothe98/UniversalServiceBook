@@ -45,10 +45,9 @@ function Login() {
             })
             .then((response) => {
                 const data = response.data;
-            // token validation
                 const token = data.data.token;
                 if (!token) {
-                    throw new Error("A token űres!");
+                    throw new Error("A token üres!");
                 }
 
                 /* collect the token and send a request to the server */
@@ -69,7 +68,8 @@ function Login() {
                         const role = highestRole;
                         
                         toast.success("Sikeresen bejelentkeztél!")
-                        localStorage.setItem("token", ""+token);
+                        localStorage.setItem("token", token);
+
                         setAuth({ user, token, role });
                         Navigate(from, { replace: true });
                     }

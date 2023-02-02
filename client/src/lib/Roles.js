@@ -5,4 +5,4 @@ const Roles = {
     User: 2001
 }
 
-module.exports = Roles
+export default Roles
