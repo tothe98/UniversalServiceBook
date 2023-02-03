@@ -40,6 +40,9 @@ function App() {
     
     const handleChangeTab = (newValue) => {
         setActivePage(newValue);
+        setTimeout(() => {
+            console.clear();
+        }, 500)
     }
 
     const routes = {
@@ -165,6 +168,12 @@ function App() {
                 break;
         }
     }, [activePage, routes])
+
+    useEffect(() => {
+        setTimeout(() => {
+            console.clear();
+        }, 500)
+    }, [])
 
     return (
     <ThemeProvider theme={theme}>

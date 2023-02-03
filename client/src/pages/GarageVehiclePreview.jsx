@@ -552,7 +552,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
 
                 { /* Service information(s) */ }
                 <Grid item sx={{width: "100%"}}>
-                    <NameBox> <Typography>Szervíz Előélet</Typography> </NameBox>
+                    <NameBox> <Typography>Szerviz Előélet</Typography> </NameBox>
                     <Grid container direction="column">
                         <MyFullWidthInputSkeleton />
                         <MyFullWidthInputSkeleton />
@@ -635,7 +635,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                                 <Typography>Évjárat: </Typography>
                                             </Grid>
                                             <Grid item>
-                                                <CarDetailValue>{moment(vehicle.vintage).format("YYYY-MM-DD")}</CarDetailValue>
+                                                <CarDetailValue>{moment(vehicle.vintage).format("YYYY")}</CarDetailValue>
                                             </Grid>
                                         </Grid>
                                     </Grid>

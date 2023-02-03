@@ -24,6 +24,32 @@ const Layout = ({handleChangeTab, routes, activePage}) => {
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
     const betweenSM_MD = useMediaQuery(theme.breakpoints.between("sm", "md"));
 
+    if (!auth.user) {
+        return <>
+            <Header 
+                handleChangeTab={handleChangeTab}
+                routes={routes}
+            />
+            { !underSmall && <PageSelector routes={routes} 
+                                            activePage={activePage} 
+                                            handleChangeTab={handleChangeTab} /> }
+            <Wrapper>
+                <Grid container direction={underLarge ? "column" : "row"}>
+                    <Grid item xs={12} sx={{
+                        textAlign: "center",
+                        width: "100%",
+                        paddingTop: theme.global.basePadding,
+                        paddingLeft: theme.global.basePadding,
+                        paddingRight: theme.global.basePadding
+                    }}>
+                        <Outlet />
+                    </Grid>
+                </Grid>
+            </Wrapper>
+            <Footer />
+        </>
+    }
+
     return <>
         <Header 
             handleChangeTab={handleChangeTab}
@@ -35,17 +61,32 @@ const Layout = ({handleChangeTab, routes, activePage}) => {
           <Wrapper>
               <Grid container direction={underLarge ? "column" : "row"}>
                   <Grid item md={1} xs={0}></Grid>
-                  <Grid item xs={2} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}>
-                      <Profile handleChangeTab={handleChangeTab} />
-                  </Grid>
+                    {
+                        auth?.user
+                        &&
+                        <Grid item xs={2} sx={{marginTop: underLarge || betweenSM_MD ? 0 : "-3.8125rem"}}>
+                        <Profile handleChangeTab={handleChangeTab} />
+                        </Grid>
+                    }
 
-                  <Grid item md={8} xs={10} sx={{
-                      paddingTop: underLarge || betweenSM_MD ? "1rem" : "53px",
-                      paddingLeft: theme.global.basePadding,
-                      paddingRight: theme.global.basePadding
-                  }}>
-                      <Outlet />
-                  </Grid>
+                    {
+                        auth?.user
+                        ?
+                        <Grid item md={8} xs={10} sx={{
+                            paddingTop: underLarge || betweenSM_MD ? "1rem" : "53px",
+                            paddingLeft: theme.global.basePadding,
+                            paddingRight: theme.global.basePadding
+                        }}>
+                            <Outlet />
+                        </Grid>
+                        :
+                        <Grid item xs={12} sx={{
+                            paddingLeft: theme.global.basePadding,
+                            paddingRight: theme.global.basePadding
+                        }}>
+                            <Outlet />
+                        </Grid>
+                    }
                   { auth?.user && <Grid item md={1} xs={0}></Grid> }
               </Grid>
           </Wrapper>

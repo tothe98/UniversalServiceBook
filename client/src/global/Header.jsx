@@ -88,7 +88,7 @@ function Header({routes, handleChangeTab}) {
                         <ListItem>
                             <ListItemButton component={Link} to={route.link}>
                                 <MyAvatar>
-                                    <AutoAwesomeIcon sx={{ color: "#fff" }} />
+                                    <AutoAwesomeIcon sx={{ color: "white" }} />
                                 </MyAvatar>
                                 <ListItemText primary={route.name} 
                                         onClick={e=>{handleChangeTab(route.activeIndex); setOpen(!open)}} />
@@ -123,11 +123,11 @@ function Header({routes, handleChangeTab}) {
                     <Grid item xs></Grid>
                     <Grid item lg={10} xs={11} >
                         <Title variant="h1" component={Link} to="/">
-                            Univerzális Szervízkönyv
+                            Univerzális Szervizkönyv
                         </Title>
                     </Grid>
                     {
-                        underS && <SideMenu item xs={1}>
+                        underS && auth.user && <SideMenu item xs={1}>
                             <IconButton><Typography variant="h1"><MenuIcon onClick={e=>setOpen(!open)} /></Typography></IconButton>
                         </SideMenu>
                     }
@@ -135,30 +135,35 @@ function Header({routes, handleChangeTab}) {
                 </Grid>
             </Wrapper>
 
-            <MyDrawer
-                PaperProps={{ elevation: 9 }}
-                anchor="top"
-                open={open}
-                disableBackdropTransition={!iOS}
-                disableDiscovery={iOS}
-                onClose={e=>{setOpen(false)}}
-            >
-                <List >
-                    <MarginDiv />
-                    <SpaceInList />
+            {
+                auth.user
+                &&
+                <MyDrawer
+                    PaperProps={{ elevation: 9 }}
+                    anchor="top"
+                    open={open}
+                    disableBackdropTransition={!iOS}
+                    disableDiscovery={iOS}
+                    onClose={e=>{setOpen(false)}}
+                >
+                    <List >
+                        <MarginDiv />
+                        <SpaceInList />
 
-                    { auth.user && <Tabs /> }
+                        <Tabs />
 
-                    <ListItem>
-                        <ListItemButton onClick={e=>{handleLogout(e)}}>
-                            <MyAvatar>
-                                <LogoutOutlinedIcon />
-                            </MyAvatar>
-                            <ListItemText disableTypography primary="Kijelentkezés" />
-                        </ListItemButton>
-                    </ListItem>
-                </List>
-            </MyDrawer>
+                        <ListItem>
+                            <ListItemButton onClick={e=>{handleLogout(e)}}>
+                                <MyAvatar>
+                                    <LogoutOutlinedIcon />
+                                </MyAvatar>
+                                <ListItemText disableTypography primary="Kijelentkezés" />
+                            </ListItemButton>
+                        </ListItem>
+                    </List>
+                </MyDrawer>
+            }
+
         </React.Fragment>)
 }
 
