@@ -26,7 +26,7 @@ function InformationCard({ data, i, handleChangeTab }) {
                         justifyContent={ underS ? "center" : "flex-start" }>
                     <Grid item xs={1}>
                         <Grid container direction="column" justifyContent="center" alignItems="center">
-                            <ContentBoxImage src={serviceInformationIcon} alt="Szervíz Információ" sx={{width: "4em", height: "4em"}} />
+                            <ContentBoxImage src={serviceInformationIcon} alt="Szerviz Információ" sx={{width: "4em", height: "4em"}} />
                             <Typography>{i + 1}</Typography>
                         </Grid>
                     </Grid>
@@ -34,7 +34,7 @@ function InformationCard({ data, i, handleChangeTab }) {
                     <Grid item xs={10} sx={{maxWidth: "628px", height: "auto"}}>
                         <Grid container direction="column" justifyContent="center" sx={{ textAlign: underS ? "center" : "" }} >
                             <Typography variant="h4" xs>
-                                Szervíz Információ
+                                Szerviz Információ
                             </Typography>
                         </Grid>
                         <Grid container direction="row" sx={{ textAlign: underS ? "center" : "" }} >

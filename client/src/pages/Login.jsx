@@ -1,6 +1,4 @@
 import React, {useState} from "react";
-import { useEffect } from "react";
-import { axiosInstance } from "../lib/GlobalConfigs"
 import {
     Button,
     Grid,
@@ -10,16 +8,16 @@ import {
     axios,
     toast
 } from "../lib/GlobalImports";
+import {
+    SubTitle,
+    SendButton,
+    LoginContainer,
+    AvatarImage
+} from "../lib/StyledComponents"
+import { useEffect } from "react";
+import { axiosInstance } from "../lib/GlobalConfigs"
 import {Link, useNavigate, useLocation} from "react-router-dom";
 import useAuth from "../hooks/useAuth";
-
-const SubTitle = styled(Typography)(({theme}) => ({
-    marginBottom: "2rem"
-}))
-
-const SendButton = styled(Button)(({theme}) => ({
-    ...theme.mixins.button,
-}))
 
 function Login() {
     const { setAuth } = useAuth();
@@ -104,6 +102,8 @@ function Login() {
     }, [])
 
     return <React.Fragment>
+        <AvatarImage src={'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profil kép" sx={{margin: 0}} />
+        
         <SubTitle variant='h3'>Bejelentkezés</SubTitle>
 
         <form onSubmit={e=>sendLogin(e)}>
@@ -113,6 +113,7 @@ function Login() {
                         label="Email cím"
                         type="email"
                         onChange={e=>handleEmailChange(e)}
+                        sx={{ minWidth: "300px" }}
                     />
                 </Grid>
 
@@ -121,6 +122,7 @@ function Login() {
                         label="Jelszó"
                         type="password"
                         onChange={e=>handlePasswordChange(e)}
+                        sx={{ minWidth: "300px" }}
                     />
                 </Grid>
 

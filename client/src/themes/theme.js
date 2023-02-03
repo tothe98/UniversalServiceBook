@@ -17,6 +17,9 @@ let theme = createTheme({
             blue: BLUE,
             _RoseRed: ROSE_RED_HEX,
             orange: ORANGE,
+        },
+        tabcolor: {
+            main: "#24292F"
         }
     },
     mixins: {
@@ -97,7 +100,8 @@ let theme = createTheme({
         "0px 0px 0px #D9D9D9"
     ],
     global: {
-        basePadding: "10px"
+        basePadding: "10px",
+        baseMargin: "4rem",
     },
     components: {
         // Name of the component

@@ -68,6 +68,7 @@ function Registration() {
                         label="Keresztnév "
                         type="text"
                         onChange={e=>setFirstName(e.target.value)}
+                        sx={{ minWidth: "300px" }}
                         required
                     />
                 </Grid>
@@ -76,6 +77,7 @@ function Registration() {
                         label="Családnév "
                         type="text"
                         onChange={e=>setLastName(e.target.value)}
+                        sx={{ minWidth: "300px" }}
                         required
                     />
                 </Grid>
@@ -84,6 +86,7 @@ function Registration() {
                         label="Email cím "
                         type="email"
                         onChange={e=>setEmail(e.target.value)}
+                        sx={{ minWidth: "300px" }}
                         required
                     />
                 </Grid>
@@ -93,6 +96,7 @@ function Registration() {
                         label="Jelszó "
                         type="password"
                         onChange={e=>setPassword(e.target.value)}
+                        sx={{ minWidth: "300px" }}
                         required
                     />
                 </Grid>
@@ -102,6 +106,7 @@ function Registration() {
                         label="Telefonszám"
                         type="tel"
                         onChange={e=>setPhoneNumber(e.target.value)}
+                        sx={{ minWidth: "300px" }}
                     />
                 </Grid>
 

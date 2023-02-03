@@ -33,7 +33,9 @@ function PageSelector({activePage, handleChangeTab, routes}) {
         <Grid container>
             <Grid item lg={auth?.user ? 3 : 1 } xs={0}></Grid>
             <Grid item lg={auth?.user ? 8 : 11} xs={12}>
-                <Tabs value={activePage} textColor="#24292F" onChange={handleChangeTab} TabIndicatorProps={{style: {backgroundColor: "#909090"}}}>
+                <Tabs value={activePage} textColor="#24292F" onChange={handleChangeTab} TabIndicatorProps={{style: {
+                    backgroundColor: "#909090"
+                }}}>
                     {
                         /*
                          Documentation: Basically, when I render the tab components then It matters that the 

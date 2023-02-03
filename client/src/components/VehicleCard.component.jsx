@@ -37,7 +37,7 @@ function VehicleCard({ vehicle, i, handleChangeTab }) {
                             >
                             </CarCardHeader>
 
-                            <Grid container direction={underMD ? "column" : "center"}
+                            <Grid container direction={underMD ? "column" : "row"}
                                 alignItems={underMD ? "center" : "flex-start"}
                                 justifyContent={underMD && "center"}>
                                 <Grid item>

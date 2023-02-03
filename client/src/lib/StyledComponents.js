@@ -352,6 +352,8 @@ const AvatarImage = styled('img')(({theme}) => ({
     backgroundColor: theme.palette.common.gray,
     height: AVATAR_MAX_HEIGHT,
     width: AVATAR_MAX_WIDTH,
+    minWidth: `${AVATAR_MAX_HEIGHT/2}px`,
+    minWidth: `${AVATAR_MAX_WIDTH/2}px`,
     marginBottom: '40px',
     borderRadius: '50%',
     objectFit: "cover",
