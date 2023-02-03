@@ -102,7 +102,7 @@ function Home({handleChangeTab}) {
                 <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
             }
 
-            <SubTitle variant='h3' sx={{marginTop: "2rem"}}>Szervíz Információk</SubTitle>
+            <SubTitle variant='h3' sx={{marginTop: "2rem"}}>Szerviz Információk</SubTitle>
 
             {
                 serviceInformations
@@ -112,7 +112,7 @@ function Home({handleChangeTab}) {
                         serviceInformations.length > 0
                         ?
                             serviceInformations.map((information, i) => {
-                                return <InformationCard data={information} i={i} handleChangeTab={handleChangeTab} />
+                                return <InformationCard key={information + " " + i} data={information} i={i} handleChangeTab={handleChangeTab} />
                             })
                         :
                         <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>

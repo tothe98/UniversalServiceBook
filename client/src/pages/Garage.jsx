@@ -163,6 +163,7 @@ function Garage({handleChangeTab}) {
         setTimeout(() => {
             setIsSent(false);
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+
         const body = {
             manufacture: newVehicleManufacture['id'],
             model: newVehicleModel['id'],
@@ -181,6 +182,66 @@ function Garage({handleChangeTab}) {
             nod: newVehicleDocument,
             mileage: newVehicleKm
         }
+
+        if (!newVehicleManufacture['id']) {
+            toast.error("Hiba! Nem adta meg járművének gyártóját!");
+            return;
+        }
+        if (!newVehicleModel['id']) {
+            toast.error(`Hiba! Nem adta meg a járművének modelljét! Kérjük figyeljen arra, hogy 
+                        a mezőbe írt értéknek megfelelőt válassza ki a legördülő listából!`);
+            return;
+        }
+        if (!newVehicleFuel) {
+            toast.error("Hiba! Nem adta meg a járművének üzemanyag típusát!");
+            return;
+        }
+        if (!newVehicleDriveType) {
+            toast.error("Hiba! Nem adta meg a járművének hajtását!");
+            return;
+        }
+        if (!newVehicleDesignType) {
+            toast.error("Hiba! Nem adta meg a járművének kivitelét!");
+            return;
+        }
+        if (!newVehicleTransmission) {
+            toast.error("Hiba! Nem adta meg a járművének sebességváltójának típusát!");
+            return;
+        }
+        if (!newVehicleVin) {
+            toast.error("Hiba! Nem adta meg a járműve alvázszámát!");
+            return;
+        }
+        if (!newVehicleVintage) {
+            toast.error(`Hiba! Nem, vagy hibásan adta meg a járműve évjáratát! Kérjük figyeljen arra, hogy 
+                        a mezőbe írt értéknek megfelelőt válassza ki a legördülő listából!`);
+            return;
+        }
+        if (!newVehicleOwnWeight) {
+            toast.error("Hiba! Nem, vagy hibásan adta meg a járműve saját tömegét!");
+            return;
+        }
+        if (!newVehicleMaxWeight) {
+            toast.error("Hiba! Nem, vagy hibásan adta meg a járműve maximális tömegét!");
+            return;
+        }
+        if (!newVehicleCylinderCapacity) {
+            toast.error("Hiba! Nem, vagy hibásan adta meg a járművének hengerűrtartalmát!");
+            return;
+        }
+        if (!newVehiclePerformance) {
+            toast.error("Hiba! Nem, vagy hibásan adta meg a járművének teljesítményét!");
+            return;
+        }
+        if (!newVehicleDocument) {
+            toast.error("Hiba! Nem adta meg a járművének származási helyét!");
+            return;
+        }
+        if (!newVehicleKm) {
+            toast.error("Hiba! Nem, vagy hibásan adta meg a járművének kilométerállását!");
+            return;
+        }
+
         const formData = new FormData();
         formData.append("preview", newVehicleWallpaper);
         for (let i = 0; i < newVehicleGallery.length; i++) {
@@ -208,26 +269,48 @@ function Garage({handleChangeTab}) {
             'x-access-token': localStorage.getItem("token")
         }
         const response = await axiosInstance.post("/addVehicle", formData, { headers })
-                        .then((response) => {
-                            toast.success("Sikeresen hozzáadtál egy új járművet!");
-                            setIsAdding(false);
-                            setIsModified(true);
+        .then((response) => {
+            toast.success("Sikeresen hozzáadtál egy új járművet!");
+            setIsAdding(false);
+            setIsModified(true);
+            setNewVehicleWallpaperInBase64(null);
+            setNewVehicleWallpaper(null);
+            setNewVehicleVin(null);
+            setNewVehicleLicenseNum(null);
+            setNewVehicleCategory(null);
+            setNewVehicleManufacture(null);
+            setNewVehicleDesignType(null);
+            setNewVehicleModel(null);
+            setNewVehicleVintage(null);
+            setNewVehicleKm(null);
+            setNewVehicleOwnWeight(null);
+            setNewVehicleMaxWeight(null);
+            setNewVehicleFuel(null);
+            setNewVehicleCylinderCapacity(null);
+            setNewVehiclePerformance(null);
+            setNewVehicleDriveType(null);
+            setNewVehicleTransmission(null);
+            setNewVehicleDocument(null);
+            setNewVehicleDocumentValidity(null);
+            setNewVehicleGallery(null);
+            setNewVehicleGalleryImageLoading(null);
 
-                            // TODO: remove old state values
+            setVehicles([]);
+            setVisibleVehicles([]);
 
-                            window.location.reload();
-                        })
-                        .catch((error) => {
-                            if (error.response.status == 422) {
-                                toast.warning("Hiba! Nem töltöttél ki minden mezőt!");
-                                return;
-                            }
+            getVehicles(localStorage.getItem("token"));
+        })
+        .catch((error) => {
+            if (error.response.status == 422) {
+                toast.warning("Hiba! Nem töltöttél ki minden mezőt!");
+                return;
+            }
 
-                            if (error.response.status == 409) {
-                                toast.warning("Hiba! Ilyen alvázszámmal már létezik jármű!");
-                                return;
-                            }
-                        });
+            if (error.response.status == 409) {
+                toast.warning("Hiba! Ilyen alvázszámmal már létezik jármű!");
+                return;
+            }
+        });
     }
 
     /* vehicle search method(s) */
@@ -406,36 +489,6 @@ function Garage({handleChangeTab}) {
     }
     /* end data request methods */
 
-    /* helper methods for car delete */
-    const findVehicleNameById = (id) => {
-        let vehicleName = "";
-        visibleVehicles.forEach(x => {
-            if (x.id == id) {
-                vehicleName = `${x['manufacture'] + " " + x['model']}`;
-                return;
-            }
-        })
-    }
-    const deleteVehicle = async (id) => {
-        if (!id) return;
-
-        axiosInstance.delete(`/deleteVehicle/${id}`, {
-                headers: {
-                    "x-access-token": localStorage.getItem("token")
-                }
-            })
-            .then((response) => {
-                if (response.status == 202) {
-                    // remove vehicle from vehicles and afterwards from the visiblevehicles
-                    const newVehicles = [...vehicles].map((x) => (x.id !== id));
-                    setVehicles(newVehicles);
-                    setVisibleVehicles(newVehicles);
-                }
-            })
-            .catch((err) => {
-            })
-    }
-
     /* handle searching... */
     useEffect(() => {
         let filteredVehicles = [];
@@ -600,7 +653,7 @@ function Garage({handleChangeTab}) {
                                         <CarCardMedia
                                             component="img"
                                             image={newVehicleWallpaperInBase64 ? newVehicleWallpaperInBase64 : "https://t3.ftcdn.net/jpg/04/21/50/96/360_F_421509616_AW4LfRfbYST8T2ZT9gFGxGWfrCwr4qm4.jpg"}
-                                            alt="new-wallpaper"
+                                            alt="autó előkép"
                                         />
                                     </Grid>
 
@@ -632,8 +685,8 @@ function Garage({handleChangeTab}) {
                                         <Grid item xs={11}>
                                             <MyTextField
                                                 fullWidth
-                                                id="outlined-disabled"
-                                                label="Alvázszám"
+                                                id="Alvázszám"
+                                                label="Alvázszám *"
                                                 type="text"
                                                 onChange={e=>{
                                                     if (newVehicleVin.length <= parseInt(process.env.REACT_APP_MAXIMUM_VIN_LENGTH)) {
@@ -657,7 +710,7 @@ function Garage({handleChangeTab}) {
                                         <Grid item xs={11}>
                                             <MyTextField
                                                 fullWidth
-                                                id="outlined-disabled"
+                                                id="Rendszám"
                                                 label="Rendszám"
                                                 type="text"
                                                 onChange={e=>{
@@ -681,11 +734,11 @@ function Garage({handleChangeTab}) {
 
                                         <Grid item xs={11}>
                                             <MyFormControll fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Jármű kategória</InputLabel>
+                                                <InputLabel id="Jármű kategória">Jármű kategória *</InputLabel>
                                                 <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    label="Jármű kategória"
+                                                    labelId="Jármű kategória *"
+                                                    id="Jármű kategória *"
+                                                    label="Jármű kategória *"
                                                     onChange={e => setNewVehicleCategory(e.target.value)
                                                     }
                                                     value={newVehicleCategory}
@@ -713,7 +766,7 @@ function Garage({handleChangeTab}) {
                                                 <Autocomplete
                                                     fullWidth
                                                     disablePortal
-                                                    id="combo-box-demo"
+                                                    id="Jármű márkája"
                                                     options={
                                                         vehicleManufacturers.map((x,i) => {
                                                             return {
@@ -726,9 +779,10 @@ function Garage({handleChangeTab}) {
                                                     onChange={(event, newValue) => {
                                                         setNewVehicleManufacture(newValue ? newValue : " ");
                                                     }}
-                                                    renderInput={(params) => <TextField {...params} label="Jármű márkája" />}
+                                                    renderInput={(params) => <TextField {...params} label="Jármű márkája **" />}
                                                 />
                                             </MyFormControll>
+                                            <Typography variant="body1" sx={{ opacity: "0.6" }}>* Kérjük, hogy a mezőbe írt értéknek megfelelőt válassza ki a legördülő listából.</Typography>
                                         </Grid>
                                     </Grid>
 
@@ -744,7 +798,7 @@ function Garage({handleChangeTab}) {
                                                 <Autocomplete
                                                     fullWidth
                                                     disablePortal
-                                                    id="combo-box-demo"
+                                                    id="Jármű modell"
                                                     options={
                                                         vehicleModels.map((x,i) => {
                                                             return {
@@ -757,9 +811,10 @@ function Garage({handleChangeTab}) {
                                                     onChange={(event, newValue) => {
                                                         setNewVehicleModel(newValue ? newValue : " ");
                                                     }}
-                                                    renderInput={(params) => <TextField {...params} label="Jármű modell" />}
+                                                    renderInput={(params) => <TextField {...params} label="Jármű modell **" />}
                                                 />
                                             </MyFormControll>
+                                            <Typography variant="body1" sx={{ opacity: "0.6" }}>* Kérjük, hogy a mezőbe írt értéknek megfelelőt válassza ki a legördülő listából.</Typography>
                                         </Grid>
                                     </Grid>
 
@@ -772,11 +827,11 @@ function Garage({handleChangeTab}) {
 
                                         <Grid item xs={11}>
                                             <MyFormControll fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Kivitel</InputLabel>
+                                                <InputLabel id="Kivitel-beviteli-mezo">Kivitel *</InputLabel>
                                                 <Select
-                                                    labelId="demo-simple-select-label"
-                                                    id="demo-simple-select"
-                                                    label="Kivitel"
+                                                    labelId="Kivitel"
+                                                    id="Kivitel"
+                                                    label="Kivitel *"
                                                     onChange={e => setNewVehicleDesignType(e.target.value)}
                                                     value={newVehicleDesignType}
                                                     MenuProps={MenuProps}
@@ -806,7 +861,7 @@ function Garage({handleChangeTab}) {
                                                 <Autocomplete
                                                     fullWidth
                                                     disablePortal
-                                                    id="combo-box-demo"
+                                                    id="jarmu-évjáratok"
                                                     options={
                                                         Array.from(vehicleVintages).map((year,i) => {
                                                             return {
@@ -819,7 +874,7 @@ function Garage({handleChangeTab}) {
                                                     onChange={(event, newValue) => {
                                                         setNewVehicleVintage(newValue ? newValue : " ");
                                                     }}
-                                                    renderInput={(params) => <TextField {...params} label="Jármű évjárat" />}
+                                                    renderInput={(params) => <TextField {...params} label="Jármű évjárat *" />}
                                                 />
                                             </MyFormControll>
                                         </Grid>
@@ -842,24 +897,27 @@ function Garage({handleChangeTab}) {
                                             <MyTextField
                                                 fullWidth
                                                 id="outlined-disabled"
-                                                label="Km. óra állás"
+                                                label="Km. óra állás *"
                                                 type="number"
                                                 onChange={e=>{
                                                     let kmInput = parseInt(e.target.value+"")
 
-                                                    if (kmInput < 0)
+                                                    if (kmInput <= 0)
                                                     {
                                                         setErrorMessageDuringCarAdd("km", "Ez a mező nem lehet kisebb mint 0!");
+                                                        setNewVehicleKm(null);
                                                         return;
                                                     }
                                                     else if (kmInput >= parseInt(process.env.REACT_APP_MAXIMUM_KM))
                                                     {
                                                         setErrorMessageDuringCarAdd("km", `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_KM} km!`);
+                                                        setNewVehicleKm(null);
                                                         return;
                                                     }
                                                     setNewVehicleKm(kmInput)
                                                 }}
                                             />
+                                            <Typography variant="body1" sx={{ opacity: 0.7 }}>* Ezen mező értéke 1 és {process.env.REACT_APP_MAXIMUM_KM} km lehet!</Typography>
                                         </Grid>
                                     </Grid>
 
@@ -874,7 +932,7 @@ function Garage({handleChangeTab}) {
                                             <MyTextField
                                                 fullWidth
                                                 id="outlined-disabled"
-                                                label="Saját tömeg"
+                                                label="Saját tömeg *"
                                                 InputProps={{
                                                     endAdornment: <InputAdornment position="start">kg</InputAdornment>,
                                                 }}
@@ -882,15 +940,17 @@ function Garage({handleChangeTab}) {
                                                 type="number"
                                                 onChange={e=>{
                                                     let weight = parseInt(e.target.value);
-                                                    if (weight < 0)
+                                                    if (weight <= 0)
                                                     {
                                                         setErrorMessageDuringCarAdd("önsúly", "Ez a mező nem lehet kisebb mint 0!");
+                                                        setNewVehicleOwnWeight(null);
                                                         return;
                                                     }
                                                     else if (weight > parseInt(process.env.REACT_APP_MAXIMUM_WEIGHT)) {
                                                         if (weight < 0)
                                                         {
                                                             setErrorMessageDuringCarAdd("önsúly", `Ez a mező nem lehet nagyobb mint ${parseInt(process.env.REACT_APP_MAXIMUM_WEIGHT)} kg!`);
+                                                            setNewVehicleOwnWeight(null);
                                                             return;
                                                         }
                                                     }
@@ -898,6 +958,7 @@ function Garage({handleChangeTab}) {
                                                     setNewVehicleOwnWeight(weight)
                                                 }}
                                             />
+                                            <Typography variant="body1" sx={{ opacity: 0.7 }}>* Ezen mező értéke 1 és {process.env.REACT_APP_MAXIMUM_WEIGHT} kg lehet!</Typography>
                                         </Grid>
                                     </Grid>
 
@@ -912,7 +973,7 @@ function Garage({handleChangeTab}) {
                                             <MyTextField
                                                 fullWidth
                                                 id="outlined-disabled"
-                                                label="Teljes tömeg"
+                                                label="Teljes tömeg *"
                                                 default={0}
                                                 InputProps={{
                                                     endAdornment: <InputAdornment position="start">kg</InputAdornment>,
@@ -923,12 +984,14 @@ function Garage({handleChangeTab}) {
                                                     if (weight < 0)
                                                     {
                                                         setErrorMessageDuringCarAdd("teljes tömeg", "Ez a mező nem lehet kisebb mint 0!");
+                                                        setNewVehicleMaxWeight(null);
                                                         return;
                                                     }
                                                     else if (weight > parseInt(process.env.REACT_APP_MAXIMUM_WEIGHT)) {
                                                         if (weight < 0)
                                                         {
                                                             setErrorMessageDuringCarAdd("teljes tömeg", `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_WEIGHT} kg!`);
+                                                            setNewVehicleMaxWeight(null);
                                                             return;
                                                         }
                                                     }
@@ -936,6 +999,7 @@ function Garage({handleChangeTab}) {
                                                     setNewVehicleMaxWeight(weight)
                                                 }}
                                             />
+                                            <Typography variant="body1" sx={{ opacity: 0.7 }}>* Ezen mező értéke 1 és {process.env.REACT_APP_MAXIMUM_WEIGHT} kg lehet!</Typography>
                                         </Grid>
                                     </Grid>
                                     { /* ----- Jármű adatok */ }
@@ -954,18 +1018,18 @@ function Garage({handleChangeTab}) {
 
                                         <Grid item xs={11}>
                                             <MyFormControll fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Üzemanyag</InputLabel>
+                                                <InputLabel id="demo-simple-select-label">Üzemanyag *</InputLabel>
                                                 <Select
                                                     labelId="demo-simple-select-label"
                                                     id="demo-simple-select"
-                                                    label="Üzemanyag"
+                                                    label="Üzemanyag *"
                                                     onChange={e =>setNewVehicleFuel(e.target.value)}
                                                     value={newVehicleFuel}
                                                     MenuProps={MenuProps}
                                                 >
                                                     {
                                                         vehicleFuels.map((x,i) => {
-                                                            return <MenuItem key={i+"asdsad"} value={x.id}>{x.type}</MenuItem>
+                                                            return <MenuItem key={i+x} value={x.id}>{x.type}</MenuItem>
                                                         })
                                                     }
                                                 </Select>
@@ -984,7 +1048,7 @@ function Garage({handleChangeTab}) {
                                             <MyTextField
                                                 fullWidth
                                                 id="outlined-disabled"
-                                                label="Hengerűrtartalom"
+                                                label="Hengerűrtartalom *"
                                                 type="number"
                                                 InputProps={{
                                                     endAdornment: <InputAdornment position="start">cm<sup>3</sup></InputAdornment>,
@@ -995,12 +1059,14 @@ function Garage({handleChangeTab}) {
                                                     if (amount < 0)
                                                     {
                                                         setErrorMessageDuringCarAdd("hengerűrtartalom", "Ez a mező nem lehet kisebb mint 0!");
+                                                        setNewVehicleCylinderCapacity(null);
                                                         return;
                                                     }
                                                     else if (amount > parseInt(process.env.REACT_APP_MAXIMUM_CYLINDER_CAPACITY)) {
                                                         if (amount < 0)
                                                         {
                                                             setErrorMessageDuringCarAdd("hengerűrtartalom", `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_CYLINDER_CAPACITY}!`);
+                                                            setNewVehicleCylinderCapacity(null);
                                                             return;
                                                         }
                                                     }
@@ -1024,7 +1090,7 @@ function Garage({handleChangeTab}) {
                                                     <MyTextField
                                                         fullWidth
                                                         id="outlined-disabled"
-                                                        label="Teljesítmény"
+                                                        label="Teljesítmény *"
                                                         InputProps={{
                                                             endAdornment: <InputAdornment position="start">LE</InputAdornment>,
                                                         }}
@@ -1035,12 +1101,14 @@ function Garage({handleChangeTab}) {
                                                             if (amount < 0)
                                                             {
                                                                 setErrorMessageDuringCarAdd("teljesítmény (le)", "Ez a mező nem lehet kisebb mint 0!");
+                                                                setNewVehiclePerformance(null);
                                                                 return;
                                                             }
                                                             else if (amount > parseInt(process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE)) {
                                                                 if (amount < 0)
                                                                 {
                                                                     setErrorMessageDuringCarAdd("teljesítmény (le)", `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE}!`);
+                                                                    setNewVehiclePerformance(null);
                                                                     return;
                                                                 }
                                                             }
@@ -1062,11 +1130,11 @@ function Garage({handleChangeTab}) {
 
                                         <Grid item xs={11}>
                                             <MyFormControll fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Hajtás</InputLabel>
+                                                <InputLabel id="demo-simple-select-label">Hajtás *</InputLabel>
                                                 <Select
                                                     labelId="demo-simple-select-label"
                                                     id="demo-simple-select"
-                                                    label="Hajtás"
+                                                    label="Hajtás *"
                                                     onChange={e =>setNewVehicleDriveType(e.target.value)}
                                                     value={newVehicleDriveType}
                                                     defaultValue={"hatso"}
@@ -1091,7 +1159,7 @@ function Garage({handleChangeTab}) {
 
                                         <Grid item xs={11}>
                                             <MyFormControll fullWidth>
-                                                <InputLabel id="demo-simple-select-label">Sebességváltó</InputLabel>
+                                                <InputLabel id="demo-simple-select-label">Sebességváltó *</InputLabel>
                                                 <Select
                                                     labelId="demo-simple-select-label"
                                                     id="demo-simple-select"
@@ -1127,10 +1195,11 @@ function Garage({handleChangeTab}) {
                                             <MyTextField
                                                 fullWidth
                                                 id="outlined-disabled"
-                                                label="Okmányok jellege"
+                                                label="Okmányok jellege **"
                                                 type="text"
                                                 onChange={e =>setNewVehicleDocument(e.target.value)}
                                             />
+                                            <Typography variant="body1" sx={{ opacity: "0.6" }}>* Az okmányok jellege a jármű származási helyét várja értékül.</Typography>
                                         </Grid>
                                     </Grid>
 
@@ -1187,7 +1256,7 @@ function Garage({handleChangeTab}) {
                                     >
                                         {
                                             !newVehicleGalleryImageLoading && Array.from(newVehicleGallery).map((obj, i) => {
-                                                return !obj.deleted && <Grid item>
+                                                return !obj.deleted && <Grid item key={obj + "" + i}>
                                                     <Grid container direction="column" gap={2} justifyContent="center" alignItems="center">
                                                         <Grid item>
                                                             <GalleryImage
@@ -1239,7 +1308,7 @@ function Garage({handleChangeTab}) {
 
         {
             visibleVehicles.length > 0 && visibleVehicles.map((vehicle,i) => {
-                return <VehicleCard vehicle={vehicle} i={i} handleChangeTab={handleChangeTab}  />
+                return <VehicleCard key={vehicle + " " + i} vehicle={vehicle} i={i} handleChangeTab={handleChangeTab}  />
             })
         }
     </React.Fragment>)

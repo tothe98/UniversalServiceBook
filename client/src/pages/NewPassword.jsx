@@ -71,9 +71,9 @@ function NewPassword({}) {
         {
             isSent
             ?
-            <SendButton sx={{ background: "green", color: "white" }} onClick={sendNewPasswordRequest}>Mentés</SendButton>
+            <SendButton sx={{ background: "green", color: "white" }} onClick={sendNewPasswordRequest} disabled>Mentés</SendButton>
             :
-            <SendButton sx={{ background: "green", color: "white" }} disabled>Mentés</SendButton>
+            <SendButton sx={{ background: "green", color: "white" }}>Mentés</SendButton>
         }
     </>
 }
