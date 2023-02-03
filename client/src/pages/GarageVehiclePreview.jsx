@@ -815,7 +815,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
 
             { /* Service information(s) */ }
             <Grid item sx={{width: "100%"}}>
-                    <NameBox> <SubTitle variant="h4" sx={{marginBottom: "0"}}>Szervíz Előélet</SubTitle> </NameBox>
+                    <NameBox> <SubTitle variant="h4" sx={{marginBottom: "0"}}>Szerviz Előélet</SubTitle> </NameBox>
                     { vehicle.serviceEntries && <Grid container direction="column">
                         {
                             Array.from(vehicle.serviceEntries).map((service, i) => {
@@ -827,7 +827,7 @@ function GarageVehiclePreview({routes, activePage, handleChangeTab}) {
                                         id="panel1bh-header"
                                     >
                                         <SubTitle variant="h4" sx={{ width: '33%', flexShrink: 0 }}>
-                                            #{i+1} Szervíz Bejegyzés
+                                            #{i+1} Szerviz Bejegyzés
                                         </SubTitle>
                                         { !underMD && <Typography sx={{ color: 'text.secondary' }}>{service.mileage} km</Typography> }
                                     </AccordionSummary>

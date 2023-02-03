@@ -1226,7 +1226,7 @@ function Garage({handleChangeTab}) {
                                     { /* ----- end of Okmányok */ }
 
                                     <AddCarSubTitle variant="h4">
-                                        Kép Galléria
+                                        Kép Galéria
                                     </AddCarSubTitle>
 
                                     <Grid container direction="row" spacing={0} wrap="nowrap" alignItems="center" justifyContent="center">
