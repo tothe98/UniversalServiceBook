@@ -37,6 +37,15 @@ function Login() {
         }, 3000);
         e.preventDefault();
         
+        if (!email) {
+            toast.error("Kérlek töltsd ki az email cím mezőt!")
+            return;
+        }
+        if (!password) {
+            toast.error("Kérlek töltsd ki az email cím mezőt!")
+            return;
+        }
+
         await axiosInstance.post("signin", {
             email: email,
             password: password

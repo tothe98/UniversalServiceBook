@@ -246,11 +246,15 @@ function Settings({handleChangeTab}) {
                     <Grid container direction="row" spacing={1.5}>
                         <Grid item id="WallpaperItem">
                             <AvatarImage src={
+                                auth._profilImg
+                                ?
+                                auth._profilImg
+                                :
                                 pictureInBase64
                                 ?
                                 pictureInBase64
                                 :
-                                picture 
+                                'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA=' 
                             } alt="profile image" id="wallpaperIMG" />
                         </Grid>
 

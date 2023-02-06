@@ -32,30 +32,56 @@ function Registration() {
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
         
         e.preventDefault();
+
+        if (!firstName) {
+            toast.error("Kérlek töltsd ki a keresztnév mezőt!")
+            return;
+        }
+        if (!lastName) {
+            toast.error("Kérlek töltsd ki a vezetéknév mezőt!")
+            return;
+        }
+        if (!email) {
+            toast.error("Kérlek töltsd ki az email cím mezőt!")
+            return;
+        }
+        if (!password) {
+            toast.error("Kérlek töltsd ki az email cím mezőt!")
+            return;
+        }
+
         const response = await axiosInstance.post("signup", {
             fName: firstName,
             lName: lastName,
             email: email,
             password: password,
             phone: phoneNumber ? phoneNumber : "00"
-        }, { headers: { "x-access-token": localStorage.getItem("token") }});
-        const data = await response.data;
-        if (response.status >= 200 && response.status < 300) 
-        {
+        }, { headers: { "x-access-token": localStorage.getItem("token") }})
+        .then(res => {
             toast.success("Sikeres regisztráció!")
-        }
-        else if (response.status == 422)
-        {
-            toast.error("Opss! Valamit nem töltöttél ki!")
-        }
-        else if (response.status == 409)
-        {
-            toast.error("Opss! Ezzel az e-mail címmel már létezik egy felhasználó!")
-        }
-        else
-        {
-            toast.error("Opss! Valami hiba történt a regisztráció során!")
-        }
+
+            window.location.href = "/bejelentkezes"
+        })
+        .catch(err => {
+            if (err.response.status == 422)
+            {
+                toast.error("Opss! Valamit nem töltöttél ki!")
+            }
+            else if (err.response.status == 409)
+            {
+                toast.error("Opss! Ezzel az e-mail címmel már létezik egy felhasználó!")
+            }
+            else
+            {
+                toast.error("Opss! Valami hiba történt a regisztráció során!")
+            }
+
+        })
+        setEmail("");
+        setFirstName("");
+        setLastName("");
+        setPassword("");
+        setPhoneNumber("");
     }
 
     return <React.Fragment>
