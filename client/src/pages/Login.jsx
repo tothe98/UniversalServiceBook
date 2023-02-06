@@ -87,13 +87,16 @@ function Login() {
                 });
             })
             .catch(e => {
-                if (e.response.status === 400)
+                if (e.response.status == 400)
                 {
                     // sikertelen
-                    console.log(e.response);
                     toast.error("Sajnáljuk :/ Sikertelen bejelentkezés!")
                 }
-                else if (e.response.status === 403)
+                else if (e.response.status == 422) 
+                {
+                    toast.error("Sikertelen bejelentkezés! Valamit nem töltött ki!");
+                }
+                else if (e.response.status == 403)
                 {
                     // nincs aktiválva
                     toast.warning("Opss! Nincs aktiválva a fiók! Kérlek aktiváld a fiókodat!")

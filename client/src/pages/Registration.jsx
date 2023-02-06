@@ -125,6 +125,7 @@ function Registration() {
                         sx={{ minWidth: "300px" }}
                         required
                     />
+                    <Typography variant="body1">* A jelszónak minimum 8 karakter hosszúnak kell lennie.</Typography>
                 </Grid>
 
                 <Grid item>
