@@ -25,7 +25,7 @@ exports.getServiceInformation = async (req, res) => {
 
 exports.getLastViewed = async (req, res) => {
     try {
-        const lastViewes = await RecentActivations.find({ userId: req.userId, isActive: true, category: 'vehicle' }).sort({ date: -1 }).limit(4)
+        const lastViewes = await RecentActivations.find({ userId: req.userId, isActive: true, category: 'vehicle' }).sort({ date: -1 }).limit(3)
         let lastViewed = []
         for (lastView of lastViewes) {
             const vehicle = await Vehicles.findOne({ _id: lastView.vehicleId, _userId: req.userId, isActive: true })

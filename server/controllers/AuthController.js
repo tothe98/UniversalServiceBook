@@ -55,12 +55,11 @@ exports.signup = async (req, res) => {
 
         const verificationCode = generateString(20)
         const userId = createdUser['_id']
-        console.log(verificationCode);
-        console.log(userId);
         const activationReguest = await EmailConfirmation.create({
             verificationCode: verificationCode,
             userId: userId,
-            category: 'email'
+            category: 'email',
+            expireDate:moment().add(3, 'days').format()
         })
         if (activationReguest) {
             await sendEmail(createdUser["email"], "Email megerősítés",

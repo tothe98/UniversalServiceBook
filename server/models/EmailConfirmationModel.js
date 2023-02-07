@@ -13,7 +13,6 @@ const EmailConfirmationSchema = new mongoose.Schema({
     },
     expireDate: {
         type: Date,
-        default: moment().add(3, 'days').format()
     },
     isActive: {
         type: Boolean,
@@ -21,7 +20,7 @@ const EmailConfirmationSchema = new mongoose.Schema({
     },
     date: {
         type: Date,
-        default: moment().format()
+        default: Date.now
     },
     category:{
         type: String,
