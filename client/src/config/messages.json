@@ -1,0 +1,39 @@
+{
+    "documentation": {
+        "_": "If there is a _ mark before the sentence then it does not contain replaceable characters.",
+        "[*]": "If there isn't _ mark before the sentence then you have to replace [*] to the desired value."
+    },
+    "markers": {
+        "comment": "You can't change these values, these are for information purposes only.",
+        "editableSentence": "_",
+        "replacedField": "[*]"
+    },
+    "languages": {
+        "hu": {
+            "global": {
+                "adding": {
+                    "error": "_Az elem hozzáadása meghiúsult.",
+                    "success": "_Sikeresen hozzáadta a kívánt elemet!"
+                },
+                "deleting": {
+                    "error": "_Az elem törlése meghiúsult.",
+                    "success": "_Sikeresen törölte a kívánt elemet!"
+                },
+                "editing": {
+                    "error": "_Az elem szerkesztése meghiúsult.",
+                    "success": "_Sikeresen szerkesztette a kívánt elemet!"
+                },
+                "share": {
+                    "error": "_Az elem megosztása meghiúsult.",
+                    "success": "_Sikeresen megosztotta a kívánt elemet!"
+                }
+            },
+            "field": {
+                "error": "Kérjük, hogy a(z) [*] mezőt töltse ki!",
+                "warning": "A [*] mező értéke nem felel meg a megadott kritériumoknak!",
+                "success": "_Sikeresen kitöltötted a kívánt mezőt!",
+                "notfound": "[*] mező nem található."
+            }
+        }
+    }
+}

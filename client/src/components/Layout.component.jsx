@@ -30,9 +30,6 @@ const Layout = ({handleChangeTab, routes, activePage}) => {
                 handleChangeTab={handleChangeTab}
                 routes={routes}
             />
-            { !underSmall && <PageSelector routes={routes} 
-                                            activePage={activePage} 
-                                            handleChangeTab={handleChangeTab} /> }
             <Wrapper>
                 <Grid container direction={underLarge ? "column" : "row"}>
                     <Grid item xs={12} sx={{

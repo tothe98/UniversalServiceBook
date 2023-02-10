@@ -33,6 +33,7 @@ import useAuth from './hooks/useAuth';
 import RequireAuth from "./context/RequireAuth"
 import ForgotPassword from './pages/ForgotPassword';
 import NewPassword from './pages/NewPassword';
+import SharedVehiclePreview from './pages/SharedVehiclePreview';
 
 function App() {
     const { auth, setAuth } = useAuth();
@@ -186,6 +187,7 @@ function App() {
             <Route path='/aktivalas/:userid/:token' element={<EmailVerification />} />   
             <Route path='/ujjelszo' element={<ForgotPassword />} />
             <Route path='/elfelejtett/:userid/:verificationCode' element={<NewPassword />} />
+            <Route path='/megosztott/:id' element={<SharedVehiclePreview activePage={activePage}  routes={routes} handleChangeTab={handleChangeTab} /> } />
 
             { /*Protected routes*/ }
             <Route element={<RequireAuth allowedRoles={[Roles.User, Roles.Employee, Roles.Admin, Roles.Owner]} />}>
