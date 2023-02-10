@@ -123,4 +123,6 @@ config/.env
 .DS_Store
 .idea
 
+/__test__
+
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Node,dotenv

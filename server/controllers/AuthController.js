@@ -96,7 +96,7 @@ exports.signin = async (req, res) => {
             user: 'System',
             data: JSON.stringify(req.body)
         })
-        return res.status(422).json({ message: 'error', data: {} })
+        return res.status(409).json({ message: 'error', data: {} })
     }
     if (!emailIsExist.isActive) {
         req.body.password = ""
@@ -127,7 +127,7 @@ exports.signin = async (req, res) => {
             user: 'System',
             data: JSON.stringify(req.body)
         })
-        return res.status(422).json({ message: 'error', data: {} })
+        return res.status(409).json({ message: 'error', data: {} })
     }
 
 }

@@ -10,7 +10,8 @@ const {
     DesignTypes,
     Transmissions,
     Pictures,
-    RecentActivations
+    RecentActivations,
+    Users
 } = require("../core/DatabaseInitialization");
 const { addVehicleValidate } = require("../models/ValidationSchema");
 const { logger } = require("../config/logger");
@@ -413,7 +414,11 @@ exports.deleteVehicle = async (req, res) => {
             })
             return res.status(404).json({ message: "VehicleNotFound", data: {} })
         }
-        await RecentActivations.updateMany({ vehicleId: id }, { isActive: false });
+        //await RecentActivations.updateMany({ vehicleId: id }, { isActive: false });
+        const recentActivations = await RecentActivations.find({ vehicleId: id });
+        for (recentActivation of recentActivations) {
+            await RecentActivations.findOneAndUpdate({ _id: recentActivation._id }, { isActive: false });
+        }
         vehicle.isActive = false
         await vehicle.save()
         return res.status(204).json({ message: '', data: {} })
@@ -506,4 +511,37 @@ exports.getPublicVehicle = async (req, res) => {
     }
 }
 
+exports.changeOwner = async (req, res) => {
+    const { email } = req.body;
+    const { id } = req.params;
+    if (!email || !id) {
+        logger.warn(`Sikertelen tulajdonos változtatás! Exception: Email mező hiányzik!`, {
+            user: req.userId,
+            data: JSON.stringify(req.body)
+        });
+        return res.status(422).json({ message: "EmailIsEmpty", data: {} });
+    }
+    try {
+        const user = await Users.findOne({ email: email });
+        if (!user) {
+            logger.warn("Sikertelen tulajdonos változtatás! Exception: Nem létezik a felhasználó ", { user: req.userId, data: JSON.stringify(user) });
+            return res.status(404).json({ message: 'NotFoundUser', data: {} });
+        }
+
+        await Vehicles.findOneAndUpdate({ _id: id }, { _userId: user._id });
+        const recentActivations = await RecentActivations.find({ vehicleId: id });
+        for (recentActivation of recentActivations) {
+            await RecentActivations.findOneAndUpdate({ _id: recentActivation._id }, { isActive: false });
+        }
+        return res.status(200).json({ message: "success", data: {} });
+
+    } catch (error) {
+        logger.error("[SERVER] Hiba történt a tulajdonos változtatásnál!", {
+            user: req.userId,
+            data: JSON.stringify(error)
+        });
+        return res.status(500).json({ message: 'error', data: { error: error } });
+    }
+
+}
 

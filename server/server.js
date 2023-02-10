@@ -40,24 +40,27 @@ app.use(
 )
 app.use('/api/v1', routesUrls)
 
-mongoose.connect(
-    process.env.MONGODB, {
-    useNewUrlParser: true,
-})
-    .then(() => {
-        logger.info('[DATABASE]:Adatbázis kapcsolat létrejött.', { user: 'System', data: "" })
-        console.log('[DATABASE]:Adatbázis kapcsolat létrejött.')
-        app.listen(process.env.PORT || 5000, () => {
-            logger.info(`[SERVER]:Szerver elindult a ${process.env.PORT || 5000}-as porton.`, {
-                user: 'System',
-                data: ""
-            })
-            console.log(`[SERVER]:Szerver elindult a ${process.env.PORT || 5000}-as porton.`)
-            initScheduledJobs();
-        })
-    })
-    .catch((e) => {
-        logger.error('Nem sikerült csatlakozni az adatbázishoz.', { user: 'System', data: JSON.stringify(e) })
-        console.log(e);
-    })
+module.exports = app;
 
+if (process.env.NODE_ENV !== "test") {
+    mongoose.connect(
+        process.env.MONGODB, {
+        useNewUrlParser: true,
+    })
+        .then(() => {
+            logger.info('[DATABASE]:Adatbázis kapcsolat létrejött.', { user: 'System', data: "" })
+            console.log('[DATABASE]:Adatbázis kapcsolat létrejött.')
+            app.listen(process.env.PORT || 5000, () => {
+                logger.info(`[SERVER]:Szerver elindult a ${process.env.PORT || 5000}-as porton.`, {
+                    user: 'System',
+                    data: ""
+                })
+                console.log(`[SERVER]:Szerver elindult a ${process.env.PORT || 5000}-as porton.`)
+                initScheduledJobs();
+            })
+        })
+        .catch((e) => {
+            logger.error('Nem sikerült csatlakozni az adatbázishoz.', { user: 'System', data: JSON.stringify(e) })
+            console.log(e);
+        })
+}
