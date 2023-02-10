@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import {
     axiosInstance
-} from "../lib/GlobalConfigs"
+} from "../lib/GlobalConfigs" 
 import {
     ExpandMoreIcon,
     KeyboardBackspaceOutlinedIcon,
     RemoveCircleOutlineOutlinedIcon,
     ShareOutlinedIcon,
     EditIcon,
-    NotActivatedIcon,
+    NotActivatedIcon, 
     ContentCopyIcon,
     DeleteIcon,
     AccountTreeOutlinedIcon,
