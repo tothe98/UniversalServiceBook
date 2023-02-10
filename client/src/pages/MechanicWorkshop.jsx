@@ -41,6 +41,7 @@ import {
     MyCardHeader
 } from "../lib/StyledComponents"
 import {Editor} from "@tinymce/tinymce-react";
+import { Languages, MessageStatusCodes, getFieldMessage } from '../config/MessageHandler';
 
 const UploadButton = styled(Button)(({theme}) => ({
     margin: "2rem 0"
@@ -73,7 +74,7 @@ function MechanicWorkshop({handleChangeTab}) {
         setFindedVehicle({})
 
         if (!vehicleVin) {
-            toast.error("Az alvázszám mező űres!");
+            toast.error(getFieldMessage(Languages.hu, "alvázszám", MessageStatusCodes.error));
             return;
         }
 
@@ -112,9 +113,24 @@ function MechanicWorkshop({handleChangeTab}) {
         /* it is a plain html text */
         let textEditorContent = serviceMessageHTML.current.getContent();
 
-        console.log(mileage, textEditorContent, newServiceDate.toString(), findedVehicle['id'])
-
         const formData = new FormData();
+
+        if (!findedVehicle) {
+            toast.error("Nem található a szerkesztendő jármű!");
+            return;
+        }
+        if (!mileage) {
+            toast.error(getFieldMessage(Languages.hu, "kilométeróra", MessageStatusCodes.error))
+            return;
+        }
+        if (!textEditorContent) {
+            toast.error(getFieldMessage(Languages.hu, "szervíz szöveg", MessageStatusCodes.error))
+            return;
+        }
+        if (!newServiceDate) {
+            toast.error(getFieldMessage(Languages.hu, "szerviz dátum", MessageStatusCodes.error))
+            return;
+        }
 
         for (let i = 0; i < attachments.length; i++) {
             formData.append("pictures", attachments[i]['file']);

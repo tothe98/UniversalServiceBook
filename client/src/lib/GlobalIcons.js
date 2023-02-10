@@ -36,8 +36,22 @@ import SuccessIcon from "../global/successIcon.png"
 import NotActivatedIcon from "../global/notActivatedIcon.png"
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import EditIcon from '@mui/icons-material/Edit';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Person4Icon from '@mui/icons-material/Person4';
+import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
+import RightArrow from '@mui/icons-material/KeyboardArrowRight';
+import LeftArrow from '@mui/icons-material/KeyboardArrowLeft';
+import CancelIcon from '@mui/icons-material/Cancel';
 
 export {
+    CancelIcon,
+    RightArrow,
+    LeftArrow,
+    ChangeCircleIcon,
+    Person4Icon,
+    DeleteIcon,
+    ContentCopyIcon,
     EditIcon,
     AutoAwesomeIcon,
     SuccessIcon,

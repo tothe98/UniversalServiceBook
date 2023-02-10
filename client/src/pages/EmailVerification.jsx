@@ -5,7 +5,8 @@ import {
     Grid,
     styled,
     Typography,
-    axios
+    axios,
+    toast
 } from "../lib/GlobalImports";
 import {
     SuccessIcon,
@@ -35,6 +36,18 @@ function EmailVerification() {
 
     useEffect(() => {
         setVerificationStatus(3);
+
+        if (!userid) {
+            toast.error("E-mail azonosítási hiba!.");
+            toast.info("Átirányítás");
+            return;
+        }
+        if (!token) {
+            toast.error("E-mail azonosítási hiba!.");
+            toast.info("Átirányítás");
+            return;
+        }
+
         axiosInstance.post(`/emailConfirmation/`, {
             userId: userid,
             verificationCode: token

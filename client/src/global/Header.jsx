@@ -14,7 +14,9 @@ import {
     useMediaQuery,
     Link,
     theme,
-    toast
+    toast,
+    Button,
+    Navigate
 } from '../lib/GlobalImports';
 import {
     Title,
@@ -28,7 +30,8 @@ import {
 import {
     MenuIcon,
     LogoutOutlinedIcon,
-    AutoAwesomeIcon
+    AutoAwesomeIcon,
+    Person4Icon
 } from '../lib/GlobalIcons'
 import Roles from '../lib/Roles';
 import useAuth from '../hooks/useAuth';
@@ -46,9 +49,19 @@ const Wrapper = styled('div')(({theme}) => ({
     position: "relative"
 }))
 
+const LoginButton = styled(Button)(({theme}) => ({
+    color: "#fff",
+    baxkgroundColor: "none",
+    [theme.breakpoints.down("sm")]: {
+        minWidth: "100%"
+    }
+}))
+
 function Header({routes, handleChangeTab}) {
     const { auth } = useAuth();
     const underS = useMediaQuery(theme.breakpoints.down("sm"))
+    const upMD = useMediaQuery(theme.breakpoints.up("md"))
+    const downMD = useMediaQuery(theme.breakpoints.down("md"))
     const [open, setOpen] = useState(false);
     const iOS = typeof navigator !== 'undefined' && /iPad|iPhone|iPod/.test(navigator.userAgent);
 
@@ -121,14 +134,22 @@ function Header({routes, handleChangeTab}) {
             <Wrapper>
                 <Grid container >
                     <Grid item xs></Grid>
-                    <Grid item lg={10} xs={11} >
+                    <Grid item lg={9} xs={10} >
                         <Title variant="h1" component={Link} to="/">
                             Univerzális Szervizkönyv
                         </Title>
                     </Grid>
                     {
-                        underS && auth.user && <SideMenu item xs={1}>
-                            <IconButton><Typography variant="h1"><MenuIcon onClick={e=>setOpen(!open)} /></Typography></IconButton>
+                        !auth.user && upMD && <SideMenu item xs={1}>
+                            <LoginButton startIcon={<Person4Icon />} onClick={e=>{ window.location.href = "/bejelentkezes" }}>
+                                <Typography variant="body1">Bejelentkezés</Typography>
+                            </LoginButton>
+                        </SideMenu>
+                    }
+                    {
+                        !auth.user && downMD && <SideMenu item xs={1}>
+                            <LoginButton startIcon={<Person4Icon />} onClick={e=>{ window.location.href = "/bejelentkezes" }}>
+                            </LoginButton>
                         </SideMenu>
                     }
                     <Grid item xs></Grid>

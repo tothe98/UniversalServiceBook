@@ -16,6 +16,7 @@ import {
 import {
     axiosInstance
 } from "../lib/GlobalConfigs"
+import { Languages, MessageStatusCodes, getFieldMessage } from '../config/MessageHandler';
 
 function Registration() {
     const [firstName, setFirstName] = useState("");
@@ -34,19 +35,24 @@ function Registration() {
         e.preventDefault();
 
         if (!firstName) {
-            toast.error("Kérlek töltsd ki a keresztnév mezőt!")
+            toast.error(getFieldMessage(Languages.hu, "keresztnév", MessageStatusCodes.error))
             return;
         }
         if (!lastName) {
-            toast.error("Kérlek töltsd ki a vezetéknév mezőt!")
+            toast.error(getFieldMessage(Languages.hu, "családnév", MessageStatusCodes.error))
             return;
         }
         if (!email) {
-            toast.error("Kérlek töltsd ki az email cím mezőt!")
+            toast.error(getFieldMessage(Languages.hu, "e-mail", MessageStatusCodes.error))
             return;
         }
         if (!password) {
-            toast.error("Kérlek töltsd ki az email cím mezőt!")
+            toast.error(getFieldMessage(Languages.hu, "jelszó", MessageStatusCodes.error))
+            return;
+        }
+
+        if (password.length < 8) {
+            toast.error(toast.error(getFieldMessage(Languages.hu, "password", MessageStatusCodes.error)))
             return;
         }
 
@@ -91,18 +97,18 @@ function Registration() {
             <Grid container direction="column" spacing={1.5}>
                 <Grid item>
                     <TextField
-                        label="Keresztnév "
+                        label="Családnév "
                         type="text"
-                        onChange={e=>setFirstName(e.target.value)}
+                        onChange={e=>setLastName(e.target.value)}
                         sx={{ minWidth: "300px" }}
                         required
                     />
                 </Grid>
                 <Grid item>
                     <TextField
-                        label="Családnév "
+                        label="Keresztnév "
                         type="text"
-                        onChange={e=>setLastName(e.target.value)}
+                        onChange={e=>setFirstName(e.target.value)}
                         sx={{ minWidth: "300px" }}
                         required
                     />
@@ -125,7 +131,6 @@ function Registration() {
                         sx={{ minWidth: "300px" }}
                         required
                     />
-                    <Typography variant="body1">* A jelszónak minimum 8 karakter hosszúnak kell lennie.</Typography>
                 </Grid>
 
                 <Grid item>
@@ -137,7 +142,10 @@ function Registration() {
                     />
                 </Grid>
 
-                <Grid item><Typography variant="disabled">A regisztrációval elfogadod a szerződési feltételeinket.</Typography></Grid>
+                <Grid item>
+                    <Typography variant="disabled">A regisztrációval elfogadod a szerződési feltételeinket.</Typography>
+                    <Typography variant="body2">* A jelszónak minimum 8 karakter hosszúnak kell lennie.</Typography>
+                </Grid>
 
                 <Grid item><Typography component={Link} to="/bejelentkezes">Van már fiókod?</Typography></Grid>
 

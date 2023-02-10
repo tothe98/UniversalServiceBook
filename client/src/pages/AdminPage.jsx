@@ -11,6 +11,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import {
     axiosInstance
 } from "../lib/GlobalConfigs"
+import { Languages, MessageStatusCodes, getFieldMessage } from "../config/MessageHandler";
 
 const SubTitle = styled(Typography)(({theme}) => ({
     ...theme.typography.link,
@@ -90,6 +91,23 @@ function AdminPage() {
         setTimeout(() => {
             setIsSent(false);
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+
+        if (!newWorkshopName) {
+            toast.error(getFieldMessage(Languages.hu, "garázs név", MessageStatusCodes.error))
+            return;
+        }
+        if (!newWorkshopCountry) {
+            toast.error(getFieldMessage(Languages.hu, "város", MessageStatusCodes.error))
+            return;
+        }
+        if (!newWorkshopAddress) {
+            toast.error(getFieldMessage(Languages.hu, "cím", MessageStatusCodes.error))
+            return;
+        }
+        if (!newWorkshopOwner) {
+            toast.error(getFieldMessage(Languages.hu, "garázs tulajdonos", MessageStatusCodes.error))
+            return;
+        }
         
         await axiosInstance.post('/addNewWorkshop', {
             name: newWorkshopName,
@@ -97,8 +115,8 @@ function AdminPage() {
             city: newWorkshopCity,
             address: newWorkshopAddress,
             owner: newWorkshopOwner,
-            phone: newWorkshopPhone,
-            email: newWorkshopEmail
+            phone: newWorkshopPhone ? newWorkshopPhone : "",
+            email: newWorkshopEmail ? newWorkshopEmail : ""
         }, { headers: { 'x-access-token': localStorage.getItem("token") }})
             .then(response => {
                 toast.success("Sikeresen hozzáadtad a műhelyt!");
