@@ -626,7 +626,7 @@ function Garage({handleChangeTab}) {
             </Grid>
 
             <Grid item>
-                <Button sx={{boxShadow: "0px 0px 0px rgb(0 0 0 / 25%)"}} variant="contained" color="warning" startIcon={ isAdding ? <DoNotDisturbOnOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />} onClick={e=>setIsAdding(!isAdding)}>
+                <Button size="small" sx={{boxShadow: "0px 0px 0px rgb(0 0 0 / 25%)"}} variant="contained" color="warning" startIcon={ isAdding ? <DoNotDisturbOnOutlinedIcon /> : <AddCircleOutlineOutlinedIcon />} onClick={e=>setIsAdding(!isAdding)}>
                     Hozzáadás
                 </Button>
             </Grid>
@@ -660,7 +660,7 @@ function Garage({handleChangeTab}) {
                                     <Grid item>
                                         <CarCardContent>
                                             <AddCarSubTitle variant="h4">
-                                                Háttérkép feltöltése
+                                                Előnézeti kép feltöltése
                                             </AddCarSubTitle>
 
                                             <MyTextField onChange={e=>handleVehiclePreviewChange(e)} inputProps={{ accept: 'image/*' }} fullWidth name="wallpaper" placeholder="Kép kiválasztása..."
@@ -1279,13 +1279,13 @@ function Garage({handleChangeTab}) {
                                 </CarCardContent>
 
                                 <CarCardActions>
-                                    <Button sx={{marginLeft: "auto"}} variant="contained" color="warning" onClick={e=>setIsAdding(false)}>Mégsem</Button>
+                                    <Button size="small" sx={{marginLeft: "auto"}} variant="contained" color="warning" onClick={e=>setIsAdding(false)}>Mégsem</Button>
                                     {
                                         isSent
                                         ?
-                                        <Button variant="contained" disabled>Mentés</Button>
+                                        <Button size="small" variant="contained" disabled>Mentés</Button>
                                         :
-                                        <Button variant="contained" color="success" onClick={e=>handleNewVehicle(e)}>Mentés</Button>
+                                        <Button size="small" variant="contained" color="success" onClick={e=>handleNewVehicle(e)}>Mentés</Button>
                                     }
                                 </CarCardActions>
                             </CarCard>

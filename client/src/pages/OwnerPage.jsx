@@ -41,6 +41,7 @@ import { Languages, MessageStatusCodes, getFieldMessage } from '../config/Messag
 function OwnerPage() {
     const theme = useTheme();
     const [isLoading, setIsLoading] = useState(true);
+    const [isSent, setIsSent] = useState(false);
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
     /* datas */
@@ -68,9 +69,9 @@ function OwnerPage() {
     ];
 
     const handleEmployeeAddition = async (e) => {
-        setIsAdding(true);
+        setIsSent(true);
         setTimeout(() => {
-            setIsAdding(false);
+            setIsSent(false);
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
 
         if (!employeeID) {
@@ -121,11 +122,14 @@ function OwnerPage() {
 
     const handleTableDataClick = (e) => {
         const rowID = Number(e['id']);
-        for (let i = 0; i < employees.length; i++) {
-            if (i == (rowID - 1)) {
-                setCurrentEditedEmployee(employees[i]);
-                setIsEmployeeEdit(true);
-                return;
+        
+        if (e['field'] == "delete") {
+            for (let i = 0; i < employees.length; i++) {
+                if (i == (rowID - 1)) {
+                    setCurrentEditedEmployee(employees[i]);
+                    setIsEmployeeEdit(true);
+                    return;
+                }
             }
         }
     }
@@ -212,15 +216,15 @@ function OwnerPage() {
                             onChange={e=>setEmployeeID(e.target.value)}
                         />
                     </Grid>
-                    <Grid item>
+                    <Grid item sx={{ marginTop: "0.1em" }}>
                         {
-                            isAddingProcessing
+                            isSent
                             ?
-                            <Button variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} disabled>
+                            <Button size='small' variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} disabled>
                                 Hozzáadás
                             </Button>
                             :
-                            <Button variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} onClick={e=>{handleEmployeeAddition(e); setIsAddingProcessing(true)}}>
+                            <Button size='small' variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} onClick={e=>{handleEmployeeAddition(e); setIsAddingProcessing(true)}}>
                                 Hozzáadás
                             </Button>
                         }

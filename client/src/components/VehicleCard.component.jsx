@@ -88,7 +88,7 @@ function VehicleCard({ vehicle, i, handleChangeTab }) {
                                             <Chip label={`${vehicle.mileage} km`} variant="outlined"/>
                                             <Chip label={`${vehicle.performanceLE} LE`} variant="outlined"/></>
                                 }
-                                <ViewButton sx={{marginLeft: "auto"}} component={Link}
+                                <ViewButton size='small' sx={{marginLeft: "auto"}} component={Link}
                                             to={`/jarmuveim/${vehicle['_id'] ? vehicle['_id'] : vehicle['id']}`} onClick={e => {
                                     handleChangeTab(1)
                                 }}>Megtekintem</ViewButton>

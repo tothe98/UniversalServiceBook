@@ -56,7 +56,7 @@ function Login() {
 
         // message
         if (password.length < 8) {
-            toast.error(getFieldMessage(Languages.hu, "password", MessageStatusCodes.warning))
+            toast.error(getFieldMessage(Languages.hu, "jelszó", MessageStatusCodes.warning))
             return;
         }
 

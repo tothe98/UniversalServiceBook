@@ -44,7 +44,7 @@ function InformationCard({ data, i, handleChangeTab }) {
                     </Grid>
 
                     <Grid item xs sx={{position: underS ? "block" : "absolute", bottom: "2em", right: "2em"}}>
-                        <ViewButton component={Link} to={`/jarmuveim/${data['vehicleId']}`} onClick={e=>{handleChangeTab(2)}}  >Megtekintem</ViewButton>
+                        <ViewButton size='small' component={Link} to={`/jarmuveim/${data['vehicleId']}`} onClick={e=>{handleChangeTab(2)}}  >Megtekintem</ViewButton>
                     </Grid>
                 </Grid>
             </ContentBox>

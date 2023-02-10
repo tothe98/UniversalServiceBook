@@ -84,13 +84,6 @@ const getGlobalMessage = (lang, field, action, status) => {
 
 */
 const getFieldMessage = (lang, field, status) => {
-    setTimeout(() => {
-        console.log(lang, field, status)
-        console.log(messages)
-        console.log(messages[lang])
-
-    }, 1000)
-
     // validating the specified language
     const isLanguageExists = Languages[lang] ? Languages[lang] : undefined;
     if (!isLanguageExists) {
@@ -121,7 +114,7 @@ const getFieldMessage = (lang, field, status) => {
     const replacedField = messages['markers']['replacedField'];
 
     if (message.startsWith(editableSentenceMarker)) {
-        message = message.substring(1);
+        message = message.substring(1, message.length);
         return message;
     }
 

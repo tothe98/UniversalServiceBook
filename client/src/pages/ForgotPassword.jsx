@@ -50,25 +50,32 @@ function ForgotPassword() {
     }
 
     return <>
-        <SubTitle variant='h3'>Elfelejtett jelszó kérelem</SubTitle>
+        <SubTitle sx={{ marginTop: "30px" }} variant='h3'>Elfelejtett jelszó kérelem</SubTitle>
 
-        <MyTextField
-            fullWidth
-            id="outlined-disabled"
-            label="Email cím"
-            value={email}
-            default={""}
-            color="success"
-            type="email"
-            onChange={e=>{setEmail(e.target.value)}}
-        />
-        {
-            isSent
-            ?
-            <SendButton disabled>Küldés</SendButton>
-            :
-            <SendButton onClick={sendForgotPasswordRequest}>Küldés</SendButton>
-        }
+        <Grid container direction="column">
+            <Grid item>
+                <MyTextField
+                    fullWidth
+                    id="outlined-disabled"
+                    label="Email cím"
+                    value={email}
+                    default={""}
+                    color="success"
+                    type="email"
+                    sx={{maxWidth: "500px"}}
+                    onChange={e=>{setEmail(e.target.value)}}
+                />
+            </Grid>
+            <Grid item>
+                {
+                    isSent
+                    ?
+                    <SendButton disabled>Küldés</SendButton>
+                    :
+                    <SendButton onClick={sendForgotPasswordRequest}>Küldés</SendButton>
+                }
+            </Grid>
+        </Grid>
     </>
 }
 

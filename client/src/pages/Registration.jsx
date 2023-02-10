@@ -52,7 +52,7 @@ function Registration() {
         }
 
         if (password.length < 8) {
-            toast.error(toast.error(getFieldMessage(Languages.hu, "password", MessageStatusCodes.error)))
+            toast.error(getFieldMessage(Languages.hu, "password", MessageStatusCodes.error))
             return;
         }
 

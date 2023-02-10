@@ -75,7 +75,7 @@ function AdminPage() {
     const columns = [
         { field: 'id', headerName: 'Sorszám', width: 70 },
         { field: 'name', headerName: 'Műhely név', width: 200 },
-        { field: 'country', headerName: 'Állam', width: 130 },
+        { field: 'country', headerName: 'Ország', width: 130 },
         { field: 'city', headerName: 'Város', width: 130 },
         { field: 'address', headerName: 'Cím', width: 130 },
         { field: 'employeesBtn', headerName: 'Alkalmazottak', width: 250,  },
@@ -93,19 +93,23 @@ function AdminPage() {
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
 
         if (!newWorkshopName) {
-            toast.error(getFieldMessage(Languages.hu, "garázs név", MessageStatusCodes.error))
+            toast.error(getFieldMessage(Languages.hu, "műhely név", MessageStatusCodes.error))
             return;
         }
         if (!newWorkshopCountry) {
+            toast.error(getFieldMessage(Languages.hu, "ország", MessageStatusCodes.error))
+            return;
+        }
+        if (!newWorkshopCity) {
             toast.error(getFieldMessage(Languages.hu, "város", MessageStatusCodes.error))
             return;
         }
         if (!newWorkshopAddress) {
-            toast.error(getFieldMessage(Languages.hu, "cím", MessageStatusCodes.error))
+            toast.error(getFieldMessage(Languages.hu, "utca", MessageStatusCodes.error))
             return;
         }
         if (!newWorkshopOwner) {
-            toast.error(getFieldMessage(Languages.hu, "garázs tulajdonos", MessageStatusCodes.error))
+            toast.error(getFieldMessage(Languages.hu, "műhely tulajdonos", MessageStatusCodes.error))
             return;
         }
         
@@ -120,7 +124,6 @@ function AdminPage() {
         }, { headers: { 'x-access-token': localStorage.getItem("token") }})
             .then(response => {
                 toast.success("Sikeresen hozzáadtad a műhelyt!");
-                setIsAddingProcessing(false);
                 setIsAdding(false);
                 setModified(true);
             })
@@ -134,7 +137,6 @@ function AdminPage() {
                 else if (err.response.status == 409) {
                     toast.error("Ez a személy már dolgozik egy műhelynél!")
                 }
-                setIsAddingProcessing(false);
             })
     }
 
@@ -225,7 +227,7 @@ function AdminPage() {
                         <MyTextField
                             fullWidth
                             id="outlined-disabled"
-                            label="Műhely neve"
+                            label="Műhely neve *"
                             type="text"
                             color='success'
                             value={newWorkshopName}
@@ -237,7 +239,7 @@ function AdminPage() {
                         <MyTextField
                             fullWidth
                             id="outlined-disabled"
-                            label="Állam"
+                            label="Ország *"
                             type="text"
                             color='success'
                             value={newWorkshopCountry}
@@ -249,7 +251,7 @@ function AdminPage() {
                         <MyTextField
                             fullWidth
                             id="outlined-disabled"
-                            label="Város"
+                            label="Város *"
                             type="text"
                             color='success'
                             value={newWorkshopCity}
@@ -261,7 +263,7 @@ function AdminPage() {
                         <MyTextField
                             fullWidth
                             id="outlined-disabled"
-                            label="Utca"
+                            label="Utca *"
                             type="text"
                             color='success'
                             value={newWorkshopAddress}
@@ -273,7 +275,7 @@ function AdminPage() {
                         <MyTextField
                             fullWidth
                             id="outlined-disabled"
-                            label="Műhely tulajdonos (email címe)"
+                            label="Műhely tulajdonos (email címe) *"
                             type="text"
                             color='success'
                             value={newWorkshopOwner}
@@ -307,7 +309,7 @@ function AdminPage() {
 
                     <Grid item>
                         {
-                            isAddingProcessing
+                            isSent
                             ?
                             <Button variant="contained" color="success" startIcon={<AddIcon />} disabled>
                                 Hozzáadás

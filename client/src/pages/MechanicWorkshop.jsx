@@ -80,29 +80,27 @@ function MechanicWorkshop({handleChangeTab}) {
 
         if (vehicleVin.length > parseInt(process.env.REACT_APP_MAXIMUM_VIN_LENGTH)) {
             toast.error("Az alvázszám nem lehet hosszabb mint "+process.env.REACT_APP_MAXIMUM_VIN_LENGTH+" karakter.")
-            setVehicleVin("")
             return;
         }
 
-        const response = await axiosInstance.get(`getVehicleByVin/${vehicleVin}`,
-            {
-                headers: {
-                    "x-access-token": localStorage.getItem("token")
-                }
-            });
-        /* We have to write the date to data  */
-        const data = await response.data;
-        const vehicle = await data.data.vehicle;
-        const serviceEntriesCount = await data.data.serviceEntriesCount;
-        setFindedVehicle(vehicle);
-        setFindedVehicleServiceEntriesCount(serviceEntriesCount);
-        
-        if (!findedVehicle) {
+        await axiosInstance.get(`getVehicleByVin/${vehicleVin}`,
+        {
+            headers: {
+                "x-access-token": localStorage.getItem("token")
+            }
+        })
+        .then(response => {
+            const data = response.data;
+            const vehicle = data.data.vehicle;
+            const serviceEntriesCount = data.data.serviceEntriesCount;
+            setFindedVehicle(vehicle);
+            setFindedVehicleServiceEntriesCount(serviceEntriesCount);
+            setIsFinded(true);
+        })
+        .catch(err => {
             toast.error("Nem található jármű ezzel az alvázszámmal!")
-            return;
-        }
-
-        setIsFinded(true);
+            setIsFinded(false);
+        })
     }
 
     const handleNewServiceMessage = () => {
@@ -245,7 +243,7 @@ function MechanicWorkshop({handleChangeTab}) {
                 />
             </Grid>
             <Grid item>
-                <Button variant="contained" color="warning" startIcon={<SearchOutlinedIcon />} onClick={e=>handleSearchVehicle(e)}>
+                <Button size="small" variant="contained" color="warning" startIcon={<SearchOutlinedIcon />} onClick={e=>handleSearchVehicle(e)}>
                     Keresés
                 </Button>
             </Grid>
@@ -380,11 +378,11 @@ function MechanicWorkshop({handleChangeTab}) {
                 {
                     isSent
                     ?
-                    <UploadButton variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} disabled>
+                    <UploadButton size='small' variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} disabled>
                         Feltöltés
                     </UploadButton>
                     :
-                    <UploadButton variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} onClick={e=>handleNewServiceMessage(e)}>
+                    <UploadButton size='small' variant="contained" color="success" startIcon={<AddCircleOutlineOutlinedIcon />} onClick={e=>handleNewServiceMessage(e)}>
                         Feltöltés
                     </UploadButton>
                 }
