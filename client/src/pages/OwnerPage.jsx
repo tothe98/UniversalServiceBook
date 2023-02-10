@@ -36,6 +36,7 @@ import {
 import { Stack } from '@mui/system';
 import { useTheme } from '@emotion/react';
 import { DataGrid } from '@mui/x-data-grid';
+import { Languages, MessageStatusCodes, getFieldMessage } from '../config/MessageHandler';
 
 function OwnerPage() {
     const theme = useTheme();
@@ -71,6 +72,11 @@ function OwnerPage() {
         setTimeout(() => {
             setIsAdding(false);
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+
+        if (!employeeID) {
+            toast.error(getFieldMessage(Languages.hu, "dolgozó azonosító", MessageStatusCodes.error));
+            return;
+        }
 
         await axiosInstance.post('/addEmployee', { email: employeeID  }, { headers: { 'x-access-token': localStorage.getItem("token") }})
             .then(response => {

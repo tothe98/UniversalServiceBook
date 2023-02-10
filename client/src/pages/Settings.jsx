@@ -57,10 +57,6 @@ function Settings({handleChangeTab}) {
         setHome(auth.user.home);
         setPhoneNumber(auth.user.phone);
         setIsLoading(false);
-
-        setTimeout(() => {
-            console.log(picture)
-        }, 1000)
     }, []);
 
     const handleProfileImageChange = async (e) => {
@@ -132,8 +128,8 @@ function Settings({handleChangeTab}) {
                 return;
             }
 
-            if (newPassword.length >= 8 && reNewPassword.length >= 8) {
-                toast.error("A jelszónak legalább 8 karakternek kell lennie!")
+            if (newPassword.length < 8 || reNewPassword.length < 8) {
+                toast.error("Az új jelszavaknak legalább 8 karakternek kell lennie!")
                 return;
             }
 
@@ -181,10 +177,15 @@ function Settings({handleChangeTab}) {
                 'Content-Type': 'multipart/form-data',
                 'x-access-token': localStorage.getItem("token")
             }
-            const response = await axiosInstance.put("updateUser", formData, { headers });
-            await getUserDatas(localStorage.getItem("token"));
+            await axiosInstance.put("updateUser", formData, { headers })
+                .then(res => {
+                    getUserDatas(localStorage.getItem("token"));
+                    toast.success("Sikeresen frissítetted a fiókodat!")
+                })
+                .catch(err => {
+                    toast.error("Hiba! A felhasználói felület modósítása meghiúsult!")
+                })
 
-            toast.success("Sikeresen frissítetted a fiókodat!")
         }
     }
 
@@ -246,9 +247,9 @@ function Settings({handleChangeTab}) {
                     <Grid container direction="row" spacing={1.5}>
                         <Grid item id="WallpaperItem">
                             <AvatarImage src={
-                                auth._profilImg
+                                auth.user['picture']
                                 ?
-                                auth._profilImg
+                                auth.user['picture']
                                 :
                                 pictureInBase64
                                 ?
@@ -284,6 +285,7 @@ function Settings({handleChangeTab}) {
                             fullWidth
                             label="Keresztnév:"
                             defaultValue={firstName}
+                            type="text"
                             onChange={e=>setFirstName(e.target.value)}
                         /></Grid>
 
@@ -291,6 +293,7 @@ function Settings({handleChangeTab}) {
                             fullWidth
                             label="Családnév:"
                             defaultValue={lastName}
+                            type="text"
                             onChange={e=>setLastName(e.target.value)}
                         /></Grid>
 
@@ -305,6 +308,7 @@ function Settings({handleChangeTab}) {
                         <Grid item><TextField
                             fullWidth
                             label="Város"
+                            type="text"
                             defaultValue={ home ? home : ""}
                             onChange={e=>setHome(e.target.value)}
                         /></Grid>

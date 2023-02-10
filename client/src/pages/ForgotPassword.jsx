@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { useState } from 'react';
+import { Languages, MessageStatusCodes, getFieldMessage } from '../config/MessageHandler';
 import { axiosInstance } from '../lib/GlobalConfigs';
 import {
     Grid, theme, toast
@@ -21,6 +22,14 @@ function ForgotPassword() {
         setTimeout(() => {
             setIsSent(false);
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+        
+        if (!email) {
+            toast.error(getFieldMessage(Languages.hu, "e-mail", MessageStatusCodes.error));
+            return;
+        }
+        if (!(email.includes("@") && email.includes(".") )) {
+            toast.error(getFieldMessage(Languages.hu, "e-mail", MessageStatusCodes.warning))
+        }
         
         await axiosInstance.post("/forgotPassword", { email: email })
             .then(res => {

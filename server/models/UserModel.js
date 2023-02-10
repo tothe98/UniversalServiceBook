@@ -23,10 +23,6 @@ const UserSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         ref: 'Pictures'
     },
-    _workshop: {
-        type: mongoose.Types.ObjectId,
-        ref: 'Workshops'
-    },
     roles: [{
         type: Number,
         default: ROLES.User,
@@ -34,7 +30,7 @@ const UserSchema = new mongoose.Schema({
     }],
     phone: {
         type: String,
-        required: true
+        required: false
     },
     home: {
         type: String,
