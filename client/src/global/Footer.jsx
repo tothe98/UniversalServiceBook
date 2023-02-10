@@ -1,49 +1,49 @@
-import { styled, Toolbar, Typography } from '@mui/material';
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-
-const MAX_HEIGHT = '100px';
-const MAX_WIDTH = '880px';
-
-const ContainerDiv = styled('div')(({theme}) => ({
-    maxHeight: MAX_HEIGHT,
-    height: '100%',
-    maxWidth: MAX_WIDTH,
-    width: '100%',
-    marginTop: '40px',
-    marginLeft: 'auto',
-    marginRight: 'auto'
-}))
-
-const MyHr = styled('hr')(({theme}) => ({
-    margin: 0
-}))
-
-const FooterText = styled(Toolbar)(({theme}) => ({
-}))
-
-const SubMenuContainer = styled(Toolbar)(({theme}) => ({
-    marginLeft: 'auto'
-}))
-
-const FooterElement = styled(Typography)(({theme}) => ({
-    ...theme.typography.link,
-    margin: '0 10px'
-}))
+import React, {Component, useState} from 'react';
+import {
+    Drawer,
+    Grid,
+    IconButton,
+    List,
+    ListItem, ListItemButton,
+    ListItemText,
+    Typography,
+    useMediaQuery,
+    theme,
+    Link
+} from '../lib/GlobalImports';
+import {
+    Wrapper,
+    MyHr,
+    FooterText,
+    SubMenuContainer,
+    FooterElement
+} from '../lib/StyledComponents'
+import {
+    MenuIcon
+} from '../lib/GlobalIcons'
 
 function Footer() {
-    return <ContainerDiv>
-        <MyHr />
-        <FooterText disableGutters>
-            <Typography>(C) Minden jog fenntartva.</Typography>
+    const [open, setOpen] = useState(false);
+    const underMD = useMediaQuery(theme.breakpoints.down("md"));
 
-            <SubMenuContainer>
-                <FooterElement component={Link} to="/#" >Segítség kérés</FooterElement>
-                <FooterElement component={Link} to="/#" >Általános szerződési feltételek</FooterElement>
-                <FooterElement component={Link} to="/#" >Elérhetőségeink</FooterElement>
-            </SubMenuContainer>
-        </FooterText>
-    </ContainerDiv>
+    return <Wrapper container alignItems="center" justifyContent="center">
+        <Grid container>
+            <Grid item md={1} xs={0}></Grid>
+
+            <Grid item md={10}  xs={12}>
+                <MyHr />
+                <FooterText disableGutters>
+                    <Typography variant="h6">(C) Minden jog fenntartva.</Typography>
+
+                    <SubMenuContainer>
+                        <FooterElement variant='h6'>Molnár Dániel & Tóth Erik</FooterElement>
+                    </SubMenuContainer>
+                </FooterText>
+            </Grid>
+
+            <Grid item md={1} xs={0}></Grid>
+        </Grid>
+    </Wrapper>
 }
 
 export default Footer;

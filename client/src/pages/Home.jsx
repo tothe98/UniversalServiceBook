@@ -1,53 +1,127 @@
-import { Box, styled, Typography } from '@mui/material';
-import React, { Component } from 'react';
-import Footer from '../global/Footer';
-import Header from '../global/Header';
-import PageSelector from '../global/PageSelector';
-import Profile from '../global/Profile';
+import React, {Component, useEffect, useState} from 'react';
+import {
+    MyCardSkeleton, 
+    MyTextSkeleton
+} from "../lib/Skeletons";
+import {
+    serviceInformationIcon
+} from "../lib/GlobalIcons"
+import {
+    DOMPurify,
+    Link,
+    uuidv4,
+    theme,
+    axios,
+    moment,
+    Alert,
+    Box,
+    Button,
+    Card, CardActions, CardContent,
+    CardHeader, CardMedia,
+    Chip, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider,
+    Grid,
+    IconButton, Menu, Snackbar,
+    styled,
+    Toolbar, Tooltip,
+    Typography,
+    useMediaQuery
+} from '../lib/GlobalImports';
+import {
+    SubTitle
+} from '../lib/StyledComponents'
+import {
+    axiosInstance
+} from '../lib/GlobalConfigs'
+import VehicleCard from '../components/VehicleCard.component';
+import InformationCard from '../components/InformationCard.component';
 
-const PageBody = styled(Box)(({theme}) => ({
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'flex-start'
-}))
+function Home({handleChangeTab}) {
+    const underMD = useMediaQuery(theme.breakpoints.down("md"));
+    const underS = useMediaQuery(theme.breakpoints.down("sm"));
 
-const PageContent = styled(Box)(({theme}) => ({
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    paddingTop: '53px',
-    marginLeft: '21px'
-}))
+    /* loading screen variables */
+    const [isLoading, setIsLoading] = useState(true);
+    const [serviceInformations, setServiceInformations] = useState([]);
+    const [lastActivityVehicles, setLastActivityVehicles] = useState([]);
 
-function Home() {
+    const getLastActivityVehicles = (token) => {
+        setIsLoading(true);
+        axiosInstance.get(`/lastViewed`, { headers: { "x-access-token": token } } )
+            .then(res => {
+                setLastActivityVehicles(res.data.data.lastViewed);
+            })
+            .catch(err => {
+
+            })
+        setIsLoading(false);
+    }
+    const getLastActivityServiceEntries = (token) => {
+        setIsLoading(true);
+        axiosInstance.get(`/serviceInformation`, { headers: { "x-access-token": token } } )
+            .then(res => {
+                setServiceInformations(res.data.data.servceInformation);
+            })
+            .catch(err => {
+
+            })
+        setIsLoading(false);
+    }
+
+    useEffect(() => {
+        getLastActivityVehicles(localStorage.getItem("token"));
+        getLastActivityServiceEntries(localStorage.getItem("token"));
+    }, []);
+
+    if (isLoading) {
+        return (
+            <>
+                <div>
+                    <MyTextSkeleton />
+                    <MyCardSkeleton />
+                </div>
+
+                <div>
+                    <MyTextSkeleton />
+                    <MyCardSkeleton />
+                </div>
+            </>
+        )
+    }
+
     return (
-        <React.Fragment>
-            <Header />
-            <PageSelector />
-            <PageBody>
-                <Profile />
-                <PageContent>
-                    <Typography variant='h3'>Legútóbbi aktivításaim</Typography>
+        <>
+            <SubTitle variant='h3'>Legutóbbi aktivításaim</SubTitle>
 
-                    <div>Autó 1</div>
-                    <div>Autó 2</div>
-                    <div>Autó 3</div>
-                    <div>Autó 4</div>
-                    <div>Autó 5</div>
-                    
-                    <Typography variant='h3'>Szervíz Információk</Typography>
+            {
+                lastActivityVehicles
+                ?
+                lastActivityVehicles.map((vehicle, i) => {
+                    return <VehicleCard vehicle={vehicle} i={i} handleChangeTab={handleChangeTab} />
+                })
+                :
+                <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
+            }
 
-                    <div>Szervíz 1</div>
-                    <div>Szervíz 2</div>
-                    <div>Szervíz 3</div>
-                    <div>Szervíz4</div>
-                    <div>Szervíz 5</div>
-                </PageContent>
-            </PageBody>
-            <Footer />
-        </React.Fragment>
+            <SubTitle variant='h3' sx={{marginTop: "2rem"}}>Szerviz Információk</SubTitle>
+
+            {
+                serviceInformations
+                ?
+                    serviceInformations.length
+                    ?
+                        serviceInformations.length > 0
+                        ?
+                            serviceInformations.map((information, i) => {
+                                return <InformationCard key={information + " " + i} data={information} i={i} handleChangeTab={handleChangeTab} />
+                            })
+                        :
+                        <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
+                    :
+                    <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
+                :
+                <Typography variant="h4" sx={{ opacity: 0.7 }} >Nincs legutóbbi aktivításod!</Typography>
+            }
+        </>
     )
 }
 
