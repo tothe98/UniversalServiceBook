@@ -61,6 +61,7 @@ import {
 import useAuth from "../hooks/useAuth";
 import Roles from "../lib/Roles";
 import { textAlign } from "@mui/system";
+import ImageViewer from "../components/ImageViewer.component";
 
 const SubTitle = styled(Typography)(({ theme }) => ({
     ...theme.typography.link,
@@ -75,17 +76,19 @@ function SharedVehiclePreview({ routes, activePage, handleChangeTab }) {
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
 
     const [isLoading, setIsLoading] = useState(true);
-    /*
-    isShared = vehicle is shared ?
-    isOpenShareMenu = if i shared a vehicle and I clicked to the share button then a popup will be shown and in the modal we can eliminate the sharing or we can
-                      just close the modal.
-    */
+    const [isOpenImageView, setIsOpenImageView] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [vehicle, setVehicle] = useState({});
     const [expanded, setExpanded] = useState(false);
 
     const handleAccordionChange = (panel) => (event, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     };
+
+    const handleOpenImage = (index) => {
+        setIsOpenImageView(true);
+        setCurrentIndex(index);
+    }
 
     /* data request methods */
     const getVehicle = async (token) => {
@@ -423,14 +426,14 @@ function SharedVehiclePreview({ routes, activePage, handleChangeTab }) {
                     <Grid item xs={7}>
                         <Grid container direction="column" alignItems="flex-start" justifyContent="center">
                             <Grid item>
-                                <CarWallPaperImage src={
+                                <CarWallPaperImage onClick={e=>handleOpenImage(0)} src={
                                     vehicle['pictures'][0]
                                 } alt={vehicle.manufacture + " " + vehicle.model} />
 
                                 <Grid container direction="row" spacing={0.4}>
                                     {
                                         Array.from(vehicle['pictures']).slice(1, vehicle['pictures'].length).map((image, i) => {
-                                            return <Grid item key={image + "" + i}><CarGalleryImage src={"/" + image} /></Grid>
+                                            return <Grid item key={image + "" + i}><CarGalleryImage onClick={e=>handleOpenImage(i)} src={"/" + image} /></Grid>
                                         })
                                     }
                                 </Grid>
@@ -703,6 +706,14 @@ function SharedVehiclePreview({ routes, activePage, handleChangeTab }) {
                 </Grid>}
             </Grid>
         </Grid>
+
+        { isOpenImageView && <ImageViewer 
+            isURL={true}
+            images={ [...vehicle['pictures']] }
+            index={currentIndex}
+            open={isOpenImageView}
+            onClose={e=>setIsOpenImageView(false)}
+        /> }
     </React.Fragment>)
 }
 

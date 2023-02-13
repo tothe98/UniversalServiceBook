@@ -244,7 +244,8 @@ const MarginDiv = styled('div')(({theme}) => ({
 const MyAvatar = styled(Avatar)(({theme}) => ({
     color: theme.palette.common.white,
     background: "none",
-    marginRight: "1em"
+    marginRight: "1em",
+    objectFit: "cover"
 }))
 
 const MyDivider = styled(Divider)(({theme}) => ({
@@ -366,7 +367,7 @@ const AvatarImage = styled('img')(({theme}) => ({
     },
     [theme.breakpoints.down("md")]: {
         width: "100px",
-        height: '100%',
+        height: '100px',
         marginBottom: "0px"
     }
 }))
@@ -384,7 +385,19 @@ const MyGridItem = styled(Grid)(({theme}) => ({
     width: "100%"
 }))
 
+const ImageGrid = styled(Grid)(({ theme }) => ({
+    maxWidth: "600px",
+    height: "100%"
+}))
+
+const ViewImage = styled("img")(({ theme }) => ({
+    width: "100%",
+    maxHeight: "500px"
+}))
+
 export {
+    ImageGrid,
+    ViewImage,
     MyGridItem,
     FormCancelButton,
     FormActionButton,

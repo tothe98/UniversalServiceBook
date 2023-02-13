@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
 import moment from 'moment';
 import {
     Chip, 
@@ -23,12 +23,22 @@ import {
     MenuText,
     CarDialogText
 } from '../lib/StyledComponents'
+import ImageViewer from './ImageViewer.component.jsx';
 
 function VehicleCard({ vehicle, i, handleChangeTab }) {
     const underMD = useMediaQuery(theme.breakpoints.down("md"));
     const underS = useMediaQuery(theme.breakpoints.down("sm"));
 
-    return <ContentBox key={vehicle+i}>
+    const [isOpenImageView, setIsOpenImageView] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
+    const handleOpenImage = (index) => {
+        setIsOpenImageView(true);
+        setCurrentIndex(index);
+    }
+
+    return <>
+            <ContentBox key={vehicle+i}>
                 <Grid container direction="column">
                     <Grid item>
                         <CarCard>
@@ -45,6 +55,7 @@ function VehicleCard({ vehicle, i, handleChangeTab }) {
                                         component="img"
                                         image={ vehicle?.preview ? vehicle['preview'] : vehicle['pictures'][0] }
                                         alt={`${vehicle.manufacture} ${vehicle.model}`}
+                                        onClick={e=>handleOpenImage(0)}
                                     />
                                 </Grid>
 
@@ -97,6 +108,15 @@ function VehicleCard({ vehicle, i, handleChangeTab }) {
                     </Grid>
                 </Grid>
             </ContentBox>
+
+            { isOpenImageView && <ImageViewer 
+                isURL={true}
+                images={ [vehicle.preview ? vehicle['preview'] : vehicle['pictures'][0]] }
+                index={currentIndex}
+                open={isOpenImageView}
+                onClose={e=>setIsOpenImageView(false)}
+            /> }
+        </>
 }
 
 export default VehicleCard;
