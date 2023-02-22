@@ -78,13 +78,6 @@ exports.addWorkshop = async (req, res) => {
 exports.deleteWorkshop = async (req, res) => {
     try {
         const { id } = req.params
-        if (!id) {
-            logger.warn(`Sikertelen műhely törlés! Exception: Az ID paraméter hiányzik!`, {
-                user: req.userId,
-                data: JSON.stringify(req.params)
-            })
-            return res.status(422).json({ message: "IdIsEmpty", data: {} })
-        }
         const workshopById = await Workshops.findOne({ _id: id })
         if (!workshopById) {
             logger.warn(`Sikertelen műhely törlés! Exception: A műhely nem létezik!`, {
@@ -276,13 +269,6 @@ exports.addEmployee = async (req, res) => {
 exports.deleteEmployee = async (req, res) => {
     try {
         const { id } = req.params
-        if (!id) {
-            logger.warn(`Sikertelen dolgozó törlés! Exception: ID paraméter nincs megadva!`, {
-                user: req.userId,
-                data: JSON.stringify(req.params)
-            })
-            return res.status(422).json({ message: "IdIsEmpty", data: {} })
-        }
 
         const workshop = await Workshops.findOne({ _owner: req.userId, employees: id })
         if (!workshop) {
@@ -326,15 +312,8 @@ exports.deleteEmployee = async (req, res) => {
 exports.getVehicleByVin = async (req, res) => {
     try {
         const { vin } = req.params
-        if (!vin) {
-            logger.warn(`Sikertelen jármű lekérés alvázszám alapján! Exception: VIN paraméter nincs megadva!`, {
-                user: req.userId,
-                data: JSON.stringify(req.params)
-            })
-            return res.status(422).json({ message: 'VinIsEmpty', data: {} })
-        }
 
-        const vehicle = await Vehicles.findOne({ vin: vin })
+        const vehicle = await Vehicles.findOne({ vin: vin.toUpperCase() })
             .populate('_manufacture')
             .populate('_model')
             .populate('_userId')
@@ -395,7 +374,6 @@ exports.addServiceEntry = (req, res) => {
         }
         try {
             const vehicle = await Vehicles.findOne({ _id: value.vehicleID }).populate('_manufacture').populate('_model')
-            console.log(vehicle);
             if (!vehicle) {
                 deleteFiles(files)
                 logger.warn(`Sikertelen szervizbejegyzés hozzáadás! Exception: Jármű nem létezik!`, {
