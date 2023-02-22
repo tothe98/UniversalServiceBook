@@ -1,9 +1,11 @@
+import { Typography } from '@mui/material';
 import React, { Component } from 'react'
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { axiosInstance } from '../lib/GlobalConfigs';
 import { MyTextField, SendButton, SubTitle } from '../lib/StyledComponents';
+import { Languages, MessageStatusCodes, getFieldMessage } from '../config/MessageHandler';
 
 function NewPassword({}) {
     const { userid, verificationCode } = useParams();
@@ -16,6 +18,23 @@ function NewPassword({}) {
         setTimeout(() => {
             setIsSent(false);
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+
+        if (!newPassword) {
+            toast.error(getFieldMessage(Languages.hu, "új jelszó", MessageStatusCodes.error));
+            return;
+        }
+        if (newPassword.length < 8) {
+            toast.error(getFieldMessage(Languages.hu, "jelszó", MessageStatusCodes.warning));
+            return;
+        }
+        if (!newRePassword) {
+            toast.error(getFieldMessage(Languages.hu, "jelszó ismétlés", MessageStatusCodes.error));
+            return;
+        }
+        if (newRePassword.length < 8) {
+            toast.error(getFieldMessage(Languages.hu, "jelszó ismétlés", MessageStatusCodes.warning));
+            return;
+        }
         
         await axiosInstance.post(`/newPassword`, {
             userId: userid,
@@ -68,6 +87,7 @@ function NewPassword({}) {
             type="password"
             onChange={e=>{setNewRePassword(e.target.value)}}
         />
+        <Typography variant='body2'>* A jelszónak legalább 8 karakter hosszúnak kell lennie.</Typography>
         {
             isSent
             ?

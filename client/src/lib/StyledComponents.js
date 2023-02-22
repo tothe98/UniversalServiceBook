@@ -244,7 +244,8 @@ const MarginDiv = styled('div')(({theme}) => ({
 const MyAvatar = styled(Avatar)(({theme}) => ({
     color: theme.palette.common.white,
     background: "none",
-    marginRight: "1em"
+    marginRight: "1em",
+    objectFit: "cover"
 }))
 
 const MyDivider = styled(Divider)(({theme}) => ({
@@ -281,7 +282,8 @@ const BackToCarsButton = styled(Button)(({theme}) => ({
 const CarWallPaperImage = styled("img")(({theme}) => ({
     objectFit: "cover",
     width: "100%",
-    height: "100%"
+    height: "100%",
+    cursor: "pointer"
 }))
 
 const CarGalleryImage = styled("img")(({theme}) => ({
@@ -290,6 +292,7 @@ const CarGalleryImage = styled("img")(({theme}) => ({
     width: "100%",
     minHeight: "40px",
     height: "auto",
+    cursor: "pointer",
     "&:hover": {
         opacity: 0.7
     }
@@ -352,8 +355,8 @@ const AvatarImage = styled('img')(({theme}) => ({
     backgroundColor: theme.palette.common.gray,
     height: AVATAR_MAX_HEIGHT,
     width: AVATAR_MAX_WIDTH,
-    minWidth: `${AVATAR_MAX_HEIGHT/2}px`,
-    minWidth: `${AVATAR_MAX_WIDTH/2}px`,
+    minWidth: `100px`,
+    minWidth: `100px`,
     marginBottom: '40px',
     borderRadius: '50%',
     objectFit: "cover",
@@ -364,7 +367,7 @@ const AvatarImage = styled('img')(({theme}) => ({
     },
     [theme.breakpoints.down("md")]: {
         width: "100px",
-        height: '100%',
+        height: '100px',
         marginBottom: "0px"
     }
 }))
@@ -382,7 +385,19 @@ const MyGridItem = styled(Grid)(({theme}) => ({
     width: "100%"
 }))
 
+const ImageGrid = styled(Grid)(({ theme }) => ({
+    maxWidth: "600px",
+    height: "100%"
+}))
+
+const ViewImage = styled("img")(({ theme }) => ({
+    width: "100%",
+    maxHeight: "500px"
+}))
+
 export {
+    ImageGrid,
+    ViewImage,
     MyGridItem,
     FormCancelButton,
     FormActionButton,

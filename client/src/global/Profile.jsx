@@ -21,6 +21,7 @@ import {
     AvatarImage
 } from '../lib/StyledComponents'
 import useAuth from '../hooks/useAuth';
+import ImageViewer from '../components/ImageViewer.component';
 
 const Container = styled(Grid)(({theme}) => ({
     paddingLeft: theme.global.basePadding,
@@ -51,10 +52,18 @@ function Profile({handleChangeTab, loggedIn}) {
     const underLarge = useMediaQuery(theme.breakpoints.down("lg"));
     const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
+    const [isOpenImageView, setIsOpenImageView] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
+
     useEffect(() => {
         setIsLoading(true);
         setIsLoading(false);
     });
+
+    const handleOpenImage = (index) => {
+        setIsOpenImageView(true);
+        setCurrentIndex(index);
+    }
 
     if (isLoading) {
         return <>
@@ -121,7 +130,9 @@ function Profile({handleChangeTab, loggedIn}) {
                     <Grid item>
                         <Grid container direction="row" alignItems="center" justifyContent="flex-start" spacing={1.5}>
                             <Grid item>
-                                <AvatarImage src={auth?.user?.picture
+                                <AvatarImage 
+                                    onClick={e=>handleOpenImage(0)}
+                                    src={auth?.user?.picture
                                     ? 
                                     `${process.env.REACT_APP_CLIENT_URL}/${auth.user.picture}`
                                     : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profil kép" sx={{margin: 0}} />
@@ -141,7 +152,7 @@ function Profile({handleChangeTab, loggedIn}) {
                 :
                 (<React.Fragment>
                     <Grid item>
-                        <AvatarImage src={auth?.user?.picture !== undefined ? auth.user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profil kép" />
+                        <AvatarImage onClick={e=>handleOpenImage(0)} src={auth?.user?.picture !== undefined ? auth.user.picture : 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA='} alt="profil kép" />
                     </Grid>
                     <Grid item>
                         <Typography align="center" variant="h2">
@@ -180,6 +191,15 @@ function Profile({handleChangeTab, loggedIn}) {
     {
         underLarge && <hr />
     }
+
+        { isOpenImageView && auth?.user?.picture && <ImageViewer 
+            isURL={true} 
+            images={[auth.user.picture]}
+            index={currentIndex}
+            open={isOpenImageView}
+            onClose={e => setIsOpenImageView(false)}
+            />
+        }
     </>
 }
 

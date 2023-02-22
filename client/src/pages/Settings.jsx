@@ -26,6 +26,7 @@ import {
     axiosInstance
 } from "../lib/GlobalConfigs"
 import useAuth from "../hooks/useAuth";
+import ImageViewer from "../components/ImageViewer.component";
 
 function Settings({handleChangeTab}) {
     /* getting context data */
@@ -34,7 +35,8 @@ function Settings({handleChangeTab}) {
     /* loading screen variables */
     const [isLoading, setIsLoading] = useState(true);
     const [isSent, setIsSent] = useState(false);
-
+    const [isOpenImageView, setIsOpenImageView] = useState(false);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const [picture, setPicture] = useState("");
     const [pictureInBase64, setPictureInBase64] = useState("");
     const [firstName, setFirstName] = useState("");
@@ -50,28 +52,34 @@ function Settings({handleChangeTab}) {
     const [formUnderProcessing, setIsProcessing] = useState(false)
 
     useEffect(() => {
-        setPicture(auth.user.picture);
+        setPicture({
+            url: auth.user.picture,
+            file: null,
+            modified: false,
+            base64: null
+        });
         setFirstName(auth.user.fName);
         setLastName(auth.user.lName);    
         setEmail(auth.user.email);
         setHome(auth.user.home);
         setPhoneNumber(auth.user.phone);
         setIsLoading(false);
-
-        setTimeout(() => {
-            console.log(picture)
-        }, 1000)
     }, []);
 
     const handleProfileImageChange = async (e) => {
         setIsProcessing(true)
         const file = e.target.files[0];
         const base64 = await convertBase64(file);
-        setPictureInBase64(base64);
-        setPicture(file);
+        setPicture({
+            url: auth.user.picture,
+            file: file,
+            modified: true,
+            base64: base64
+        });
         setIsProcessing(false)
     }
 
+    // put it to global function
     const convertBase64 = (file) => {
         return new Promise((resolve, reject) => {
             const fileReader = new FileReader();
@@ -100,7 +108,13 @@ function Settings({handleChangeTab}) {
         })
         const role = highestRole;
 
-        setPicture(user.picture);
+        /* LATER: I have to create a schema for it (Write the project to typescript) */
+        setPicture({
+            url: user.picture,
+            file: null,
+            modified: false,
+            base64: null
+        });
         setFirstName(user.fName);
         setLastName(user.lName);
         setEmail(user.email);
@@ -132,8 +146,8 @@ function Settings({handleChangeTab}) {
                 return;
             }
 
-            if (newPassword.length >= 8 && reNewPassword.length >= 8) {
-                toast.error("A jelszónak legalább 8 karakternek kell lennie!")
+            if (newPassword.length < 8 || reNewPassword.length < 8) {
+                toast.error("Az új jelszavaknak legalább 8 karakternek kell lennie!")
                 return;
             }
 
@@ -164,16 +178,9 @@ function Settings({handleChangeTab}) {
         }
 
         // profile picture
-        // if user does not have picture attribute the user does not have picture otherwise I have to compare the two base64 string
-        if (auth.user.picture === undefined) {
-            if (picture)
-            {
-                changedSomething = true;
-                formData.append("picture", picture);
-            }
-        } else if(pictureInBase64 !== auth.user.picture) {
-            formData.append("picture", picture);
+        if (picture.modified) {
             changedSomething = true;
+            formData.append("picture", picture.file);
         }
 
         if (changedSomething) {
@@ -181,11 +188,21 @@ function Settings({handleChangeTab}) {
                 'Content-Type': 'multipart/form-data',
                 'x-access-token': localStorage.getItem("token")
             }
-            const response = await axiosInstance.put("updateUser", formData, { headers });
-            await getUserDatas(localStorage.getItem("token"));
+            await axiosInstance.put("updateUser", formData, { headers })
+                .then(res => {
+                    getUserDatas(localStorage.getItem("token"));
+                    toast.success("Sikeresen frissítetted a fiókodat!")
+                })
+                .catch(err => {
+                    toast.error("Hiba! A felhasználói felület modósítása meghiúsult!")
+                })
 
-            toast.success("Sikeresen frissítetted a fiókodat!")
         }
+    }
+
+    const handleOpenImage = (index) => {
+        setIsOpenImageView(true);
+        setCurrentIndex(index);
     }
 
     if (isLoading) {
@@ -245,14 +262,16 @@ function Settings({handleChangeTab}) {
                 <MyGridItem item>
                     <Grid container direction="row" spacing={1.5}>
                         <Grid item id="WallpaperItem">
-                            <AvatarImage src={
-                                auth._profilImg
+                            <AvatarImage
+                                onClick={e=>handleOpenImage(0)}
+                                src={
+                                picture.modified
                                 ?
-                                auth._profilImg
+                                picture.base64
                                 :
-                                pictureInBase64
+                                picture.url
                                 ?
-                                pictureInBase64
+                                picture.url
                                 :
                                 'https://media.istockphoto.com/id/1016744004/vector/profile-placeholder-image-gray-silhouette-no-photo.jpg?s=612x612&w=0&k=20&c=mB6A9idhtEtsFXphs1WVwW_iPBt37S2kJp6VpPhFeoA=' 
                             } alt="profile image" id="wallpaperIMG" />
@@ -284,6 +303,7 @@ function Settings({handleChangeTab}) {
                             fullWidth
                             label="Keresztnév:"
                             defaultValue={firstName}
+                            type="text"
                             onChange={e=>setFirstName(e.target.value)}
                         /></Grid>
 
@@ -291,6 +311,7 @@ function Settings({handleChangeTab}) {
                             fullWidth
                             label="Családnév:"
                             defaultValue={lastName}
+                            type="text"
                             onChange={e=>setLastName(e.target.value)}
                         /></Grid>
 
@@ -305,6 +326,7 @@ function Settings({handleChangeTab}) {
                         <Grid item><TextField
                             fullWidth
                             label="Város"
+                            type="text"
                             defaultValue={ home ? home : ""}
                             onChange={e=>setHome(e.target.value)}
                         /></Grid>
@@ -392,6 +414,15 @@ function Settings({handleChangeTab}) {
                 </MyGridItem>
             </Grid>
         </form>
+
+        { isOpenImageView && (picture.modified || picture.url) && <ImageViewer 
+            isURL={picture.modified ? false : true} 
+            images={[picture.modified ? picture.base64 : picture.url]}
+            index={currentIndex}
+            open={isOpenImageView}
+            onClose={e => setIsOpenImageView(false)}
+            />
+        }
     </React.Fragment>)
 }
 

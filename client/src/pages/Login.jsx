@@ -14,6 +14,14 @@ import {
     LoginContainer,
     AvatarImage
 } from "../lib/StyledComponents"
+import {
+ Languages,
+ MainObjects,
+ ObjectProperties,
+ MessageStatusCodes,
+ getFieldMessage,
+ getGlobalMessage
+} from "../config/MessageHandler";
 import { useEffect } from "react";
 import { axiosInstance } from "../lib/GlobalConfigs"
 import {Link, useNavigate, useLocation} from "react-router-dom";
@@ -36,13 +44,19 @@ function Login() {
             setIsSent(false);
         }, 3000);
         e.preventDefault();
-        
+
         if (!email) {
-            toast.error("Kérlek töltsd ki az email cím mezőt!")
+            toast.error(getFieldMessage(Languages.hu, "e-mail", MessageStatusCodes.error))
             return;
         }
         if (!password) {
-            toast.error("Kérlek töltsd ki az email cím mezőt!")
+            toast.error(getFieldMessage(Languages.hu, "jelszó", MessageStatusCodes.error))
+            return;
+        }
+
+        // message
+        if (password.length < 8) {
+            toast.error(getFieldMessage(Languages.hu, "jelszó", MessageStatusCodes.warning))
             return;
         }
 
@@ -101,6 +115,11 @@ function Login() {
                     // nincs aktiválva
                     toast.warning("Opss! Nincs aktiválva a fiók! Kérlek aktiváld a fiókodat!")
                 }
+                else if (e.response.status == 409)
+                {
+                    // nincs aktiválva
+                    toast.warning("E-mail, jelszó páros helytelen!")
+                }
         });
     }
 
@@ -136,6 +155,7 @@ function Login() {
                         onChange={e=>handlePasswordChange(e)}
                         sx={{ minWidth: "300px" }}
                     />
+                    <Typography variant="body2">* A jelszónak legalább 8 karakternek kell lennie.</Typography>
                 </Grid>
 
                 <Grid item>

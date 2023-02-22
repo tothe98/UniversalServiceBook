@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { useState } from 'react';
+import { Languages, MessageStatusCodes, getFieldMessage } from '../config/MessageHandler';
 import { axiosInstance } from '../lib/GlobalConfigs';
 import {
     Grid, theme, toast
@@ -22,6 +23,14 @@ function ForgotPassword() {
             setIsSent(false);
         }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
         
+        if (!email) {
+            toast.error(getFieldMessage(Languages.hu, "e-mail", MessageStatusCodes.error));
+            return;
+        }
+        if (!(email.includes("@") && email.includes(".") )) {
+            toast.error(getFieldMessage(Languages.hu, "e-mail", MessageStatusCodes.warning))
+        }
+        
         await axiosInstance.post("/forgotPassword", { email: email })
             .then(res => {
                 if (res.status == 200) {
@@ -41,25 +50,32 @@ function ForgotPassword() {
     }
 
     return <>
-        <SubTitle variant='h3'>Elfelejtett jelszó kérelem</SubTitle>
+        <SubTitle sx={{ marginTop: "30px" }} variant='h3'>Elfelejtett jelszó kérelem</SubTitle>
 
-        <MyTextField
-            fullWidth
-            id="outlined-disabled"
-            label="Email cím"
-            value={email}
-            default={""}
-            color="success"
-            type="email"
-            onChange={e=>{setEmail(e.target.value)}}
-        />
-        {
-            isSent
-            ?
-            <SendButton disabled>Küldés</SendButton>
-            :
-            <SendButton onClick={sendForgotPasswordRequest}>Küldés</SendButton>
-        }
+        <Grid container direction="column">
+            <Grid item>
+                <MyTextField
+                    fullWidth
+                    id="outlined-disabled"
+                    label="Email cím"
+                    value={email}
+                    default={""}
+                    color="success"
+                    type="email"
+                    sx={{maxWidth: "500px"}}
+                    onChange={e=>{setEmail(e.target.value)}}
+                />
+            </Grid>
+            <Grid item>
+                {
+                    isSent
+                    ?
+                    <SendButton disabled>Küldés</SendButton>
+                    :
+                    <SendButton onClick={sendForgotPasswordRequest}>Küldés</SendButton>
+                }
+            </Grid>
+        </Grid>
     </>
 }
 
