@@ -144,7 +144,6 @@ exports.confirmEmail = async (req, res) => {
         }
         const isValidCode = await EmailConfirmation.findOne({ verificationCode: verificationCode, userId: userId, isActive: true, category: 'email' })
         if (!isValidCode) {
-            console.log(isValidCode);
             logger.warn(`Sikertelen email megerősítés! Exception: Nem létezik ilyen megerősítés a rendszerben!`, {
                 user: 'System',
                 data: JSON.stringify(req.body)

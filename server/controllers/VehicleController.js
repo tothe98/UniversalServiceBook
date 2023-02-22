@@ -65,7 +65,7 @@ exports.addVehicle = (req, res) => {
             const fileName = req.files.picture.map(picture => picture.path.replaceAll('\\', '/')).join('@')
             const previewName = req.files.preview[0].path.replaceAll('\\', '/')
 
-            const isExistVin = await Vehicles.findOne({ vin: value.vin })
+            const isExistVin = await Vehicles.findOne({ vin: value.vin.toUpperCase() })
             if (isExistVin) {
                 deleteFiles(req.files?.preview)
                 deleteFiles(filesArray)

@@ -6,7 +6,7 @@ const authSignUpValidate = (data) => {
         fName: Joi.string().required().label("First Name"),
         lName: Joi.string().required().label("Last Name"),
         email: Joi.string().email().required().label("Email"),
-        phone: Joi.string().optional().label("Phone Number"),
+        phone: Joi.string().allow("").label("Phone Number"),
         password: Joi.string().min(8).required().label('Password')
     })
     return schema.validate(data)
@@ -38,14 +38,14 @@ const addVehicleValidate = (data) => {
         driveType: Joi.string().hex().length(24).required().label("DriveType"),
         designType: Joi.string().hex().length(24).required().label("DesignType"),
         transmission: Joi.string().hex().length(24).required().label("Transmission"),
-        licenseNumber: Joi.string().optional().label("LicenseNumber"),
+        licenseNumber: Joi.string().allow("").label("LicenseNumber"),
         vin: Joi.string().min(3).max(18).required().label("VIN"), //^[A-HJ-NPR-Za-hj-npr-z\d]{8}[\dX][A-HJ-NPR-Za-hj-npr-z\d]{2}\d{6}$
         vintage: Joi.string().required().label("Vintage"),
         ownMass: Joi.required().label("Own Mass"),
         fullMass: Joi.required().label("Full Mass"),
         cylinderCapacity: Joi.required().label("Cylinder Capacity"),
         performance: Joi.required().label("Performance in PH"),
-        mot: Joi.string().optional().label("Document Validity"),
+        mot: Joi.string().allow("").label("Document Validity"),
         nod: Joi.required().label("Nationaly Of Document"),
         mileage: Joi.required().label("Mileage"),
     })
@@ -59,8 +59,8 @@ const addWorkshopValidate = (data) => {
         city: Joi.string().required().label('City'),
         address: Joi.string().required().label('Address'),
         owner: Joi.string().email().required().label('Owner Email'),
-        phone: Joi.string().label('Workshop Phone'),
-        email: Joi.string().label('Workshop Email')
+        phone: Joi.string().allow("").label('Workshop Phone'),
+        email: Joi.string().allow("").label('Workshop Email')
     })
     return schema.validate(data)
 }

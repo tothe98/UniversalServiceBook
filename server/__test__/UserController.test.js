@@ -2,14 +2,14 @@ const mongoose = require('mongoose');
 const app = require('../server');
 const jwt = require('jsonwebtoken');
 const ROLES = require('../core/Role');
-const moment = require('moment')
+const moment = require('moment');
+const bcrypt = require('bcrypt');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const { Users, EmailConfirmation } = require('../core/DatabaseInitialization');
 const request = require('supertest');
 
 let mongod;
 
-// Connect to a mock MongoDB server before running tests
 beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     dbUrl = mongod.getUri();
@@ -18,7 +18,6 @@ beforeAll(async () => {
     });
 });
 
-// Close the mock MongoDB server after running tests
 afterAll(async () => {
     await mongoose.connection.close();
     await mongod.stop();
@@ -26,7 +25,6 @@ afterAll(async () => {
 
 describe('GET /getUserData', () => {
     it('should return an user', async () => {
-        // Create a test user
         const testUser = new Users({
             fName: 'Test',
             lName: 'User',
@@ -42,12 +40,21 @@ describe('GET /getUserData', () => {
         };
         const token = jwt.sign(payload, process.env.JWT_SECRET);
 
-        // Make a GET request to the /users endpoint
         const res = await request(app).get('/api/v1/getUserData').set("x-access-token", token);
 
-        // Assert that the response has a status of 200 OK and the returned users include the test user
         expect(res.status).toBe(200);
         expect(res.body.data.user.email).toBe("test@user.com");
+    });
+
+    it("should return 500", async () => {
+        const payload = {
+            userId: "6asduuas96wzz",
+            roles: [ROLES.User]
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+        const res = await request(app).get('/api/v1/getUserData').set("x-access-token", token);
+
+        expect(res.status).toBe(500);
     });
 
     it("should return unauthorized", async () => {
@@ -59,11 +66,12 @@ describe('GET /getUserData', () => {
 
 describe('PUT /updateUser', () => {
     it("should return updated user", async () => {
+        const salt = bcrypt.genSaltSync(10);
         const testUser = new Users({
             fName: 'Test',
             lName: 'User',
             email: 'test1@user.com',
-            password: 'tesztjelszo123',
+            password: bcrypt.hashSync("tesztjelszo123", salt),
             roles: [ROLES.User],
             phone: "+36778885333"
         });
@@ -76,14 +84,131 @@ describe('PUT /updateUser', () => {
 
         const data = {
             home: "Szombathely",
-            fName: "Váradi"
+            fName: "Váradi",
+            phone: "+3670887222",
+            lName: "Benedek",
+            oldPassword: "tesztjelszo123",
+            newPassword: "ujJelszó1234"
+        };
+
+        const res = await request(app).put('/api/v1/updateUser').set("x-access-token", token)
+            .field("home", data.home)
+            .field("fName", data.fName)
+            .field("oldPassword", data.oldPassword)
+            .field("newPassword", data.newPassword)
+            .field("lName", data.lName)
+            .field("phone", data.phone)
+            .attach("picture", __dirname + "/assets/img1.jpeg")
+
+        expect(res.status).toBe(202);
+        expect(res.body.data.user.home).toBe("Szombathely");
+        expect(res.body.data.user.fName).toBe("Váradi");
+    });
+    it("should return updated user without update", async () => {
+        const salt = bcrypt.genSaltSync(10);
+        const testUser = new Users({
+            fName: 'Test',
+            lName: 'User',
+            email: 'test13@user.com',
+            password: bcrypt.hashSync("tesztjelszo123", salt),
+            roles: [ROLES.User],
+            phone: "+36778885333"
+        });
+        await testUser.save();
+        const payload = {
+            userId: testUser._id,
+            roles: testUser.roles
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+        const data = {
         };
 
         const res = await request(app).put('/api/v1/updateUser').set("x-access-token", token).send(data);
 
         expect(res.status).toBe(202);
-        expect(res.body.data.user.home).toBe("Szombathely");
-        expect(res.body.data.user.fName).toBe("Váradi");
+    });
+    it("should return 422", async () => {
+        const salt = bcrypt.genSaltSync(10);
+        const testUser = new Users({
+            fName: 'Test',
+            lName: 'User',
+            email: 'test14@user.com',
+            password: bcrypt.hashSync("tesztjelszo123", salt),
+            roles: [ROLES.User],
+            phone: "+36778885333"
+        });
+        await testUser.save();
+        const payload = {
+            userId: testUser._id,
+            roles: testUser.roles
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+        const data = {
+            home: "Szombathely",
+            fName: "Váradi",
+            phone: "+3670887222",
+            lName: "Benedek",
+            oldPassword: "tesztjelszo123",
+            newPassword: "ujJelszó1234"
+        };
+
+        const res = await request(app).put('/api/v1/updateUser').set("x-access-token", token)
+            .field("home", data.home)
+            .field("fName", data.fName)
+            .field("oldPassword", data.oldPassword)
+            .field("newPassword", data.newPassword)
+            .attach("picture", __dirname + "/assets/img1.jpeg")
+            .attach("picture", __dirname + "/assets/img2.jpeg");
+
+        expect(res.status).toBe(422);
+    });
+    it("should return 422", async () => {
+        const salt = bcrypt.genSaltSync(10);
+        const testUser = new Users({
+            fName: 'Test',
+            lName: 'User',
+            email: 'test12@user.com',
+            password: bcrypt.hashSync("tesztjelszo123", salt),
+            roles: [ROLES.User],
+            phone: "+36778885333"
+        });
+        await testUser.save();
+        const payload = {
+            userId: testUser._id,
+            roles: testUser.roles
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+        const data = {
+            home: "Szombathely",
+            fName: "Váradi",
+            oldPassword: "tesztjelszo1234",
+            newPassword: "ujJelszó1234"
+        };
+
+        const res = await request(app).put('/api/v1/updateUser').set("x-access-token", token).send(data);
+
+        expect(res.status).toBe(422);
+    });
+    it("should return 500", async () => {
+        const payload = {
+            userId: "6zrpor678cr6z",
+            roles: [ROLES.User]
+        };
+        const token = jwt.sign(payload, process.env.JWT_SECRET);
+
+        const data = {
+            home: "Szombathely",
+            fName: "Váradi",
+            oldPassword: "tesztjelszo1234",
+            newPassword: "ujJelszó1234"
+        };
+
+        const res = await request(app).put('/api/v1/updateUser').set("x-access-token", token).send(data);
+
+        expect(res.status).toBe(500);
     });
 });
 
@@ -114,6 +239,23 @@ describe('POST /forgotPassword', () => {
 
         const res = await request(app).post('/api/v1/forgotPassword').send(data);
         expect(res.status).toBe(422);
+    });
+    it("should return 404", async () => {
+        const data = {
+            email: "test@users.com"
+        };
+
+        const res = await request(app).post('/api/v1/forgotPassword').send(data);
+        expect(res.status).toBe(404);
+    });
+    it("should return 409", async () => {
+        const data = {
+            email: "test2@user.com"
+        };
+
+        const res = await request(app).post('/api/v1/forgotPassword').send(data);
+
+        expect(res.status).toBe(409);
     });
 });
 
@@ -146,6 +288,25 @@ describe('POST /newPassword', () => {
 
         expect(res.status).toBe(201);
         expect(res.body.message).toBe("success");
+    });
+    it("should return 404", async () => {
+        const code = await EmailConfirmation.create({
+            verificationCode: "7zuiuu755",
+            userId: "6ztwe78j759e",
+            category: "password",
+            expireDate: moment().add(15, 'minutes').format()
+        });
+
+        const data = {
+            userId: "6ztwe78j759e",
+            verificationCode: code.verificationCode,
+            password: "ezEgyMasikJelszo123",
+            cpassword: "ezEgyMasikJelszo123"
+        };
+
+        const res = await request(app).post('/api/v1/newPassword').send(data);
+
+        expect(res.status).toBe(404);
     });
     it("should return 422", async () => {
         const data = {

@@ -8,7 +8,6 @@ const request = require('supertest');
 
 let mongod;
 
-// Connect to a mock MongoDB server before running tests
 beforeAll(async () => {
     mongod = await MongoMemoryServer.create();
     dbUrl = mongod.getUri();
@@ -17,7 +16,6 @@ beforeAll(async () => {
     });
 });
 
-// Close the mock MongoDB server after running tests
 afterAll(async () => {
     await mongoose.connection.close();
     await mongod.stop();
@@ -35,6 +33,29 @@ describe('POST /signup', () => {
         const res = await request(app).post('/api/v1/signup').send(data);
         expect(res.status).toBe(201);
     });
+    it('should return 422', async () => {
+        const data = {
+            fName: "",
+            lName: "User",
+            email: "test@user.com",
+            password: "EgyBiztonságosJelszó123"
+        };
+
+        const res = await request(app).post('/api/v1/signup').send(data);
+        expect(res.status).toBe(422);
+    });
+    it('should return 409', async () => {
+        const data = {
+            fName: "Test",
+            lName: "User",
+            email: "test@user.com",
+            password: "EgyBiztonságosJelszó123"
+        };
+
+        const res = await request(app).post('/api/v1/signup').send(data);
+        expect(res.status).toBe(409);
+    });
+
 });
 
 describe('POST /emailConfirmation', () => {
@@ -48,6 +69,72 @@ describe('POST /emailConfirmation', () => {
 
         const res = await request(app).post('/api/v1/emailConfirmation').send(data);
         expect(res.status).toBe(202);
+    });
+    it('should return 422', async () => {
+        const data = {
+            userId: "",
+            verificationCode: ""
+        };
+
+        const res = await request(app).post('/api/v1/emailConfirmation').send(data);
+        expect(res.status).toBe(422);
+    });
+    it('should return 404', async () => {
+        const user = await Users.findOne({ email: "test@user.com" });
+        const code = await EmailConfirmation.findOne({ userId: user._id });
+        const data = {
+            userId: user._id,
+            verificationCode: "6ztoi876hz5gz"
+        };
+
+        const res = await request(app).post('/api/v1/emailConfirmation').send(data);
+        expect(res.status).toBe(404);
+    });
+    it('should return 409', async () => {
+        const user = await Users.findOne({ email: "test@user.com" });
+        const testCode = await EmailConfirmation.create({
+            verificationCode: "weeoo866688",
+            userId: user._id,
+            expireDate: "2023-01-01",
+            category: "email"
+        });
+        const data = {
+            userId: user._id,
+            verificationCode: testCode.verificationCode
+        };
+
+        const res = await request(app).post('/api/v1/emailConfirmation').send(data);
+        expect(res.status).toBe(409);
+    });
+    it('should return 404', async () => {
+        const testCode = await EmailConfirmation.create({
+            verificationCode: "weeoo866688",
+            userId: "6zezuiw7865z",
+            expireDate: "2023-10-10",
+            category: "email"
+        });
+        const data = {
+            userId: "6zezuiw7865z",
+            verificationCode: testCode.verificationCode
+        };
+
+        const res = await request(app).post('/api/v1/emailConfirmation').send(data);
+        expect(res.status).toBe(404);
+    });
+    it('should return 500', async () => {
+        const testCode = await EmailConfirmation.create({
+            verificationCode: "weeoo866688",
+            userId: "6zezuiw7865z",
+            expireDate: "2023-10-10",
+            category: "email"
+        });
+        const data = {
+            userId: "6zezuiw7865zs",
+            verificationCode: testCode.verificationCode
+        };
+
+        const res = await request(app).post('/api/v1/emailConfirmation').send(data);
+        expect(res.status).toBe(500);
     });
 });
 
@@ -70,6 +157,24 @@ describe('POST /signin', () => {
 
         const res = await request(app).post('/api/v1/signin').send(data);
         expect(res.status).toBe(422);
+    });
+    it('should return 409', async () => {
+        const data = {
+            email: "test2@user.com",
+            password: "EgyBiztonságosJelszó123"
+        };
+
+        const res = await request(app).post('/api/v1/signin').send(data);
+        expect(res.status).toBe(409);
+    });
+    it('should return 409', async () => {
+        const data = {
+            email: "test@user.com",
+            password: "EgyBiztonságosJelszó12"
+        };
+
+        const res = await request(app).post('/api/v1/signin').send(data);
+        expect(res.status).toBe(409);
     });
     it('should return 403', async () => {
         await Users.findOneAndUpdate({ email: "test@user.com" }, { isActive: false });
