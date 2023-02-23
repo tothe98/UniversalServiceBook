@@ -120,6 +120,7 @@ function MechanicWorkshop({ handleChangeTab }) {
         const vehicle = data.data.vehicle;
         const serviceEntriesCount = data.data.serviceEntriesCount;
         setFindedVehicle(vehicle);
+        setMileage(vehicle["mileage"]);
         setFindedVehicleServiceEntriesCount(serviceEntriesCount);
         setIsFinded(true);
       })
@@ -149,11 +150,16 @@ function MechanicWorkshop({ handleChangeTab }) {
       );
       return;
     }
+    if (mileage < findedVehicle["mileage"]) {
+      toast.error(`Hiba! Az új szervizbejegyzést nem sikerült feltölteni, 
+        mivel ön kevesebb km-t adott meg mint, amit mi előzőleg rőgzítettünk.`);
+      return;
+    }
     if (!textEditorContent) {
       toast.error(
         getFieldMessage(
           Languages.hu,
-          "szervíz szöveg",
+          "szerviz szöveg",
           MessageStatusCodes.error
         )
       );
@@ -183,6 +189,10 @@ function MechanicWorkshop({ handleChangeTab }) {
       .post("/addServiceEntry", formData, { headers })
       .then((res) => {
         toast.success("Sikeresen feltöttél egy új szerviz bejegyzést!");
+
+        setMileage(0);
+        setNewServiceDate(moment());
+        setAttachments([]);
       })
       .catch((err) => {
         if (err.response.status == 409) {
@@ -265,7 +275,7 @@ function MechanicWorkshop({ handleChangeTab }) {
             <MyTextSkeleton />
             <MyInputSkeleton />
 
-            <SubTitle2 variant="h3">Új szervízbejegyzés hozzáadása!</SubTitle2>
+            <SubTitle2 variant="h3">Új szervizbejegyzés hozzáadása!</SubTitle2>
             <MyCardSkeleton />
           </Grid>
           <Grid item>
@@ -324,13 +334,13 @@ function MechanicWorkshop({ handleChangeTab }) {
                   Tulajdonos: <a href={"#"}>{findedVehicle.fullName}</a>
                 </Typography>
                 <Typography variant="h4">
-                  Bejegyzett szervízek: {findedVehicleServiceEntriesCount}
+                  Bejegyzett szervizek: {findedVehicleServiceEntriesCount}
                 </Typography>
               </CardContent>
             </CardActionArea>
           </Card>
 
-          <SubTitle2 variant="h3">Új szervízbejegyzés hozzáadása!</SubTitle2>
+          <SubTitle2 variant="h3">Új szervizbejegyzés hozzáadása!</SubTitle2>
 
           <Grid
             container
@@ -375,8 +385,9 @@ function MechanicWorkshop({ handleChangeTab }) {
               <MyTextField
                 fullWidth
                 id="outlined-disabled"
-                label="Km. óra állás"
+                placeholder="Km. óra állás"
                 type="number"
+                value={mileage}
                 onChange={(e) => {
                   let kmInput = parseInt(e.target.value + "");
 
@@ -387,7 +398,7 @@ function MechanicWorkshop({ handleChangeTab }) {
                     kmInput >= parseInt(process.env.REACT_APP_MAXIMUM_KM)
                   ) {
                     toast.error(
-                      "Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_KM} km!"
+                      `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_KM} km!`
                     );
                     return;
                   }
