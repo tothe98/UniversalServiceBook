@@ -392,7 +392,8 @@ const ImageGrid = styled(Grid)(({ theme }) => ({
 
 const ViewImage = styled("img")(({ theme }) => ({
     width: "100%",
-    maxHeight: "500px"
+    maxHeight: "500px",
+    objectFit: "scale-down"
 }))
 
 export {
