@@ -91,7 +91,7 @@ function Home({ handleChangeTab }) {
 
   return (
     <>
-      <SubTitle variant="h3">Legutóbbi aktivításaim</SubTitle>
+      <SubTitle variant="h3">Legutóbbi aktivitásaim</SubTitle>
 
       {lastActivityVehicles ? (
         lastActivityVehicles.length > 0 ? (
@@ -106,17 +106,17 @@ function Home({ handleChangeTab }) {
           })
         ) : (
           <Typography variant="h4" sx={{ opacity: 0.7 }}>
-            Nincs legutóbbi aktivításod!
+            Nincs legutóbbi aktivitásod!
           </Typography>
         )
       ) : (
         <Typography variant="h4" sx={{ opacity: 0.7 }}>
-          Nincs legutóbbi aktivításod!
+          Nincs legutóbbi aktivitásod!
         </Typography>
       )}
 
       <SubTitle variant="h3" sx={{ marginTop: "2rem" }}>
-        Szerviz Információk
+        Szerviz információk
       </SubTitle>
 
       {serviceInformations ? (
@@ -134,17 +134,17 @@ function Home({ handleChangeTab }) {
             })
           ) : (
             <Typography variant="h4" sx={{ opacity: 0.7 }}>
-              Nincs legutóbbi szerviz aktivításod!
+              Nincs legutóbbi szerviz aktivitásod!
             </Typography>
           )
         ) : (
           <Typography variant="h4" sx={{ opacity: 0.7 }}>
-            Nincs legutóbbi szerviz aktivításod!
+            Nincs legutóbbi szerviz aktivitásod!
           </Typography>
         )
       ) : (
         <Typography variant="h4" sx={{ opacity: 0.7 }}>
-          Nincs legutóbbi szerviz aktivításod!
+          Nincs legutóbbi szerviz aktivitásod!
         </Typography>
       )}
     </>

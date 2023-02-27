@@ -509,7 +509,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 >
                   {/* car detail */}
                   <CarDetailGridItem item>
-                    <CarDetailsTitle>Általános Adatok</CarDetailsTitle>
+                    <CarDetailsTitle>Jármű általános adatai</CarDetailsTitle>
 
                     <Grid
                       container
@@ -561,78 +561,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
 
                   {/* car detail */}
                   <CarDetailGridItem item>
-                    <CarDetailsTitle>Jármű adatok</CarDetailsTitle>
-
-                    <Grid
-                      container
-                      direction="column"
-                      alignItems="flex-start"
-                      justifyContent="flex-start"
-                      sx={{ paddingLeft: "2.5em" }}
-                    >
-                      <Grid item>
-                        <Grid
-                          container
-                          direction="row"
-                          spacing={CAR_DETAiL_SPACING}
-                        >
-                          <Grid item>
-                            <Typography>
-                              <MyInputSkeleton />
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <CarDetailValue>
-                              <MyInputSkeleton />
-                            </CarDetailValue>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-
-                      <Grid item>
-                        <Grid
-                          container
-                          direction="row"
-                          spacing={CAR_DETAiL_SPACING}
-                        >
-                          <Grid item>
-                            <Typography>
-                              <MyInputSkeleton />
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <CarDetailValue>
-                              <MyInputSkeleton />
-                            </CarDetailValue>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-
-                      <Grid item>
-                        <Grid
-                          container
-                          direction="row"
-                          spacing={CAR_DETAiL_SPACING}
-                        >
-                          <Grid item>
-                            <Typography>
-                              <MyInputSkeleton />
-                            </Typography>
-                          </Grid>
-                          <Grid item>
-                            <CarDetailValue>
-                              <MyInputSkeleton />
-                            </CarDetailValue>
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-                  </CarDetailGridItem>
-                  {/* end of car detail */}
-
-                  {/* car detail */}
-                  <CarDetailGridItem item>
-                    <CarDetailsTitle>Motor adatok</CarDetailsTitle>
+                    <CarDetailsTitle>Jármű adatai</CarDetailsTitle>
 
                     <Grid
                       container
@@ -697,6 +626,77 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                           </Grid>
                         </Grid>
                       </Grid>
+                    </Grid>
+                  </CarDetailGridItem>
+                  {/* end of car detail */}
+
+                  {/* car detail */}
+                  <CarDetailGridItem item>
+                    <CarDetailsTitle>Jármű motor adatai</CarDetailsTitle>
+
+                    <Grid
+                      container
+                      direction="column"
+                      alignItems="flex-start"
+                      justifyContent="flex-start"
+                      sx={{ paddingLeft: "2.5em" }}
+                    >
+                      <Grid item>
+                        <Grid
+                          container
+                          direction="row"
+                          spacing={CAR_DETAiL_SPACING}
+                        >
+                          <Grid item>
+                            <Typography>
+                              <MyInputSkeleton />
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <CarDetailValue>
+                              <MyInputSkeleton />
+                            </CarDetailValue>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+
+                      <Grid item>
+                        <Grid
+                          container
+                          direction="row"
+                          spacing={CAR_DETAiL_SPACING}
+                        >
+                          <Grid item>
+                            <Typography>
+                              <MyInputSkeleton />
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <CarDetailValue>
+                              <MyInputSkeleton />
+                            </CarDetailValue>
+                          </Grid>
+                        </Grid>
+                      </Grid>
+
+                      <Grid item>
+                        <Grid
+                          container
+                          direction="row"
+                          spacing={CAR_DETAiL_SPACING}
+                        >
+                          <Grid item>
+                            <Typography>
+                              <MyInputSkeleton />
+                            </Typography>
+                          </Grid>
+                          <Grid item>
+                            <CarDetailValue>
+                              <MyInputSkeleton />
+                            </CarDetailValue>
+                          </Grid>
+                        </Grid>
+                      </Grid>
 
                       <Grid item>
                         <Grid
@@ -741,7 +741,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
 
                   {/* car detail */}
                   <CarDetailGridItem item>
-                    <CarDetailsTitle>Okmányok</CarDetailsTitle>
+                    <CarDetailsTitle>Jármű okmányai</CarDetailsTitle>
 
                     <Grid
                       container
@@ -799,7 +799,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
           <Grid item sx={{ width: "100%" }}>
             <NameBox>
               {" "}
-              <Typography>Szerviz Előélet</Typography>{" "}
+              <Typography>Szerviz előélet</Typography>{" "}
             </NameBox>
             <Grid container direction="column">
               <MyFullWidthInputSkeleton />
@@ -841,7 +841,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
           </Tooltip>
         </Grid>
         <Grid item>
-          <Tooltip title="Tulajdonos váltás">
+          <Tooltip title="Tulajdonosváltás">
             <IconButton onClick={(e) => setIsVehiclePrivacyManager(true)}>
               <ChangeCircleIcon sx={{ color: "black" }} />
             </IconButton>
@@ -937,7 +937,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
               >
                 {/* car detail */}
                 <CarDetailGridItem item>
-                  <CarDetailsTitle>Általános Adatok</CarDetailsTitle>
+                  <CarDetailsTitle>Jármű általános adatai</CarDetailsTitle>
 
                   <Grid
                     container
@@ -1002,7 +1002,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
 
                 {/* car detail */}
                 <CarDetailGridItem item>
-                  <CarDetailsTitle>Jármű adatok</CarDetailsTitle>
+                  <CarDetailsTitle>Jármű adatai</CarDetailsTitle>
 
                   <Grid
                     container
@@ -1061,7 +1061,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
 
                 {/* car detail */}
                 <CarDetailGridItem item>
-                  <CarDetailsTitle>Motor adatok</CarDetailsTitle>
+                  <CarDetailsTitle>Jármű motor adatai</CarDetailsTitle>
 
                   <Grid
                     container
@@ -1157,7 +1157,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
 
                 {/* car detail */}
                 <CarDetailGridItem item>
-                  <CarDetailsTitle>Okmányok</CarDetailsTitle>
+                  <CarDetailsTitle>Jármű okmányai</CarDetailsTitle>
 
                   <Grid
                     container
@@ -1214,7 +1214,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
           <NameBox>
             {" "}
             <SubTitle variant="h4" sx={{ marginBottom: "0" }}>
-              Szerviz Előélet
+              Szerviz előélet
             </SubTitle>{" "}
           </NameBox>
           {vehicle.serviceEntries && (
@@ -1561,42 +1561,39 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 justifyContent="center"
                 gap={2}
               >
-                {
-                  /* LAST TIME: Preview, Galleries */
-                  Array.from(updatedPictures).map((obj, i) => {
-                    return (
-                      !obj.modified && (
-                        <Grid item>
-                          <Grid
-                            container
-                            direction="column"
-                            gap={2}
-                            justifyContent="center"
-                            alignItems="center"
-                          >
-                            <Grid item>
-                              <GalleryImage
-                                key={obj + "asd" + i}
-                                src={`${obj.base64 ? obj.base64 : obj.url}`}
-                                loading="lazy"
-                              />
-                            </Grid>
+                {Array.from(updatedPictures).map((obj, i) => {
+                  return (
+                    !obj.modified && (
+                      <Grid item>
+                        <Grid
+                          container
+                          direction="column"
+                          gap={2}
+                          justifyContent="center"
+                          alignItems="center"
+                        >
+                          <Grid item>
+                            <GalleryImage
+                              key={obj + "asd" + i}
+                              src={`${obj.base64 ? obj.base64 : obj.url}`}
+                              loading="lazy"
+                            />
+                          </Grid>
 
-                            <Grid item>
-                              <IconButton
-                                onClick={(e) =>
-                                  handleNewVehicleGalleryImageDelete(e, obj.url)
-                                }
-                              >
-                                <RemoveCircleOutlineOutlinedIcon color="error" />
-                              </IconButton>
-                            </Grid>
+                          <Grid item>
+                            <IconButton
+                              onClick={(e) =>
+                                handleNewVehicleGalleryImageDelete(e, obj.url)
+                              }
+                            >
+                              <RemoveCircleOutlineOutlinedIcon color="error" />
+                            </IconButton>
                           </Grid>
                         </Grid>
-                      )
-                    );
-                  })
-                }
+                      </Grid>
+                    )
+                  );
+                })}
               </Grid>
             </CarDialogText>
           </DialogContent>
@@ -1629,7 +1626,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
           aria-describedby="parent-modal-description"
         >
           <DialogTitle id="alert-dialog-title">
-            <Typography variant="h2">Tulajdonos váltás</Typography>
+            <Typography variant="h2">Tulajdonosváltás</Typography>
           </DialogTitle>
 
           <DialogContent>

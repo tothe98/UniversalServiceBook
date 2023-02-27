@@ -227,7 +227,7 @@ function Garage({ handleChangeTab }) {
       return;
     }
     if (!newVehicleOwnWeight) {
-      toast.error("Hiba! Nem, vagy hibásan adta meg a járműve saját tömegét!");
+      toast.error("Hiba! Nem, vagy hibásan adta meg a járműve ön tömegét!");
       return;
     }
     if (!newVehicleMaxWeight) {
@@ -740,7 +740,7 @@ function Garage({ handleChangeTab }) {
                   <CarCardContent>
                     {/* általános adatok */}
                     <AddCarSubTitle variant="h4">
-                      Általános Adatok
+                      Jármű általános adatai
                     </AddCarSubTitle>
 
                     <Grid
@@ -756,7 +756,6 @@ function Garage({ handleChangeTab }) {
                           <EnergySavingsLeafOutlinedIcon />
                         </Typography>
                       </Grid>
-
                       <Grid item xs={11}>
                         <MyTextField
                           fullWidth
@@ -1045,7 +1044,7 @@ function Garage({ handleChangeTab }) {
                     {/* ----- általános adatok */}
 
                     {/* Jármű adatok */}
-                    <AddCarSubTitle variant="h4">Jármű adatok</AddCarSubTitle>
+                    <AddCarSubTitle variant="h4">Jármű adatai</AddCarSubTitle>
 
                     <Grid
                       container
@@ -1224,7 +1223,9 @@ function Garage({ handleChangeTab }) {
                     {/* ----- Jármű adatok */}
 
                     {/* Motor adatok */}
-                    <AddCarSubTitle variant="h4">Motor adatok</AddCarSubTitle>
+                    <AddCarSubTitle variant="h4">
+                      Jármű motor adatai
+                    </AddCarSubTitle>
 
                     <Grid
                       container
@@ -1471,7 +1472,7 @@ function Garage({ handleChangeTab }) {
                     </Grid>
                     {/* ----- Motor adatok */}
 
-                    <AddCarSubTitle variant="h4">Okmányok</AddCarSubTitle>
+                    <AddCarSubTitle variant="h4">Jármű okmányai</AddCarSubTitle>
 
                     {/* Okmányok */}
                     <Grid
@@ -1536,7 +1537,7 @@ function Garage({ handleChangeTab }) {
                     </Grid>
                     {/* ----- end of Okmányok */}
 
-                    <AddCarSubTitle variant="h4">Kép Galéria</AddCarSubTitle>
+                    <AddCarSubTitle variant="h4">Képgaléria</AddCarSubTitle>
 
                     <Grid
                       container

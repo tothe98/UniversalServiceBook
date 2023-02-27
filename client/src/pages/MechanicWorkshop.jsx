@@ -152,7 +152,7 @@ function MechanicWorkshop({ handleChangeTab }) {
     }
     if (mileage < findedVehicle["mileage"]) {
       toast.error(`Hiba! Az új szervizbejegyzést nem sikerült feltölteni, 
-        mivel ön kevesebb km-t adott meg mint, amit mi előzőleg rőgzítettünk.`);
+        mivel ön kevesebb km-t adott meg mint, amit mi előzőleg rögzítettünk.`);
       return;
     }
     if (!textEditorContent) {

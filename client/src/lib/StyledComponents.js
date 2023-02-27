@@ -387,13 +387,15 @@ const MyGridItem = styled(Grid)(({theme}) => ({
 
 const ImageGrid = styled(Grid)(({ theme }) => ({
     maxWidth: "600px",
-    height: "100%"
+    height: "100%",
+    maxHeight: "600px"
 }))
 
 const ViewImage = styled("img")(({ theme }) => ({
     width: "100%",
+    minHeight: "100%",
     maxHeight: "500px",
-    objectFit: "scale-down"
+    objectFit: "cover"
 }))
 
 export {
