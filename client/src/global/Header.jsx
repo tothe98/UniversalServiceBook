@@ -159,12 +159,24 @@ function Header({ routes, handleChangeTab }) {
     <React.Fragment>
       <Wrapper>
         <Grid container>
-          <Grid item xs></Grid>
-          <Grid item lg={9} xs={10}>
-            <Title variant="h1" component={Link} to="/">
-              Univerzális Szervizkönyv
-            </Title>
+          {upLG && <Grid item xs></Grid>}
+
+          <Grid item lg={10} xs={11}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="flex-start"
+              alignItems="center"
+              sx={{ width: "100%", height: "100%" }}
+            >
+              <Grid item>
+                <Title variant="h1" component={Link} to="/">
+                  Univerzális Szervizkönyv
+                </Title>
+              </Grid>
+            </Grid>
           </Grid>
+
           {underS && auth.user && (
             <SideMenu item xs={1}>
               <IconButton>
@@ -174,6 +186,7 @@ function Header({ routes, handleChangeTab }) {
               </IconButton>
             </SideMenu>
           )}
+
           {!auth.user && upLG && (
             <SideMenu item xs={1}>
               <LoginButton
@@ -196,6 +209,7 @@ function Header({ routes, handleChangeTab }) {
               ></LoginButton>
             </SideMenu>
           )}
+
           <Grid item xs></Grid>
         </Grid>
       </Wrapper>

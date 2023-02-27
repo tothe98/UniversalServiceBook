@@ -173,7 +173,7 @@ function App() {
     useEffect(() => {
         setTimeout(() => {
             console.clear();
-        }, 500)
+        }, 1000)
     }, [])
 
     return (

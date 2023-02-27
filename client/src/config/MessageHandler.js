@@ -28,6 +28,16 @@ export {
 
 /*
 
+Next time: I have to rewrite this function x(lang: string, path: string)
+
+    lang: en path: 'global.field.welcomeText' => "Welcome"
+    lang: hu path: 'global.field.welcomeText' => "Üdvözöljük"
+
+*/
+
+
+/*
+
 @param lang => What kind of language would you like (hu or en)?
 @param field => What kind of field would you like (e-mail or password)?
 @param action => Will this be an adding or a deleting action?

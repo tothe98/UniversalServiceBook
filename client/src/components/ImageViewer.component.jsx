@@ -89,51 +89,42 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
           <ImageGrid
             container
             gap={2}
+            direction="column"
             justifyContent="center"
             alignItems="center"
           >
-            <Grid item xs>
+            <Grid item xs={2}>
               <Grid
                 container
-                gap={2}
-                justifyContent="flex-end"
+                direction="row"
+                justifyContent="center"
                 alignItems="center"
               >
                 <Grid item>
-                  <Grid
-                    container
-                    direction="row"
-                    justifyContent="center"
-                    alignItems="center"
-                  >
-                    <Grid item>
-                      <Typography sx={{ color: "#fff" }} variant="body1">
-                        {currentImageIndex + 1}/{images.length}
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <IconButton onClick={onClose} sx={{ color: "#fff" }}>
-                        <CancelIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
+                  <Typography sx={{ color: "#fff" }} variant="body1">
+                    {currentImageIndex + 1}/{images.length}
+                  </Typography>
                 </Grid>
-
                 <Grid item>
-                  {isURL ? (
-                    <ViewImage
-                      src={
-                        ("" + currentImage).includes("http")
-                          ? currentImage
-                          : `${process.env.REACT_APP_CLIENT_URL}/${currentImage}`
-                      }
-                    />
-                  ) : (
-                    // if the isURL is false then I want to render a base64 image
-                    <ViewImage src={currentImage} />
-                  )}
+                  <IconButton onClick={onClose} sx={{ color: "#fff" }}>
+                    <CancelIcon />
+                  </IconButton>
                 </Grid>
               </Grid>
+            </Grid>
+            <Grid item xs>
+              {isURL ? (
+                <ViewImage
+                  src={
+                    ("" + currentImage).includes("http")
+                      ? currentImage
+                      : `${process.env.REACT_APP_CLIENT_URL}/${currentImage}`
+                  }
+                />
+              ) : (
+                // if the isURL is false then I want to render a base64 image
+                <ViewImage src={currentImage} />
+              )}
             </Grid>
           </ImageGrid>
         </Backdrop>

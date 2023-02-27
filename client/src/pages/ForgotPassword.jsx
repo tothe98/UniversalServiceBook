@@ -37,15 +37,15 @@ function ForgotPassword() {
       .then((res) => {
         if (res.status == 200) {
           setEmail("");
-          toast.success("Email elküldve!");
+          toast.success("E-mail elküldve!");
         }
       })
       .catch((err) => {
         if (err.response.status == 422) {
-          toast.error("Ooops! Email mező nincs kitöltve!");
+          toast.error("Ooops! E-mail mező nincs kitöltve!");
         }
         if (err.response.status == 404) {
-          toast.error("Ooops! Nem létezik ez az email cím!");
+          toast.error("Ooops! Nem létezik ez az e-mail cím!");
         }
         setEmail("");
       });
@@ -62,7 +62,7 @@ function ForgotPassword() {
           <MyTextField
             fullWidth
             id="outlined-disabled"
-            label="Email cím"
+            label="E-mail cím"
             value={email}
             default={""}
             color="success"
