@@ -23,8 +23,6 @@ function Registration() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
-  const [isTyping, setIsTyping] = useState(false);
-  const [rePassword, setRePassword] = useState("");
 
   /*
   NEXT TIME: Add repassword and green line check (check that the password is correct or not).
@@ -36,7 +34,6 @@ function Registration() {
     setIsSent(true);
     setTimeout(() => {
       setIsSent(false);
-      setIsTyping(false);
     }, Number(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
 
     e.preventDefault();
@@ -120,7 +117,7 @@ function Registration() {
         <Grid container direction="column" spacing={1.5}>
           <Grid item>
             <TextField
-              label="* Családnév "
+              label="Családnév "
               type="text"
               onChange={(e) => setLastName(e.target.value)}
               sx={{ minWidth: "300px" }}
@@ -129,7 +126,7 @@ function Registration() {
           </Grid>
           <Grid item>
             <TextField
-              label="* Keresztnév "
+              label="Keresztnév "
               type="text"
               onChange={(e) => setFirstName(e.target.value)}
               sx={{ minWidth: "300px" }}
@@ -138,7 +135,7 @@ function Registration() {
           </Grid>
           <Grid item>
             <TextField
-              label="* Email cím "
+              label="E-mail cím "
               type="email"
               onChange={(e) => setEmail(e.target.value)}
               sx={{ minWidth: "300px" }}
@@ -148,19 +145,9 @@ function Registration() {
 
           <Grid item>
             <TextField
-              label="* Jelszó "
+              label="Jelszó "
               type="password"
               onChange={(e) => setPassword(e.target.value)}
-              sx={{ minWidth: "300px" }}
-              required
-            />
-          </Grid>
-
-          <Grid item>
-            <TextField
-              label="* Jelszó megismétlése"
-              type="password"
-              onChange={(e) => handleTypingNewPassword(e.target.value)}
               sx={{ minWidth: "300px" }}
               required
             />

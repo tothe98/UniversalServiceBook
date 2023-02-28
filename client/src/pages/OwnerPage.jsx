@@ -65,7 +65,7 @@ function OwnerPage() {
     { field: "id", headerName: "Sorszám", width: 70 },
     { field: "fName", headerName: "Keresztnév", width: 130 },
     { field: "lName", headerName: "Vezetéknév", width: 130 },
-    { field: "email", headerName: "Email cím", width: 130 },
+    { field: "email", headerName: "E-mail cím", width: 130 },
     { field: "phone", headerName: "Telefonszám", width: 130 },
     { field: "delete", headerName: "", width: 130 },
   ];
@@ -265,7 +265,7 @@ function OwnerPage() {
             <MyTextField2
               fullWidth
               id="outlined-disabled"
-              label="Dolgozó azonosító"
+              label="Dolgozó e-mail címe"
               type="text"
               color="success"
               value={employeeID}

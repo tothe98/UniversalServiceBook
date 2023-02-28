@@ -329,7 +329,7 @@ function Settings({ handleChangeTab }) {
                 <TextField
                   disabled
                   fullWidth
-                  label="Felhasználói email"
+                  label="Felhasználói e-mail"
                   defaultValue={email}
                 />
               </Grid>

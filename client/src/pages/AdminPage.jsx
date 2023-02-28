@@ -326,7 +326,7 @@ function AdminPage() {
             <MyTextField
               fullWidth
               id="outlined-disabled"
-              label="Műhely tulajdonos (email címe) *"
+              label="Műhelytulajdonos (e-mail címe) *"
               type="text"
               color="success"
               value={newWorkshopOwner}
@@ -350,7 +350,7 @@ function AdminPage() {
             <MyTextField
               fullWidth
               id="outlined-disabled"
-              label="Műhely email elérhetőség"
+              label="Műhely e-mail elérhetőség"
               type="text"
               color="success"
               value={newWorkshopEmail}

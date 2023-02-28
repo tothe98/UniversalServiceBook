@@ -48,7 +48,7 @@ function DynamicAccord({ service, panel, serialNumber }) {
           id="panel1bh-header"
         >
           <SubTitle variant="h4" sx={{ width: "33%", flexShrink: 0 }}>
-            #{serialNumber + 1} Szerviz bejegyzés
+            #{serialNumber + 1} Szervizbejegyzés
           </SubTitle>
           {!underMD && (
             <Typography sx={{ color: "text.secondary" }}>
