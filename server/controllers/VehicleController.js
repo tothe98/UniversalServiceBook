@@ -266,7 +266,7 @@ exports.getVehicle = async (req, res) => {
             .populate("_workshop")
             .populate("pictures")
             .populate('_mechanicer')
-            .sort({ createdAt: -1 })
+            .sort({ mileage: -1 })
 
 
         let responseData = []

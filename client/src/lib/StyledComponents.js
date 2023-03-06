@@ -397,8 +397,15 @@ const ViewImage = styled("img")(({ theme }) => ({
     maxHeight: "500px",
     objectFit: "cover"
 }))
+const WarningImage = styled("img")(({ theme }) => ({
+    width: "100%",
+    minHeight: "25px",
+    maxHeight: "25px",
+    objectFit: "cover"
+}))
 
 export {
+    WarningImage,
     ImageGrid,
     ViewImage,
     MyGridItem,

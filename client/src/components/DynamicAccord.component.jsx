@@ -115,6 +115,7 @@ function DynamicAccord({ service, panel, serialNumber }) {
           {underS ? (
             <Typography
               variant="body1"
+              sx={{ maxWidth: "600px" }}
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(service.description),
               }}
@@ -124,6 +125,7 @@ function DynamicAccord({ service, panel, serialNumber }) {
               <dd>
                 <Typography
                   variant="body1"
+                  sx={{ maxWidth: "600px" }}
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(service.description),
                   }}

@@ -43,8 +43,10 @@ import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
 import RightArrow from '@mui/icons-material/KeyboardArrowRight';
 import LeftArrow from '@mui/icons-material/KeyboardArrowLeft';
 import CancelIcon from '@mui/icons-material/Cancel';
+import WarningIcon from '../assets/warning.png'
 
 export {
+    WarningIcon,
     CancelIcon,
     RightArrow,
     LeftArrow,

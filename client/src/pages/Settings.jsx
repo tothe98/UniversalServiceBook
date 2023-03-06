@@ -36,7 +36,6 @@ function Settings({ handleChangeTab }) {
   const [isOpenImageView, setIsOpenImageView] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [picture, setPicture] = useState("");
-  const [pictureInBase64, setPictureInBase64] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -106,7 +105,6 @@ function Settings({ handleChangeTab }) {
     });
     const role = highestRole;
 
-    /* LATER: I have to create a schema for it (Write the project to typescript) */
     setPicture({
       url: user.picture,
       file: null,
@@ -201,6 +199,38 @@ function Settings({ handleChangeTab }) {
   const handleOpenImage = (index) => {
     setIsOpenImageView(true);
     setCurrentIndex(index);
+  };
+
+  const handleLastNameChange = (e) => {
+    if (`${e.target.value}`.length > 30) {
+      setLastName(`${e.target.value}`.substring(0, 30));
+    } else {
+      setLastName(e.target.value);
+    }
+  };
+
+  const handleFirstNameChange = (e) => {
+    if (`${e.target.value}`.length > 25) {
+      setFirstName(`${e.target.value}`.substring(0, 30));
+    } else {
+      setFirstName(e.target.value);
+    }
+  };
+
+  const handleTelephoneNumberChange = (e) => {
+    if (`${e.target.value}`.length > 12) {
+      setPhoneNumber(`${e.target.value}`.substring(0, 12));
+    } else {
+      setPhoneNumber(e.target.value);
+    }
+  };
+
+  const handleCountryChange = (e) => {
+    if (`${e.target.value}`.length > 56) {
+      setHome(`${e.target.value}`.substring(0, 56));
+    } else {
+      setHome(e.target.value);
+    }
   };
 
   if (isLoading) {
@@ -305,7 +335,7 @@ function Settings({ handleChangeTab }) {
               </Grid>
 
               <Grid item>
-                <SubTitle variant="h3">Profilkép beállításai</SubTitle>
+                <SubTitle variant="h3">Profilkép beállítása</SubTitle>
 
                 <Grid container direction="column" sx={{ marginTop: "auto" }}>
                   <TextField
@@ -338,9 +368,9 @@ function Settings({ handleChangeTab }) {
                 <TextField
                   fullWidth
                   label="Keresztnév:"
-                  defaultValue={firstName}
+                  value={firstName}
                   type="text"
-                  onChange={(e) => setFirstName(e.target.value)}
+                  onChange={(e) => handleFirstNameChange(e)}
                 />
               </Grid>
 
@@ -348,9 +378,9 @@ function Settings({ handleChangeTab }) {
                 <TextField
                   fullWidth
                   label="Családnév:"
-                  defaultValue={lastName}
+                  value={lastName}
                   type="text"
-                  onChange={(e) => setLastName(e.target.value)}
+                  onChange={(e) => handleLastNameChange(e)}
                 />
               </Grid>
 
@@ -360,7 +390,8 @@ function Settings({ handleChangeTab }) {
                   label="Telefonszám"
                   type="tel"
                   defaultValue={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  value={phoneNumber}
+                  onChange={(e) => handleTelephoneNumberChange(e)}
                 />
               </Grid>
 
@@ -369,8 +400,8 @@ function Settings({ handleChangeTab }) {
                   fullWidth
                   label="Város"
                   type="text"
-                  defaultValue={home ? home : ""}
-                  onChange={(e) => setHome(e.target.value)}
+                  value={home ? home : ""}
+                  onChange={(e) => handleCountryChange(e)}
                 />
               </Grid>
             </Grid>

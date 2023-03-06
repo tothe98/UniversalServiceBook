@@ -82,6 +82,23 @@ import VehicleCard from "../components/VehicleCard.component";
 import ImageItem from "../components/ImageItem.component";
 import LiveImageUploadField from "../components/LiveImageUploadField.component";
 import ImageViewer from "../components/ImageViewer.component";
+import NewVehicleVinInput from "../components/garage/NewVehicleVinInput.component";
+import NewVehicleLicenseNumberInput from "../components/garage/NewVehicleLicenseNumberInput.component";
+import NewVehicleCategoryInput from "../components/garage/NewVehicleCategoryInput.component";
+import NewVehicleBrandInput from "../components/garage/NewVehicleBrandInput.component";
+import NewVehicleModelInput from "../components/garage/NewVehicleModelInput.component";
+import NewVehicleDesignTypeInput from "../components/garage/NewVehicleDesignTypeInput.component";
+import NewVehicleVintagesInput from "../components/garage/NewVehicleVintagesInput.component";
+import NewVehicleKMInput from "../components/garage/NewVehicleKmInput.component";
+import NewVehicleOwnMassInput from "../components/garage/NewVehicleOwnMassInput.component";
+import NewVehicleFullMassInput from "../components/garage/NewVehicleFullMassInput.component";
+import NewVehicleFuelInput from "../components/garage/NewVehicleFuelInput.component";
+import NewVehicleCylinderCapacityInput from "../components/garage/NewVehicleCylinderCapacityInput.component";
+import NewVehiclePerformanceInput from "../components/garage/NewVehiclePerformanceInput.component";
+import NewVehicleDriveTypeInput from "../components/garage/NewVehicleDriveTypeInput.component";
+import NewVehicleChangeGearInput from "../components/garage/NewVehicleChangeGearInput.component";
+import NewVehicleNODInput from "../components/garage/NewVehicleNODInput.component";
+import NewVehicleMOTInput from "../components/garage/NewVehicleMOTInput.component";
 
 function Garage({ handleChangeTab }) {
   const { auth } = useAuth();
@@ -743,483 +760,66 @@ function Garage({ handleChangeTab }) {
                       Jármű általános adatai
                     </AddCarSubTitle>
 
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <EnergySavingsLeafOutlinedIcon />
-                        </Typography>
-                      </Grid>
-                      <Grid item xs={11}>
-                        <MyTextField
-                          fullWidth
-                          id="Alvázszám"
-                          label="Alvázszám *"
-                          type="text"
-                          onChange={(e) => {
-                            if (
-                              newVehicleVin.length <=
-                              parseInt(process.env.REACT_APP_MAXIMUM_VIN_LENGTH)
-                            ) {
-                              setNewVehicleVin(
-                                e.target.value + "".toUpperCase()
-                              );
-                            } else if (
-                              newVehicleVin.length >
-                              parseInt(process.env.REACT_APP_MAXIMUM_VIN_LENGTH)
-                            ) {
-                              setErrorMessageDuringCarAdd(
-                                "alvázszám",
-                                "Az alvázszám nem lehet hosszabb mint 18 karakter!"
-                              );
-                              setNewVehicleVin("");
-                            }
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
+                    {/* NEXT TIME: I have to that the users do not enter long sentences into the input fields. */}
 
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <TextsmsOutlinedIcon />
-                        </Typography>
-                      </Grid>
+                    <NewVehicleVinInput
+                      newVehicleVin={newVehicleVin}
+                      setNewVehicleVin={setNewVehicleVin}
+                      setErrorMessageDuringCarAdd={setErrorMessageDuringCarAdd}
+                    />
+                    <NewVehicleLicenseNumberInput
+                      setErrorMessageDuringCarAdd={setErrorMessageDuringCarAdd}
+                      newVehicleLicenseNum={newVehicleLicenseNum}
+                      setNewVehicleLicenseNum={setNewVehicleLicenseNum}
+                    />
+                    <NewVehicleCategoryInput
+                      vehicleTypes={vehicleTypes}
+                      newVehicleCategory={newVehicleCategory}
+                      setNewVehicleCategory={setNewVehicleCategory}
+                    />
+                    <NewVehicleBrandInput
+                      vehicleManufacturers={vehicleManufacturers}
+                      newVehicleManufacture={newVehicleManufacture}
+                      setNewVehicleManufacture={setNewVehicleManufacture}
+                    />
+                    <NewVehicleModelInput
+                      vehicleModels={vehicleModels}
+                      setNewVehicleModel={setNewVehicleModel}
+                      newVehicleModel={newVehicleModel}
+                    />
+                    <NewVehicleDesignTypeInput
+                      MenuProps={MenuProps}
+                      vehicleDesignTypes={vehicleDesignTypes}
+                      setNewVehicleDesignType={setNewVehicleDesignType}
+                      newVehicleDesignType={newVehicleDesignType}
+                    />
+                    <NewVehicleVintagesInput
+                      setNewVehicleVintage={setNewVehicleVintage}
+                      newVehicleVintage={newVehicleVintage}
+                      vehicleVintages={vehicleVintages}
+                    />
 
-                      <Grid item xs={11}>
-                        <MyTextField
-                          fullWidth
-                          id="Rendszám"
-                          label="Rendszám"
-                          type="text"
-                          onChange={(e) => {
-                            if (
-                              newVehicleLicenseNum.length <=
-                              parseInt(
-                                process.env
-                                  .REACT_APP_MAXIMUM_LICENSE_PLATE_NUMBER_LENGTH
-                              )
-                            ) {
-                              setNewVehicleLicenseNum(
-                                e.target.value + "".toUpperCase()
-                              );
-                            } else if (
-                              newVehicleLicenseNum.length >
-                              parseInt(
-                                process.env
-                                  .REACT_APP_MAXIMUM_LICENSE_PLATE_NUMBER_LENGTH
-                              )
-                            ) {
-                              setErrorMessageDuringCarAdd(
-                                "rendszám",
-                                "A rendszám nem lehet hosszabb mint 18 karakter!"
-                              );
-                              setNewVehicleLicenseNum("");
-                            }
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <DirectionsCarFilledOutlinedIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyFormControll fullWidth>
-                          <InputLabel id="Jármű kategória">
-                            Jármű kategória *
-                          </InputLabel>
-                          <Select
-                            labelId="Jármű kategória *"
-                            id="Jármű kategória *"
-                            label="Jármű kategória *"
-                            onChange={(e) =>
-                              setNewVehicleCategory(e.target.value)
-                            }
-                            value={newVehicleCategory}
-                            defaultValue={vehicleTypes[0].id}
-                          >
-                            {vehicleTypes.map((x, i) => {
-                              return (
-                                <MenuItem key={x + i} value={`${x.id}`}>
-                                  {x.type}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </MyFormControll>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <DiscountOutlinedIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyFormControll fullWidth>
-                          <Autocomplete
-                            fullWidth
-                            disablePortal
-                            id="Jármű márkája"
-                            options={vehicleManufacturers.map((x, i) => {
-                              return {
-                                label: x.manufacture,
-                                id: x.id,
-                              };
-                            })}
-                            value={newVehicleManufacture["label"]}
-                            onChange={(event, newValue) => {
-                              setNewVehicleManufacture(
-                                newValue ? newValue : " "
-                              );
-                            }}
-                            renderInput={(params) => (
-                              <TextField {...params} label="Jármű márkája **" />
-                            )}
-                          />
-                        </MyFormControll>
-                        <Typography variant="body1" sx={{ opacity: "0.6" }}>
-                          * Kérjük, hogy a mezőbe írt értéknek megfelelőt
-                          válassza ki a legördülő listából.
-                        </Typography>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <AccountTreeOutlinedIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyFormControll fullWidth>
-                          <Autocomplete
-                            fullWidth
-                            disablePortal
-                            id="Jármű modell"
-                            options={vehicleModels.map((x, i) => {
-                              return {
-                                label: x.model,
-                                id: x.id,
-                              };
-                            })}
-                            value={newVehicleModel["label"]}
-                            onChange={(event, newValue) => {
-                              setNewVehicleModel(newValue ? newValue : " ");
-                            }}
-                            renderInput={(params) => (
-                              <TextField {...params} label="Jármű modell **" />
-                            )}
-                          />
-                        </MyFormControll>
-                        <Typography variant="body1" sx={{ opacity: "0.6" }}>
-                          * Kérjük, hogy a mezőbe írt értéknek megfelelőt
-                          válassza ki a legördülő listából.
-                        </Typography>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <CarTypeIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyFormControll fullWidth>
-                          <InputLabel id="Kivitel-beviteli-mezo">
-                            Kivitel *
-                          </InputLabel>
-                          <Select
-                            labelId="Kivitel"
-                            id="Kivitel"
-                            label="Kivitel *"
-                            onChange={(e) =>
-                              setNewVehicleDesignType(e.target.value)
-                            }
-                            value={newVehicleDesignType}
-                            MenuProps={MenuProps}
-                          >
-                            {vehicleDesignTypes.map((x, i) => {
-                              return (
-                                <MenuItem key={x + i} value={x.id}>
-                                  {x.type}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </MyFormControll>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <DateIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyFormControll fullWidth>
-                          <Autocomplete
-                            fullWidth
-                            disablePortal
-                            id="jarmu-évjáratok"
-                            options={Array.from(vehicleVintages).map(
-                              (year, i) => {
-                                return {
-                                  label: `${year}`,
-                                  value: year,
-                                };
-                              }
-                            )}
-                            value={newVehicleVintage["label"]}
-                            onChange={(event, newValue) => {
-                              setNewVehicleVintage(newValue ? newValue : " ");
-                            }}
-                            renderInput={(params) => (
-                              <TextField {...params} label="Jármű évjárat *" />
-                            )}
-                          />
-                        </MyFormControll>
-                      </Grid>
-                    </Grid>
                     {/* ----- általános adatok */}
 
                     {/* Jármű adatok */}
                     <AddCarSubTitle variant="h4">Jármű adatai</AddCarSubTitle>
 
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <KmIcon />
-                        </Typography>
-                      </Grid>
+                    <NewVehicleKMInput
+                      newVehicleKm={newVehicleKm}
+                      setErrorMessageDuringCarAdd={setErrorMessageDuringCarAdd}
+                      setNewVehicleKm={setNewVehicleKm}
+                    />
+                    <NewVehicleOwnMassInput
+                      newVehicleOwnWeight={newVehicleOwnWeight}
+                      setErrorMessageDuringCarAdd={setErrorMessageDuringCarAdd}
+                      setNewVehicleOwnWeight={setNewVehicleOwnWeight}
+                    />
+                    <NewVehicleFullMassInput
+                      newVehicleMaxWeight={newVehicleMaxWeight}
+                      setNewVehicleMaxWeight={setNewVehicleMaxWeight}
+                      setErrorMessageDuringCarAdd={setErrorMessageDuringCarAdd}
+                    />
 
-                      <Grid item xs={11}>
-                        <MyTextField
-                          fullWidth
-                          id="outlined-disabled"
-                          label="Km. óra állás *"
-                          type="number"
-                          onChange={(e) => {
-                            let kmInput = parseInt(e.target.value + "");
-
-                            if (kmInput <= 0) {
-                              setErrorMessageDuringCarAdd(
-                                "km",
-                                "Ez a mező nem lehet kisebb mint 0!"
-                              );
-                              setNewVehicleKm(null);
-                              return;
-                            } else if (
-                              kmInput >=
-                              parseInt(process.env.REACT_APP_MAXIMUM_KM)
-                            ) {
-                              setErrorMessageDuringCarAdd(
-                                "km",
-                                `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_KM} km!`
-                              );
-                              setNewVehicleKm(null);
-                              return;
-                            }
-                            setNewVehicleKm(kmInput);
-                          }}
-                        />
-                        <Typography variant="body1" sx={{ opacity: 0.7 }}>
-                          * Ezen mező értéke 1 és{" "}
-                          {process.env.REACT_APP_MAXIMUM_KM} km lehet!
-                        </Typography>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <CarWeightIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyTextField
-                          fullWidth
-                          id="outlined-disabled"
-                          label="Saját tömeg *"
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="start">
-                                kg
-                              </InputAdornment>
-                            ),
-                          }}
-                          default={0}
-                          type="number"
-                          onChange={(e) => {
-                            let weight = parseInt(e.target.value);
-                            if (weight <= 0) {
-                              setErrorMessageDuringCarAdd(
-                                "önsúly",
-                                "Ez a mező nem lehet kisebb mint 0!"
-                              );
-                              setNewVehicleOwnWeight(null);
-                              return;
-                            } else if (
-                              weight >
-                              parseInt(process.env.REACT_APP_MAXIMUM_WEIGHT)
-                            ) {
-                              if (weight < 0) {
-                                setErrorMessageDuringCarAdd(
-                                  "önsúly",
-                                  `Ez a mező nem lehet nagyobb mint ${parseInt(
-                                    process.env.REACT_APP_MAXIMUM_WEIGHT
-                                  )} kg!`
-                                );
-                                setNewVehicleOwnWeight(null);
-                                return;
-                              }
-                            }
-
-                            setNewVehicleOwnWeight(weight);
-                          }}
-                        />
-                        <Typography variant="body1" sx={{ opacity: 0.7 }}>
-                          * Ezen mező értéke 1 és{" "}
-                          {process.env.REACT_APP_MAXIMUM_WEIGHT} kg lehet!
-                        </Typography>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <CarWeightIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyTextField
-                          fullWidth
-                          id="outlined-disabled"
-                          label="Teljes tömeg *"
-                          default={0}
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="start">
-                                kg
-                              </InputAdornment>
-                            ),
-                          }}
-                          type="number"
-                          onChange={(e) => {
-                            let weight = parseInt(e.target.value);
-                            if (weight < 0) {
-                              setErrorMessageDuringCarAdd(
-                                "teljes tömeg",
-                                "Ez a mező nem lehet kisebb mint 0!"
-                              );
-                              setNewVehicleMaxWeight(null);
-                              return;
-                            } else if (
-                              weight >
-                              parseInt(process.env.REACT_APP_MAXIMUM_WEIGHT)
-                            ) {
-                              if (weight < 0) {
-                                setErrorMessageDuringCarAdd(
-                                  "teljes tömeg",
-                                  `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_WEIGHT} kg!`
-                                );
-                                setNewVehicleMaxWeight(null);
-                                return;
-                              }
-                            }
-
-                            setNewVehicleMaxWeight(weight);
-                          }}
-                        />
-                        <Typography variant="body1" sx={{ opacity: 0.7 }}>
-                          * Ezen mező értéke 1 és{" "}
-                          {process.env.REACT_APP_MAXIMUM_WEIGHT} kg lehet!
-                        </Typography>
-                      </Grid>
-                    </Grid>
                     {/* ----- Jármű adatok */}
 
                     {/* Motor adatok */}
@@ -1227,314 +827,51 @@ function Garage({ handleChangeTab }) {
                       Jármű motor adatai
                     </AddCarSubTitle>
 
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <FuelIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyFormControll fullWidth>
-                          <InputLabel id="demo-simple-select-label">
-                            Üzemanyag *
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label="Üzemanyag *"
-                            onChange={(e) => setNewVehicleFuel(e.target.value)}
-                            value={newVehicleFuel}
-                            MenuProps={MenuProps}
-                          >
-                            {vehicleFuels.map((x, i) => {
-                              return (
-                                <MenuItem key={i + x} value={x.id}>
-                                  {x.type}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </MyFormControll>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <TankIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyTextField
-                          fullWidth
-                          id="outlined-disabled"
-                          label="Hengerűrtartalom *"
-                          type="number"
-                          InputProps={{
-                            endAdornment: (
-                              <InputAdornment position="start">
-                                cm<sup>3</sup>
-                              </InputAdornment>
-                            ),
-                          }}
-                          default={500}
-                          onChange={(e) => {
-                            let amount = parseInt(e.target.value);
-                            if (amount < 0) {
-                              setErrorMessageDuringCarAdd(
-                                "hengerűrtartalom",
-                                "Ez a mező nem lehet kisebb mint 0!"
-                              );
-                              setNewVehicleCylinderCapacity(null);
-                              return;
-                            } else if (
-                              amount >
-                              parseInt(
-                                process.env.REACT_APP_MAXIMUM_CYLINDER_CAPACITY
-                              )
-                            ) {
-                              if (amount < 0) {
-                                setErrorMessageDuringCarAdd(
-                                  "hengerűrtartalom",
-                                  `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_CYLINDER_CAPACITY}!`
-                                );
-                                setNewVehicleCylinderCapacity(null);
-                                return;
-                              }
-                            }
-
-                            setNewVehicleCylinderCapacity(amount);
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <PerformanceIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <Grid container direction="row">
-                          <Grid item xs>
-                            <MyTextField
-                              fullWidth
-                              id="outlined-disabled"
-                              label="Teljesítmény *"
-                              InputProps={{
-                                endAdornment: (
-                                  <InputAdornment position="start">
-                                    LE
-                                  </InputAdornment>
-                                ),
-                              }}
-                              default={0}
-                              type="number"
-                              onChange={(e) => {
-                                let amount = parseInt(e.target.value);
-                                if (amount < 0) {
-                                  setErrorMessageDuringCarAdd(
-                                    "teljesítmény (le)",
-                                    "Ez a mező nem lehet kisebb mint 0!"
-                                  );
-                                  setNewVehiclePerformance(null);
-                                  return;
-                                } else if (
-                                  amount >
-                                  parseInt(
-                                    process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE
-                                  )
-                                ) {
-                                  if (amount < 0) {
-                                    setErrorMessageDuringCarAdd(
-                                      "teljesítmény (le)",
-                                      `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE}!`
-                                    );
-                                    setNewVehiclePerformance(null);
-                                    return;
-                                  }
-                                }
-
-                                setNewVehiclePerformance(amount);
-                              }}
-                            />
-                          </Grid>
-                        </Grid>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <WheelIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyFormControll fullWidth>
-                          <InputLabel id="demo-simple-select-label">
-                            Hajtás *
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label="Hajtás *"
-                            onChange={(e) =>
-                              setNewVehicleDriveType(e.target.value)
-                            }
-                            value={newVehicleDriveType}
-                            defaultValue={"hatso"}
-                            MenuProps={MenuProps}
-                          >
-                            {vehicleDriveTypes.map((x, i) => {
-                              return (
-                                <MenuItem key={i + "xasda2"} value={x.id}>
-                                  {x.type}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </MyFormControll>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <ChangeGearIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyFormControll fullWidth>
-                          <InputLabel id="demo-simple-select-label">
-                            Sebességváltó *
-                          </InputLabel>
-                          <Select
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            label="Sebességváltó"
-                            onChange={(e) =>
-                              setNewVehicleTransmission(e.target.value)
-                            }
-                            value={newVehicleTransmission}
-                            MenuProps={MenuProps}
-                          >
-                            {vehicleTransmissions.map((x, i) => {
-                              return (
-                                <MenuItem key={i + "xasda2"} value={x.id}>
-                                  {x.transmission}
-                                </MenuItem>
-                              );
-                            })}
-                          </Select>
-                        </MyFormControll>
-                      </Grid>
-                    </Grid>
+                    <NewVehicleFuelInput
+                      setNewVehicleFuel={setNewVehicleFuel}
+                      vehicleFuels={vehicleFuels}
+                      newVehicleFuel={newVehicleFuel}
+                      MenuProps={MenuProps}
+                    />
+                    <NewVehicleCylinderCapacityInput
+                      newVehicleCylinderCapacity={newVehicleCylinderCapacity}
+                      setErrorMessageDuringCarAdd={setErrorMessageDuringCarAdd}
+                      setNewVehicleCylinderCapacity={
+                        setNewVehicleCylinderCapacity
+                      }
+                    />
+                    <NewVehiclePerformanceInput
+                      newVehiclePerformance={newVehiclePerformance}
+                      setErrorMessageDuringCarAdd={setErrorMessageDuringCarAdd}
+                      setNewVehiclePerformance={setNewVehiclePerformance}
+                    />
+                    <NewVehicleDriveTypeInput
+                      setNewVehicleDriveType={setNewVehicleDriveType}
+                      newVehicleDriveType={newVehicleDriveType}
+                      MenuProps={MenuProps}
+                      vehicleDriveTypes={vehicleDriveTypes}
+                    />
+                    <NewVehicleChangeGearInput
+                      newVehicleTransmission={newVehicleTransmission}
+                      setNewVehicleTransmission={setNewVehicleTransmission}
+                      MenuProps={MenuProps}
+                      vehicleTransmissions={vehicleTransmissions}
+                    />
                     {/* ----- Motor adatok */}
 
                     <AddCarSubTitle variant="h4">Jármű okmányai</AddCarSubTitle>
 
                     {/* Okmányok */}
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <DocumentsIcon />
-                        </Typography>
-                      </Grid>
+                    <NewVehicleNODInput
+                      setNewVehicleDocument={setNewVehicleDocument}
+                    />
 
-                      <Grid item xs={11}>
-                        <MyTextField
-                          fullWidth
-                          id="outlined-disabled"
-                          label="Okmányok jellege **"
-                          type="text"
-                          onChange={(e) =>
-                            setNewVehicleDocument(e.target.value)
-                          }
-                        />
-                        <Typography variant="body1" sx={{ opacity: "0.6" }}>
-                          * Az okmányok jellege a jármű származási helyét várja
-                          értékül.
-                        </Typography>
-                      </Grid>
-                    </Grid>
-
-                    <Grid
-                      container
-                      direction="row"
-                      spacing={0}
-                      wrap="nowrap"
-                      alignItems="center"
-                      justifyContent="center"
-                    >
-                      <Grid item xs={1}>
-                        <Typography align="center">
-                          <DocumentsIcon />
-                        </Typography>
-                      </Grid>
-
-                      <Grid item xs={11}>
-                        <MyTextField
-                          fullWidth
-                          id="outlined-disabled"
-                          default={new Date().toLocaleDateString("en-CA")}
-                          value={newVehicleDocumentValidity}
-                          type="date"
-                          onChange={(e) => {
-                            setNewVehicleDocumentValidity(
-                              moment(e.target.value).format("YYYY-MM-DD")
-                            );
-                          }}
-                        />
-                      </Grid>
-                    </Grid>
+                    <NewVehicleMOTInput
+                      newVehicleDocumentValidity={newVehicleDocumentValidity}
+                      setNewVehicleDocumentValidity={
+                        setNewVehicleDocumentValidity
+                      }
+                    />
                     {/* ----- end of Okmányok */}
 
                     <AddCarSubTitle variant="h4">Képgaléria</AddCarSubTitle>

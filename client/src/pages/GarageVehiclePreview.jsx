@@ -1249,7 +1249,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
           <DialogContent>
             <CarDialogText id="alert-dialog-description">
               <Typography component={"span"}>
-                Biztosan törölni kívánja az alábbi jármúvet?
+                Biztosan törölni kívánja az alábbi járművet?
               </Typography>
             </CarDialogText>
           </DialogContent>
@@ -1435,21 +1435,14 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 onChange={(e) => {
                   let weight = parseInt(e.target.value);
                   if (weight < 0) {
-                    toast.warning("önsúly Ez a mező nem lehet kisebb mint 0!");
+                    setUpdatedOwnmass(vehicle["ownMass"]);
                     return;
-                  } else if (
-                    weight > parseInt(process.env.REACT_APP_MAXIMUM_WEIGHT)
-                  ) {
-                    if (weight < 0) {
-                      toast.warning(
-                        `önsúly Ez a mező nem lehet nagyobb mint ${parseInt(
-                          process.env.REACT_APP_MAXIMUM_WEIGHT
-                        )} kg!`
-                      );
-                      return;
-                    }
                   }
 
+                  if (weight > process.env.REACT_APP_MAXIMUM_WEIGHT) {
+                    setUpdatedOwnmass(vehicle["ownMass"]);
+                    return;
+                  }
                   setUpdatedOwnmass(weight);
                 }}
               />
@@ -1467,21 +1460,14 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 onChange={(e) => {
                   let weight = parseInt(e.target.value);
                   if (weight < 0) {
-                    toast.warning(
-                      "teljes tömeg Ez a mező nem lehet kisebb mint 0!"
-                    );
+                    setUpdatedFullmass(vehicle["fullMass"]);
                     return;
-                  } else if (
-                    weight > parseInt(process.env.REACT_APP_MAXIMUM_WEIGHT)
-                  ) {
-                    if (weight < 0) {
-                      toast.warning(
-                        `teljes tömeg Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_WEIGHT} kg!`
-                      );
-                      return;
-                    }
                   }
 
+                  if (weight > process.env.REACT_APP_MAXIMUM_WEIGHT) {
+                    setUpdatedFullmass(vehicle["fullMass"]);
+                    return;
+                  }
                   setUpdatedFullmass(weight);
                 }}
               />
@@ -1497,25 +1483,19 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 }}
                 type="number"
                 onChange={(e) => {
-                  let amount = parseInt(e.target.value);
-                  if (amount < 0) {
-                    toast.warning(
-                      "teljesítmény (le) Ez a mező nem lehet kisebb mint 0!"
-                    );
+                  let performance = parseInt(e.target.value);
+                  if (performance < 0) {
+                    setUpdatedPerformanceLE(vehicle["performanceLE"]);
                     return;
-                  } else if (
-                    amount >
-                    parseInt(process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE)
-                  ) {
-                    if (amount < 0) {
-                      toast.warning(
-                        `teljesítmény (le) Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE}!`
-                      );
-                      return;
-                    }
                   }
 
-                  setUpdatedPerformanceLE(amount);
+                  if (
+                    performance > process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE
+                  ) {
+                    setUpdatedPerformanceLE(vehicle["performanceLE"]);
+                    return;
+                  }
+                  setUpdatedPerformanceLE(performance);
                 }}
               />
               <MyTextField
@@ -1525,6 +1505,18 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 value={updatedLicenseNumber}
                 type="text"
                 onChange={(e) => {
+                  if (
+                    e.target.value.length >
+                    process.env.REACT_APP_MAXIMUM_LICENSE_PLATE_NUMBER_LENGTH
+                  ) {
+                    setUpdatedLicenseNumber(vehicle["licenseNumber"]);
+                    return;
+                  }
+                  if (e.target.value.length < 0) {
+                    setUpdatedLicenseNumber(vehicle["licenseNumber"]);
+                    return;
+                  }
+
                   setUpdatedLicenseNumber(e.target.value);
                 }}
               />
@@ -1535,6 +1527,15 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 value={updatedNOD}
                 type="text"
                 onChange={(e) => {
+                  if (e.target.value.length < 0) {
+                    setUpdatedNOD(vehicle["nod"]);
+                    return;
+                  }
+                  if (e.target.value.length > 30) {
+                    setUpdatedNOD(vehicle["nod"]);
+                    return;
+                  }
+
                   setUpdatedNOD(e.target.value);
                 }}
               />
@@ -1542,7 +1543,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 fullWidth
                 id="outlined-disabled"
                 label="Műszaki érvényesség"
-                value={moment(updatedMOT).format("YYYY-MM-DD")}
+                value={updatedMOT}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="start">*</InputAdornment>
@@ -1550,7 +1551,27 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 }}
                 type="date"
                 onChange={(e) => {
-                  setUpdatedMOT(e.target.value);
+                  const date = moment(e.target.valueAsDate);
+                  const isValidDate = date.isValid();
+
+                  if (!isValidDate) {
+                    setUpdatedMOT(moment(new Date()).format("YYYY-MM-DD"));
+                    return;
+                  }
+
+                  const isCorrentDate = date.isBetween(
+                    moment("1950.01.01"),
+                    moment("2040.01.01")
+                  );
+
+                  if (!isCorrentDate) {
+                    setUpdatedMOT(moment(new Date()).format("YYYY-MM-DD"));
+                    return;
+                  }
+
+                  setUpdatedMOT(
+                    moment(e.target.valueAsDate).format("YYYY-MM-DD")
+                  );
                 }}
               />
 
