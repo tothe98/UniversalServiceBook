@@ -196,12 +196,12 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
 
   const handleVehicleEdit = async () => {
     if (
-      !isLicensePlateNumberError ||
-      !isDocumentOriginError ||
-      !isDocumentValidityError ||
-      !isOwnMassError ||
-      !isFullMassError ||
-      !isPerformanceError
+      isLicensePlateNumberError ||
+      isDocumentOriginError ||
+      isDocumentValidityError ||
+      isOwnMassError ||
+      isFullMassError ||
+      isPerformanceError
     ) {
       toast.error(
         "Hoppá! Valami hiba történt! Nincs minden mező helyesen kitöltve!"
