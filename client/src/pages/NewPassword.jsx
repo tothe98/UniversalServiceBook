@@ -1,7 +1,7 @@
-import { Typography } from "@mui/material";
-import React, { Component } from "react";
+import { IconButton, InputAdornment, Typography } from "@mui/material";
+import React, { Component, useEffect } from "react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { axiosInstance } from "../lib/GlobalConfigs";
 import { MyTextField, SendButton, SubTitle } from "../lib/StyledComponents";
@@ -10,12 +10,25 @@ import {
   MessageStatusCodes,
   getFieldMessage,
 } from "../config/MessageHandler";
+import { VisibilityIcon, VisibilityOffIcon } from "../lib/GlobalIcons";
 
 function NewPassword({}) {
   const { userid, verificationCode } = useParams();
   const [isSent, setIsSent] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [newRePassword, setNewRePassword] = useState("");
+
+  const [isShowNewPassword, setIsShowNewPassword] = useState(false);
+  const [isShowReNewPassword, setIsShowReNewPassword] = useState(false);
+
+  useEffect(() => {
+    if (userid.length < 24) {
+      return (window.location.href = "/");
+    }
+    if (verificationCode.length < 25) {
+      return (window.location.href = "/");
+    }
+  }, []);
 
   const sendNewPasswordRequest = async () => {
     setIsSent(true);
@@ -95,9 +108,21 @@ function NewPassword({}) {
         label="Új jelszó"
         value={newPassword}
         color="success"
-        type="password"
         onChange={(e) => {
           setNewPassword(e.target.value);
+        }}
+        type={isShowNewPassword ? "text" : "password"}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={(e) => setIsShowNewPassword(!isShowNewPassword)}
+                onMouseDown={(e) => setIsShowNewPassword(!isShowNewPassword)}
+              >
+                {isShowNewPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+              </IconButton>
+            </InputAdornment>
+          ),
         }}
       />
       <MyTextField
@@ -106,9 +131,27 @@ function NewPassword({}) {
         label="Új jelszó mégegyszer"
         value={newRePassword}
         color="success"
-        type="password"
         onChange={(e) => {
           setNewRePassword(e.target.value);
+        }}
+        type={isShowReNewPassword ? "text" : "password"}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton
+                onClick={(e) => setIsShowReNewPassword(!isShowReNewPassword)}
+                onMouseDown={(e) =>
+                  setIsShowReNewPassword(!isShowReNewPassword)
+                }
+              >
+                {isShowReNewPassword ? (
+                  <VisibilityIcon />
+                ) : (
+                  <VisibilityOffIcon />
+                )}
+              </IconButton>
+            </InputAdornment>
+          ),
         }}
       />
       <Typography variant="body2">

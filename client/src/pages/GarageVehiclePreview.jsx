@@ -14,6 +14,7 @@ import {
   LeftArrow,
   RightArrow,
   CancelIcon,
+  WarningIcon,
 } from "../lib/GlobalIcons";
 import {
   Accordion,
@@ -56,6 +57,7 @@ import {
   GalleryImage,
   ViewImage,
   ImageGrid,
+  WarningImage,
 } from "../lib/StyledComponents";
 import {
   MyFullWidthInputSkeleton,
@@ -70,6 +72,11 @@ import { Backdrop, Badge, CircularProgress, Slide } from "@mui/material";
 import { Box } from "@mui/system";
 import ImageViewer from "../components/ImageViewer.component";
 import DynamicAccord from "../components/DynamicAccord.component";
+import {
+  AllowedMimeTypes,
+  getFileMimeType,
+  isValidFileMimeType,
+} from "../lib/FileUploader";
 
 const SubTitle = styled(Typography)(({ theme }) => ({
   ...theme.typography.link,
@@ -97,6 +104,15 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
   const [isOpenShareMenu, setIsOpenShareMenu] = useState(false);
   const [isVehiclePrivacyManager, setIsVehiclePrivacyManager] = useState(false);
   const [isShareClick, setIsShareClick] = useState(false);
+
+  /* for edit field erros */
+  const [isFullMassError, setIsFullMassError] = useState(false);
+  const [isOwnMassError, setIsOwnMassError] = useState(false);
+  const [isPerformanceError, setIsPerformanceError] = useState(false);
+  const [isDocumentOriginError, setIsDocumentOriginError] = useState(false);
+  const [isDocumentValidityError, setIsDocumentValidityError] = useState(false);
+  const [isLicensePlateNumberError, setIsLicensePlateNumberError] =
+    useState(false);
 
   /* for vehicle images */
   const [isOpenImageView, setIsOpenImageView] = useState(false);
@@ -179,6 +195,20 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
   };
 
   const handleVehicleEdit = async () => {
+    if (
+      !isLicensePlateNumberError ||
+      !isDocumentOriginError ||
+      !isDocumentValidityError ||
+      !isOwnMassError ||
+      !isFullMassError ||
+      !isPerformanceError
+    ) {
+      toast.error(
+        "Hoppá! Valami hiba történt! Nincs minden mező helyesen kitöltve!"
+      );
+      return;
+    }
+
     const removedImages = [];
     for (let index = 0; index < updatedPictures.length; index++) {
       const element = updatedPictures[index];
@@ -230,6 +260,17 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
   };
 
   const handleVehiclePreviewChange = async (e) => {
+    const isValidMimeType = isValidFileMimeType(e.target.files[0]);
+    if (!isValidMimeType) {
+      toast.error(
+        `Hiba! A feltölteni kívánt állomány kiterjesztése nem támogatott! (.${getFileMimeType(
+          e.target.files[0]
+        )}) `
+      );
+      e.target.value = "";
+      return;
+    }
+
     const file = e.target.files[0];
     const base64 = await convertBase64(file);
     setUpdatedPreview({
@@ -1412,8 +1453,13 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 <Grid item>
                   <MyTextField
                     onChange={(e) => handleVehiclePreviewChange(e)}
-                    inputProps={{ accept: "image/*" }}
+                    inputProps={{
+                      accept: "image/jpeg, image/jpg, image/png, image/webp",
+                    }}
                     fullWidth
+                    helperText={`* Engedélyezett állomány kiterjesztések (${AllowedMimeTypes.map(
+                      (x) => ` ${x}`
+                    )})`}
                     name="wallpaper"
                     placeholder="Kép kiválasztása..."
                     type="file"
@@ -1425,25 +1471,43 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 id="outlined-disabled"
                 label="* Saját tömeg"
                 value={updatedOwnmass}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="start">kg</InputAdornment>
-                  ),
-                }}
+                InputProps={
+                  isOwnMassError
+                    ? {
+                        endAdornment: (
+                          <InputAdornment position="start">
+                            <Tooltip title="Hibás értéket adott meg!">
+                              <WarningImage src={WarningIcon} />
+                            </Tooltip>
+                          </InputAdornment>
+                        ),
+                      }
+                    : {
+                        endAdornment: (
+                          <InputAdornment position="start">kg</InputAdornment>
+                        ),
+                      }
+                }
                 default={0}
                 type="number"
                 onChange={(e) => {
-                  let weight = parseInt(e.target.value);
-                  if (weight < 0) {
-                    setUpdatedOwnmass(vehicle["ownMass"]);
+                  const maxCount = parseInt(
+                    process.env.REACT_APP_MAXIMUM_WEIGHT
+                  );
+
+                  if (e.target.value < 0) {
+                    setUpdatedOwnmass(vehicle["fullMass"]);
+                    setIsOwnMassError(true);
                     return;
                   }
 
-                  if (weight > process.env.REACT_APP_MAXIMUM_WEIGHT) {
-                    setUpdatedOwnmass(vehicle["ownMass"]);
+                  if (e.target.value > maxCount) {
+                    setUpdatedOwnmass(maxCount);
+                    setIsOwnMassError(true);
                     return;
                   }
-                  setUpdatedOwnmass(weight);
+                  setUpdatedOwnmass(parseInt(e.target.value));
+                  setIsOwnMassError(false);
                 }}
               />
               <MyTextField
@@ -1451,24 +1515,42 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 id="outlined-disabled"
                 label="* Teljes tömeg"
                 value={updatedFullmass}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="start">kg</InputAdornment>
-                  ),
-                }}
+                InputProps={
+                  isFullMassError
+                    ? {
+                        endAdornment: (
+                          <InputAdornment position="start">
+                            <Tooltip title="Hibás értéket adott meg!">
+                              <WarningImage src={WarningIcon} />
+                            </Tooltip>
+                          </InputAdornment>
+                        ),
+                      }
+                    : {
+                        endAdornment: (
+                          <InputAdornment position="start">kg</InputAdornment>
+                        ),
+                      }
+                }
                 type="number"
                 onChange={(e) => {
-                  let weight = parseInt(e.target.value);
-                  if (weight < 0) {
+                  const maxCount = parseInt(
+                    process.env.REACT_APP_MAXIMUM_WEIGHT
+                  );
+
+                  if (e.target.value < 0) {
                     setUpdatedFullmass(vehicle["fullMass"]);
+                    setIsFullMassError(true);
                     return;
                   }
 
-                  if (weight > process.env.REACT_APP_MAXIMUM_WEIGHT) {
-                    setUpdatedFullmass(vehicle["fullMass"]);
+                  if (e.target.value > maxCount) {
+                    setUpdatedFullmass(maxCount);
+                    setIsFullMassError(true);
                     return;
                   }
-                  setUpdatedFullmass(weight);
+                  setUpdatedFullmass(parseInt(e.target.value));
+                  setIsFullMassError(false);
                 }}
               />
               <MyTextField
@@ -1476,26 +1558,42 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 id="outlined-disabled"
                 label="* Teljesítmény"
                 value={updatedPerformanceLE}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="start">LE</InputAdornment>
-                  ),
-                }}
+                InputProps={
+                  isPerformanceError
+                    ? {
+                        endAdornment: (
+                          <InputAdornment position="start">
+                            <Tooltip title="Hibás értéket adott meg!">
+                              <WarningImage src={WarningIcon} />
+                            </Tooltip>
+                          </InputAdornment>
+                        ),
+                      }
+                    : {
+                        endAdornment: (
+                          <InputAdornment position="start">LE</InputAdornment>
+                        ),
+                      }
+                }
                 type="number"
                 onChange={(e) => {
-                  let performance = parseInt(e.target.value);
-                  if (performance < 0) {
-                    setUpdatedPerformanceLE(vehicle["performanceLE"]);
+                  const maxCount = parseInt(
+                    process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE
+                  );
+
+                  if (e.target.value < 0) {
+                    setUpdatedPerformanceLE(0);
+                    setIsPerformanceError(true);
                     return;
                   }
 
-                  if (
-                    performance > process.env.REACT_APP_MAXIMUM_PERFORMANCE_LE
-                  ) {
-                    setUpdatedPerformanceLE(vehicle["performanceLE"]);
+                  if (e.target.value > maxCount) {
+                    setUpdatedPerformanceLE(maxCount);
+                    setIsPerformanceError(true);
                     return;
                   }
-                  setUpdatedPerformanceLE(performance);
+                  setUpdatedPerformanceLE(parseInt(e.target.value));
+                  setIsPerformanceError(false);
                 }}
               />
               <MyTextField
@@ -1504,20 +1602,39 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 label="Rendszám"
                 value={updatedLicenseNumber}
                 type="text"
+                InputProps={
+                  isLicensePlateNumberError
+                    ? {
+                        endAdornment: (
+                          <InputAdornment position="start">
+                            <Tooltip title="Hibás értéket adott meg!">
+                              <WarningImage src={WarningIcon} />
+                            </Tooltip>
+                          </InputAdornment>
+                        ),
+                      }
+                    : undefined
+                }
                 onChange={(e) => {
-                  if (
-                    e.target.value.length >
+                  const maxCount = parseInt(
                     process.env.REACT_APP_MAXIMUM_LICENSE_PLATE_NUMBER_LENGTH
-                  ) {
-                    setUpdatedLicenseNumber(vehicle["licenseNumber"]);
-                    return;
-                  }
+                  );
+
                   if (e.target.value.length < 0) {
-                    setUpdatedLicenseNumber(vehicle["licenseNumber"]);
+                    setUpdatedLicenseNumber("");
+                    setIsLicensePlateNumberError(true);
                     return;
                   }
 
+                  if (e.target.value.length > maxCount) {
+                    setUpdatedLicenseNumber(
+                      ("" + e.target.value).substring(0, maxCount)
+                    );
+                    setIsLicensePlateNumberError(true);
+                    return;
+                  }
                   setUpdatedLicenseNumber(e.target.value);
+                  setIsLicensePlateNumberError(false);
                 }}
               />
               <MyTextField
@@ -1526,17 +1643,33 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 label="* Okmányok jellege"
                 value={updatedNOD}
                 type="text"
+                InputProps={
+                  isDocumentOriginError
+                    ? {
+                        endAdornment: (
+                          <InputAdornment position="start">
+                            <Tooltip title="Hibás értéket adott meg!">
+                              <WarningImage src={WarningIcon} />
+                            </Tooltip>
+                          </InputAdornment>
+                        ),
+                      }
+                    : undefined
+                }
                 onChange={(e) => {
                   if (e.target.value.length < 0) {
                     setUpdatedNOD(vehicle["nod"]);
+                    setIsDocumentOriginError(true);
                     return;
                   }
                   if (e.target.value.length > 30) {
                     setUpdatedNOD(vehicle["nod"]);
+                    setIsDocumentOriginError(true);
                     return;
                   }
 
                   setUpdatedNOD(e.target.value);
+                  setIsDocumentOriginError(false);
                 }}
               />
               <MyTextField
@@ -1544,11 +1677,20 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
                 id="outlined-disabled"
                 label="Műszaki érvényesség"
                 value={updatedMOT}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="start">*</InputAdornment>
-                  ),
-                }}
+                InputProps={
+                  isDocumentValidityError
+                    ? {
+                        endAdornment: (
+                          <InputAdornment position="start">
+                            <Tooltip title="Hibás értéket adott meg!">
+                              <WarningImage src={WarningIcon} />
+                            </Tooltip>
+                          </InputAdornment>
+                        ),
+                      }
+                    : undefined
+                }
+                required
                 type="date"
                 onChange={(e) => {
                   const date = moment(e.target.valueAsDate);
@@ -1556,6 +1698,7 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
 
                   if (!isValidDate) {
                     setUpdatedMOT(moment(new Date()).format("YYYY-MM-DD"));
+                    setIsDocumentValidityError(true);
                     return;
                   }
 
@@ -1566,12 +1709,14 @@ function GarageVehiclePreview({ routes, activePage, handleChangeTab }) {
 
                   if (!isCorrentDate) {
                     setUpdatedMOT(moment(new Date()).format("YYYY-MM-DD"));
+                    setIsDocumentValidityError(true);
                     return;
                   }
 
                   setUpdatedMOT(
                     moment(e.target.valueAsDate).format("YYYY-MM-DD")
                   );
+                  setIsDocumentValidityError(false);
                 }}
               />
 

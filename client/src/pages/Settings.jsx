@@ -9,6 +9,9 @@ import {
   TextField,
   Typography,
   Input,
+  IconButton,
+  InputAdornment,
+  Tooltip,
 } from "../lib/GlobalImports";
 import {
   MyCircularSkeleton,
@@ -21,10 +24,21 @@ import {
   FormCancelButton,
   FormActionButton,
   AvatarImage,
+  WarningImage,
 } from "../lib/StyledComponents";
 import { axiosInstance } from "../lib/GlobalConfigs";
 import useAuth from "../hooks/useAuth";
 import ImageViewer from "../components/ImageViewer.component";
+import {
+  VisibilityIcon,
+  VisibilityOffIcon,
+  WarningIcon,
+} from "../lib/GlobalIcons";
+import {
+  AllowedMimeTypes,
+  getFileMimeType,
+  isValidFileMimeType,
+} from "../lib/FileUploader";
 
 function Settings({ handleChangeTab }) {
   /* getting context data */
@@ -33,6 +47,10 @@ function Settings({ handleChangeTab }) {
   /* loading screen variables */
   const [isLoading, setIsLoading] = useState(true);
   const [isSent, setIsSent] = useState(false);
+  const [isErrorFirstName, setIsErrorFirstName] = useState(false);
+  const [isErrorLastName, setIsErrorLastName] = useState(false);
+  const [isErrorPhone, setIsErrorPhone] = useState(false);
+  const [isErrorCountry, setIsErrorCountry] = useState(false);
   const [isOpenImageView, setIsOpenImageView] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [picture, setPicture] = useState("");
@@ -47,6 +65,10 @@ function Settings({ handleChangeTab }) {
   const [changePasswordError, setChangePasswordError] = useState(null);
   const [oldPasswordError, setOldPasswordError] = useState(null);
   const [formUnderProcessing, setIsProcessing] = useState(false);
+
+  const [isShowOldPassword, setIsShowOldPassword] = useState(false);
+  const [isShowNewPassword, setIsShowNewPassword] = useState(false);
+  const [isShowReNewPassword, setIsShowReNewPassword] = useState(false);
 
   useEffect(() => {
     setPicture({
@@ -64,6 +86,17 @@ function Settings({ handleChangeTab }) {
   }, []);
 
   const handleProfileImageChange = async (e) => {
+    const isValidMimeType = isValidFileMimeType(e.target.files[0]);
+    if (!isValidMimeType) {
+      toast.error(
+        `Hiba! A feltölteni kívánt állomány kiterjesztése nem támogatott! (.${getFileMimeType(
+          e.target.files[0]
+        )}) `
+      );
+      e.target.value = "";
+      return;
+    }
+
     setIsProcessing(true);
     const file = e.target.files[0];
     const base64 = await convertBase64(file);
@@ -169,6 +202,13 @@ function Settings({ handleChangeTab }) {
       formData.append("home", home);
     }
     if (auth.user.phone !== phoneNumber) {
+      if (phoneNumber.length < 6 || phoneNumber.length > 15) {
+        toast.error(
+          "Hiba! A telefonszám formátuma hibás (min: 6, max: 15 karakterből kell állnia.)"
+        );
+        return;
+      }
+
       changedSomething = true;
       formData.append("phone", phoneNumber);
     }
@@ -218,8 +258,8 @@ function Settings({ handleChangeTab }) {
   };
 
   const handleTelephoneNumberChange = (e) => {
-    if (`${e.target.value}`.length > 12) {
-      setPhoneNumber(`${e.target.value}`.substring(0, 12));
+    if (`${e.target.value}`.length > 15) {
+      setPhoneNumber(`${e.target.value}`.substring(0, 15));
     } else {
       setPhoneNumber(e.target.value);
     }
@@ -339,11 +379,16 @@ function Settings({ handleChangeTab }) {
 
                 <Grid container direction="column" sx={{ marginTop: "auto" }}>
                   <TextField
-                    inputProps={{ accept: "image/*" }}
+                    inputProps={{
+                      accept: "image/jpeg, image/jpg, image/png, image/webp",
+                    }}
                     fullWidth
                     name="wallpaper"
                     placeholder="Kép kiválasztása..."
                     type="file"
+                    helperText={`* Engedélyezett állomány kiterjesztések (${AllowedMimeTypes.map(
+                      (x) => ` ${x}`
+                    )})`}
                     onChange={(e) => handleProfileImageChange(e)}
                   />
                 </Grid>
@@ -370,7 +415,27 @@ function Settings({ handleChangeTab }) {
                   label="Keresztnév:"
                   value={firstName}
                   type="text"
-                  onChange={(e) => handleFirstNameChange(e)}
+                  InputProps={
+                    isErrorFirstName
+                      ? {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              <Tooltip title="Hibás értéket adott meg!">
+                                <WarningImage src={WarningIcon} />
+                              </Tooltip>
+                            </InputAdornment>
+                          ),
+                        }
+                      : undefined
+                  }
+                  onChange={(e) => {
+                    if (e.target.value.length > 30) {
+                      setIsErrorFirstName(true);
+                      return;
+                    }
+                    handleFirstNameChange(e);
+                    setIsErrorFirstName(false);
+                  }}
                 />
               </Grid>
 
@@ -380,7 +445,27 @@ function Settings({ handleChangeTab }) {
                   label="Családnév:"
                   value={lastName}
                   type="text"
-                  onChange={(e) => handleLastNameChange(e)}
+                  InputProps={
+                    isErrorLastName
+                      ? {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              <Tooltip title="Hibás értéket adott meg!">
+                                <WarningImage src={WarningIcon} />
+                              </Tooltip>
+                            </InputAdornment>
+                          ),
+                        }
+                      : undefined
+                  }
+                  onChange={(e) => {
+                    if (e.target.value.length > 30) {
+                      setIsErrorLastName(true);
+                      return;
+                    }
+                    handleLastNameChange(e);
+                    setIsErrorLastName(false);
+                  }}
                 />
               </Grid>
 
@@ -391,7 +476,27 @@ function Settings({ handleChangeTab }) {
                   type="tel"
                   defaultValue={phoneNumber}
                   value={phoneNumber}
-                  onChange={(e) => handleTelephoneNumberChange(e)}
+                  InputProps={
+                    isErrorPhone
+                      ? {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              <Tooltip title="Hibás értéket adott meg!">
+                                <WarningImage src={WarningIcon} />
+                              </Tooltip>
+                            </InputAdornment>
+                          ),
+                        }
+                      : undefined
+                  }
+                  onChange={(e) => {
+                    if (e.target.value.length > 15) {
+                      setIsErrorPhone(true);
+                      return;
+                    }
+                    handleTelephoneNumberChange(e);
+                    setIsErrorPhone(false);
+                  }}
                 />
               </Grid>
 
@@ -401,7 +506,28 @@ function Settings({ handleChangeTab }) {
                   label="Város"
                   type="text"
                   value={home ? home : ""}
-                  onChange={(e) => handleCountryChange(e)}
+                  InputProps={
+                    isErrorCountry
+                      ? {
+                          endAdornment: (
+                            <InputAdornment position="start">
+                              <Tooltip title="Hibás értéket adott meg!">
+                                <WarningImage src={WarningIcon} />
+                              </Tooltip>
+                            </InputAdornment>
+                          ),
+                        }
+                      : undefined
+                  }
+                  onChange={(e) => {
+                    if (e.target.value.length > 30) {
+                      setIsErrorCountry(true);
+                      return;
+                    }
+
+                    handleCountryChange(e);
+                    setIsErrorCountry(false);
+                  }}
                 />
               </Grid>
             </Grid>
@@ -418,8 +544,28 @@ function Settings({ handleChangeTab }) {
                     label="Régi jelszó"
                     defaultValue=""
                     fullWidth
-                    type="password"
                     onChange={(e) => setPassword(e.target.value)}
+                    type={isShowOldPassword ? "text" : "password"}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={(e) =>
+                              setIsShowOldPassword(!isShowOldPassword)
+                            }
+                            onMouseDown={(e) =>
+                              setIsShowOldPassword(!isShowOldPassword)
+                            }
+                          >
+                            {isShowOldPassword ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
               ) : (
@@ -428,8 +574,28 @@ function Settings({ handleChangeTab }) {
                     label="Régi jelszó"
                     defaultValue=""
                     fullWidth
-                    type="password"
                     onChange={(e) => setPassword(e.target.value)}
+                    type={isShowOldPassword ? "text" : "password"}
+                    InputProps={{
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            onClick={(e) =>
+                              setIsShowOldPassword(!isShowOldPassword)
+                            }
+                            onMouseDown={(e) =>
+                              setIsShowOldPassword(!isShowOldPassword)
+                            }
+                          >
+                            {isShowOldPassword ? (
+                              <VisibilityIcon />
+                            ) : (
+                              <VisibilityOffIcon />
+                            )}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    }}
                   />
                 </Grid>
               )}
@@ -441,8 +607,28 @@ function Settings({ handleChangeTab }) {
                       error
                       label="Új jelszó*"
                       fullWidth
-                      type="password"
                       onChange={(e) => setNewPassword(e.target.value)}
+                      type={isShowNewPassword ? "text" : "password"}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={(e) =>
+                                setIsShowNewPassword(!isShowNewPassword)
+                              }
+                              onMouseDown={(e) =>
+                                setIsShowNewPassword(!isShowNewPassword)
+                              }
+                            >
+                              {isShowNewPassword ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
 
@@ -451,8 +637,28 @@ function Settings({ handleChangeTab }) {
                       error
                       label="Új jelszó**"
                       fullWidth
-                      type="password"
                       onChange={(e) => setReNewPassword(e.target.value)}
+                      type={isShowReNewPassword ? "text" : "password"}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={(e) =>
+                                setIsShowReNewPassword(!isShowReNewPassword)
+                              }
+                              onMouseDown={(e) =>
+                                setIsShowReNewPassword(!isShowReNewPassword)
+                              }
+                            >
+                              {isShowReNewPassword ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
                 </React.Fragment>
@@ -462,16 +668,56 @@ function Settings({ handleChangeTab }) {
                     <TextField
                       label="Új jelszó*"
                       fullWidth
-                      type="password"
                       onChange={(e) => setNewPassword(e.target.value)}
+                      type={isShowNewPassword ? "text" : "password"}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={(e) =>
+                                setIsShowNewPassword(!isShowNewPassword)
+                              }
+                              onMouseDown={(e) =>
+                                setIsShowNewPassword(!isShowNewPassword)
+                              }
+                            >
+                              {isShowNewPassword ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
                   <Grid item>
                     <TextField
                       label="Új jelszó**"
                       fullWidth
-                      type="password"
                       onChange={(e) => setReNewPassword(e.target.value)}
+                      type={isShowReNewPassword ? "text" : "password"}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              onClick={(e) =>
+                                setIsShowReNewPassword(!isShowReNewPassword)
+                              }
+                              onMouseDown={(e) =>
+                                setIsShowReNewPassword(!isShowReNewPassword)
+                              }
+                            >
+                              {isShowReNewPassword ? (
+                                <VisibilityIcon />
+                              ) : (
+                                <VisibilityOffIcon />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
                   </Grid>
                 </React.Fragment>

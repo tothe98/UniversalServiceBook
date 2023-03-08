@@ -10,9 +10,11 @@ import {
   DialogContentText,
   DialogTitle,
   Grid,
+  InputAdornment,
   Modal,
   styled,
   TextField,
+  Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -30,6 +32,8 @@ import {
   MessageStatusCodes,
   getFieldMessage,
 } from "../config/MessageHandler";
+import { WarningImage } from "../lib/StyledComponents";
+import { WarningIcon } from "../lib/GlobalIcons";
 
 const SubTitle = styled(Typography)(({ theme }) => ({
   ...theme.typography.link,
@@ -86,6 +90,16 @@ function AdminPage() {
   /* for input areas */
   const [isAdding, setIsAdding] = useState(false);
   const [isAddingProcessing, setIsAddingProcessing] = useState(false);
+  const [isErrorWorkshopName, setIsErrorWorkshopName] = useState(false);
+  const [isErrorWorkshopCountry, setIsErrorWorkshopCountry] = useState(false);
+  const [isErrorWorkshopCity, setIsErrorWorkshopCity] = useState(false);
+  const [isErrorWorkshopStreet, setIsErrorWorkshopStreet] = useState(false);
+  const [isErrorWorkshopOwnerEmail, setIsErrorWorkshopOwnerEmail] =
+    useState(false);
+  const [isErrorWorkshopPhoneContact, setIsErrorWorkshopPhoneContact] =
+    useState(false);
+  const [isErrorWorkshopEmailContact, setIsErrorWorkshopEmailContact] =
+    useState(false);
 
   /* main data table */
   const columns = [
@@ -103,6 +117,19 @@ function AdminPage() {
   ];
 
   const handleWorkshopAddition = async (e) => {
+    if (
+      isErrorWorkshopName ||
+      isErrorWorkshopCountry ||
+      isErrorWorkshopCity ||
+      isErrorWorkshopStreet ||
+      isErrorWorkshopOwnerEmail ||
+      isErrorWorkshopPhoneContact ||
+      isErrorWorkshopEmailContact
+    ) {
+      toast.error("Hiba! Valamelyik mezőt nem töltötte ki!");
+      return;
+    }
+
     setIsSent(true);
     setTimeout(() => {
       setIsSent(false);
@@ -282,7 +309,28 @@ function AdminPage() {
               type="text"
               color="success"
               value={newWorkshopName}
-              onChange={(e) => setNewWorkshopName(e.target.value)}
+              InputProps={
+                isErrorWorkshopName
+                  ? {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip title="Hibás értéket adott meg!">
+                            <WarningImage src={WarningIcon} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }
+                  : undefined
+              }
+              onChange={(e) => {
+                if (e.target.value.length > 100) {
+                  setIsErrorWorkshopName(true);
+                  return;
+                }
+
+                setNewWorkshopName(e.target.value);
+                setIsErrorWorkshopName(false);
+              }}
             />
           </Grid>
 
@@ -294,7 +342,28 @@ function AdminPage() {
               type="text"
               color="success"
               value={newWorkshopCountry}
-              onChange={(e) => setNewWorkshopCountry(e.target.value)}
+              InputProps={
+                isErrorWorkshopCountry
+                  ? {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip title="Hibás értéket adott meg!">
+                            <WarningImage src={WarningIcon} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }
+                  : undefined
+              }
+              onChange={(e) => {
+                if (e.target.value.length > 56) {
+                  setIsErrorWorkshopCountry(true);
+                  return;
+                }
+
+                setIsErrorWorkshopCountry(false);
+                setNewWorkshopCountry(e.target.value);
+              }}
             />
           </Grid>
 
@@ -306,7 +375,28 @@ function AdminPage() {
               type="text"
               color="success"
               value={newWorkshopCity}
-              onChange={(e) => setNewWorkshopCity(e.target.value)}
+              InputProps={
+                isErrorWorkshopCity
+                  ? {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip title="Hibás értéket adott meg!">
+                            <WarningImage src={WarningIcon} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }
+                  : undefined
+              }
+              onChange={(e) => {
+                if (e.target.value.length > 40) {
+                  setIsErrorWorkshopCity(true);
+                  return;
+                }
+
+                setNewWorkshopCity(e.target.value);
+                setIsErrorWorkshopCity(false);
+              }}
             />
           </Grid>
 
@@ -317,8 +407,29 @@ function AdminPage() {
               label="Utca *"
               type="text"
               color="success"
+              InputProps={
+                isErrorWorkshopStreet
+                  ? {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip title="Hibás értéket adott meg!">
+                            <WarningImage src={WarningIcon} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }
+                  : undefined
+              }
               value={newWorkshopAddress}
-              onChange={(e) => setNewWorkshopAddress(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length > 50) {
+                  setIsErrorWorkshopStreet(true);
+                  return;
+                }
+
+                setNewWorkshopAddress(e.target.value);
+                setIsErrorWorkshopStreet(false);
+              }}
             />
           </Grid>
 
@@ -330,7 +441,27 @@ function AdminPage() {
               type="text"
               color="success"
               value={newWorkshopOwner}
-              onChange={(e) => setNewWorkshopOwner(e.target.value)}
+              InputProps={
+                isErrorWorkshopOwnerEmail
+                  ? {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip title="Hibás értéket adott meg!">
+                            <WarningImage src={WarningIcon} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }
+                  : undefined
+              }
+              onChange={(e) => {
+                if (e.target.value.length > 75) {
+                  setIsErrorWorkshopOwnerEmail(true);
+                  return;
+                }
+
+                setNewWorkshopOwner(e.target.value);
+              }}
             />
           </Grid>
 
@@ -342,7 +473,27 @@ function AdminPage() {
               type="text"
               color="success"
               value={newWorkshopPhone}
-              onChange={(e) => setNewWorkshopPhone(e.target.value)}
+              InputProps={
+                isErrorWorkshopPhoneContact
+                  ? {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip title="Hibás értéket adott meg!">
+                            <WarningImage src={WarningIcon} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }
+                  : undefined
+              }
+              onChange={(e) => {
+                if (e.target.value.length > 15) {
+                  setIsErrorWorkshopPhoneContact(true);
+                  return;
+                }
+
+                setNewWorkshopPhone(e.target.value);
+              }}
             />
           </Grid>
 
@@ -353,8 +504,28 @@ function AdminPage() {
               label="Műhely e-mail elérhetőség"
               type="text"
               color="success"
+              InputProps={
+                isErrorWorkshopEmailContact
+                  ? {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip title="Hibás értéket adott meg!">
+                            <WarningImage src={WarningIcon} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }
+                  : undefined
+              }
               value={newWorkshopEmail}
-              onChange={(e) => setNewWorkshopEmail(e.target.value)}
+              onChange={(e) => {
+                if (e.target.value.length > 75) {
+                  setIsErrorWorkshopEmailContact(true);
+                  return;
+                }
+
+                setNewWorkshopEmail(e.target.value);
+              }}
             />
           </Grid>
 

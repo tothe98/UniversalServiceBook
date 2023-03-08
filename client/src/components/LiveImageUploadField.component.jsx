@@ -1,5 +1,6 @@
 import { Grid, InputLabel, useMediaQuery } from "@mui/material";
 import React, { Component, useState } from "react";
+import { AllowedMimeTypes } from "../lib/FileUploader";
 import {
   AddCarSubTitle,
   CarCardContent,
@@ -55,7 +56,12 @@ function LiveImageUploadField({ isURL, title, image, onAction }) {
             <MyTextField
               id="custom-file-input"
               onChange={onAction}
-              inputProps={{ accept: "image/*" }}
+              inputProps={{
+                accept: "image/jpeg, image/jpg, image/png, image/webp",
+              }}
+              helperText={`* Engedélyezett állomány kiterjesztések (${AllowedMimeTypes.map(
+                (x) => ` ${x}`
+              )})`}
               fullWidth
               name="preview"
               placeholder="Kép kiválasztása..."

@@ -18,10 +18,13 @@ import {
   theme,
   axios,
   toast,
+  InputAdornment,
+  Tooltip,
 } from "../lib/GlobalImports";
 import {
   AddCircleOutlineOutlinedIcon,
   SearchOutlinedIcon,
+  WarningIcon,
 } from "../lib/GlobalIcons";
 import { axiosInstance } from "../lib/GlobalConfigs";
 import {
@@ -30,6 +33,7 @@ import {
   CarDialog,
   CarDialogText,
   MyTextField2,
+  WarningImage,
 } from "../lib/StyledComponents";
 import { Stack } from "@mui/system";
 import { useTheme } from "@emotion/react";
@@ -44,6 +48,7 @@ function OwnerPage() {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(true);
   const [isSent, setIsSent] = useState(false);
+  const [isErrorWorkerAdd, setIsErrorWorkerAdd] = useState(false);
   const underSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
   /* datas */
@@ -71,6 +76,11 @@ function OwnerPage() {
   ];
 
   const handleEmployeeAddition = async (e) => {
+    if (isErrorWorkerAdd) {
+      toast.error("Hiba! Hibásan töltötte ki a dolgozó e-mail cím mezőjét!");
+      return;
+    }
+
     setIsSent(true);
     setTimeout(() => {
       setIsSent(false);
@@ -269,7 +279,28 @@ function OwnerPage() {
               type="text"
               color="success"
               value={employeeID}
-              onChange={(e) => setEmployeeID(e.target.value)}
+              InputProps={
+                isErrorWorkerAdd
+                  ? {
+                      endAdornment: (
+                        <InputAdornment position="start">
+                          <Tooltip title="Hibás értéket adott meg!">
+                            <WarningImage src={WarningIcon} />
+                          </Tooltip>
+                        </InputAdornment>
+                      ),
+                    }
+                  : undefined
+              }
+              onChange={(e) => {
+                if (e.target.value.length > 75) {
+                  setIsErrorWorkerAdd(true);
+                  return;
+                }
+
+                setIsErrorWorkerAdd(false);
+                setEmployeeID(e.target.value);
+              }}
             />
           </Grid>
           <Grid item sx={{ marginTop: "0.1em" }}>

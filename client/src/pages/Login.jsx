@@ -7,6 +7,8 @@ import {
   Typography,
   axios,
   toast,
+  InputAdornment,
+  IconButton,
 } from "../lib/GlobalImports";
 import {
   SubTitle,
@@ -26,6 +28,7 @@ import { useEffect } from "react";
 import { axiosInstance } from "../lib/GlobalConfigs";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { VisibilityIcon, VisibilityOffIcon } from "../lib/GlobalIcons";
 
 function Login() {
   const { setAuth } = useAuth();
@@ -37,6 +40,7 @@ function Login() {
   const [isSent, setIsSent] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isShowPassword, setIsShowPassword] = useState(false);
 
   const sendLogin = async (e) => {
     setIsSent(true);
@@ -165,9 +169,25 @@ function Login() {
           <Grid item>
             <TextField
               label="Jelszó"
-              type="password"
               onChange={(e) => handlePasswordChange(e)}
               sx={{ minWidth: "300px" }}
+              type={isShowPassword ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={(e) => setIsShowPassword(!isShowPassword)}
+                      onMouseDown={(e) => setIsShowPassword(!isShowPassword)}
+                    >
+                      {isShowPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
             <Typography variant="body2">
               * A jelszónak legalább 8 karakternek kell lennie.

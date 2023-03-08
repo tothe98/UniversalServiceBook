@@ -8,6 +8,8 @@ import {
   axios,
   toast,
   Link,
+  IconButton,
+  InputAdornment,
 } from "../lib/GlobalImports";
 import { SubTitle, SendButton } from "../lib/StyledComponents";
 import { axiosInstance } from "../lib/GlobalConfigs";
@@ -16,6 +18,7 @@ import {
   MessageStatusCodes,
   getFieldMessage,
 } from "../config/MessageHandler";
+import { VisibilityIcon, VisibilityOffIcon } from "../lib/GlobalIcons";
 
 function Registration() {
   const [firstName, setFirstName] = useState("");
@@ -23,10 +26,7 @@ function Registration() {
   const [email, setEmail] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
-
-  /*
-  NEXT TIME: Add repassword and green line check (check that the password is correct or not).
-  */
+  const [isShowPassword, setIsShowPassword] = useState(false);
 
   const [isSent, setIsSent] = useState(false);
 
@@ -105,10 +105,6 @@ function Registration() {
     setPhoneNumber("");
   };
 
-  const handleTypingNewPassword = (rePassword) => {
-    console.log(rePassword);
-  };
-
   return (
     <React.Fragment>
       <SubTitle variant="h3">Regisztráció</SubTitle>
@@ -146,10 +142,26 @@ function Registration() {
           <Grid item>
             <TextField
               label="Jelszó "
-              type="password"
               onChange={(e) => setPassword(e.target.value)}
               sx={{ minWidth: "300px" }}
               required
+              type={isShowPassword ? "text" : "password"}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={(e) => setIsShowPassword(!isShowPassword)}
+                      onMouseDown={(e) => setIsShowPassword(!isShowPassword)}
+                    >
+                      {isShowPassword ? (
+                        <VisibilityIcon />
+                      ) : (
+                        <VisibilityOffIcon />
+                      )}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
             />
           </Grid>
 

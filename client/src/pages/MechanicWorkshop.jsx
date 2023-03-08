@@ -19,6 +19,7 @@ import {
   toast,
   axios,
   moment,
+  Tooltip,
 } from "../lib/GlobalImports";
 import {
   AddCircleOutlineOutlinedIcon,
@@ -27,6 +28,7 @@ import {
   KmIcon,
   RemoveCircleOutlineOutlinedIcon,
   DocumentsIcon,
+  WarningIcon,
 } from "../lib/GlobalIcons";
 import {
   MyCardSkeleton,
@@ -41,6 +43,7 @@ import {
   SubTitle2,
   MyTextField,
   MyCardHeader,
+  WarningImage,
 } from "../lib/StyledComponents";
 import { Editor } from "@tinymce/tinymce-react";
 import {
@@ -50,7 +53,11 @@ import {
 } from "../config/MessageHandler";
 import ImageItem from "../components/ImageItem.component";
 import ImageViewer from "../components/ImageViewer.component";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import {
+  AllowedMimeTypes,
+  getFileMimeType,
+  isValidFileMimeType,
+} from "../lib/FileUploader";
 
 const UploadButton = styled(Button)(({ theme }) => ({
   margin: "2rem 0",
@@ -62,6 +69,10 @@ function MechanicWorkshop({ handleChangeTab }) {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSent, setIsSent] = useState(false);
+  const [isSearchSent, setIsSearchSent] = useState(false);
+  const [isUploaded, setIsUploaded] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [isVinError, setIsVinError] = useState(false);
   const [isFinded, setIsFinded] = useState(false);
   const [findedVehicle, setFindedVehicle] = useState({});
   const [
@@ -88,6 +99,11 @@ function MechanicWorkshop({ handleChangeTab }) {
   }, []);
 
   const handleSearchVehicle = async (e) => {
+    if (vehicleVin.length === 0) {
+      toast.error("Hiba! Az alvázszám mező nem lehet üres!");
+      return;
+    }
+
     setIsFinded(false);
     setFindedVehicle({});
 
@@ -189,10 +205,10 @@ function MechanicWorkshop({ handleChangeTab }) {
       .post("/addServiceEntry", formData, { headers })
       .then((res) => {
         toast.success("Sikeresen feltöttél egy új szerviz bejegyzést!");
-
-        setMileage(0);
-        setNewServiceDate(moment());
+        setMileage(mileage);
+        setNewServiceDate(moment().format("YYYY-MM-DD HH:mm"));
         setAttachments([]);
+        serviceMessageHTML.current.setContent("");
       })
       .catch((err) => {
         if (err.response.status == 409) {
@@ -206,6 +222,17 @@ function MechanicWorkshop({ handleChangeTab }) {
   };
 
   const handleNewAttachmentUpload = async (e) => {
+    const isValidMimeType = isValidFileMimeType(e.target.files[0]);
+    if (!isValidMimeType) {
+      toast.error(
+        `Hiba! A feltölteni kívánt állomány kiterjesztése nem támogatott! (.${getFileMimeType(
+          e.target.files[0]
+        )}) `
+      );
+      e.target.value = "";
+      return;
+    }
+
     setAttachmentLoading(true);
     const newAttachments = [...attachments];
 
@@ -298,25 +325,74 @@ function MechanicWorkshop({ handleChangeTab }) {
         sx={{ marginBottom: "1.5rem" }}
       >
         <Grid item sx={{ width: "100%" }}>
-          <MyTextField
-            fullWidth
-            id="outlined-disabled"
-            label="Alvázszám"
-            type="text"
-            value={vehicleVin}
-            onChange={(e) => setVehicleVin(e.target.value)}
-          />
+          <Grid container direction="row" alignItems="center">
+            <Grid item sx={{ width: "100%" }} xs>
+              <MyTextField
+                fullWidth
+                id="outlined-disabled"
+                label="Alvázszám"
+                type="text"
+                value={vehicleVin}
+                onChange={(e) => {
+                  const maxCount = parseInt(
+                    process.env.REACT_APP_MAXIMUM_VIN_LENGTH
+                  );
+
+                  if (e.target.value.length < 0) {
+                    setVehicleVin("");
+                    setIsVinError(true);
+                    return;
+                  }
+
+                  if (e.target.value.length > maxCount) {
+                    setVehicleVin(("" + e.target.value).substring(0, maxCount));
+                    setIsVinError(true);
+                    return;
+                  }
+                  setVehicleVin(e.target.value);
+                  setIsVinError(false);
+                }}
+              />
+            </Grid>
+
+            {isVinError && (
+              <Grid item xs={1}>
+                <Tooltip title="Hibás értéket adott meg!">
+                  <WarningImage src={WarningIcon} />
+                </Tooltip>
+              </Grid>
+            )}
+          </Grid>
         </Grid>
+
         <Grid item>
-          <Button
-            size="small"
-            variant="contained"
-            color="warning"
-            startIcon={<SearchOutlinedIcon />}
-            onClick={(e) => handleSearchVehicle(e)}
-          >
-            Keresés
-          </Button>
+          {isSearchSent ? (
+            <Button
+              size="small"
+              variant="contained"
+              color="warning"
+              startIcon={<SearchOutlinedIcon />}
+              disabled
+            >
+              Keresés
+            </Button>
+          ) : (
+            <Button
+              size="small"
+              variant="contained"
+              color="warning"
+              startIcon={<SearchOutlinedIcon />}
+              onClick={(e) => {
+                handleSearchVehicle(e);
+                setIsSearchSent(true);
+                setTimeout(() => {
+                  setIsSearchSent(false);
+                }, parseInt(process.env.REACT_APP_BUTTON_CLICK_TIMEOUT));
+              }}
+            >
+              Keresés
+            </Button>
+          )}
         </Grid>
       </Grid>
 
@@ -381,31 +457,51 @@ function MechanicWorkshop({ handleChangeTab }) {
               </Typography>
             </Grid>
 
-            <Grid item xs={11}>
+            <Grid item xs>
               <MyTextField
                 fullWidth
                 id="outlined-disabled"
-                placeholder="Km. óra állás"
+                title="Km. óra állás"
                 type="number"
                 value={mileage}
+                InputProps={{
+                  inputProps: {
+                    style: {
+                      textAlign: "start",
+                      MozAppearance: "textfield",
+                      WebkitAppearance: "textfield",
+                      appearance: "textfield",
+                    },
+                  },
+                }}
                 onChange={(e) => {
-                  let kmInput = parseInt(e.target.value + "");
+                  const maxCount = parseInt(process.env.REACT_APP_MAXIMUM_KM);
+                  const eventValue = parseInt(e.target.value);
 
-                  if (kmInput < 0) {
-                    toast.error("Ez a mező nem lehet kisebb mint 0!");
-                    return;
-                  } else if (
-                    kmInput >= parseInt(process.env.REACT_APP_MAXIMUM_KM)
-                  ) {
-                    toast.error(
-                      `Ez a mező nem lehet nagyobb mint ${process.env.REACT_APP_MAXIMUM_KM} km!`
-                    );
+                  if (eventValue < 0) {
+                    setMileage(0);
+                    setIsError(true);
                     return;
                   }
-                  setMileage(kmInput);
+
+                  if (eventValue > maxCount) {
+                    setMileage(maxCount);
+                    setIsError(true);
+                    return;
+                  }
+                  setMileage(eventValue);
+                  setIsError(false);
                 }}
               />
             </Grid>
+
+            {isError && (
+              <Grid item sx={{ padding: "0.4em 0.5em" }}>
+                <Tooltip title="Hibás értéket adott meg!">
+                  <WarningImage src={WarningIcon} />
+                </Tooltip>
+              </Grid>
+            )}
           </Grid>
 
           <Grid
@@ -427,6 +523,9 @@ function MechanicWorkshop({ handleChangeTab }) {
                 fullWidth
                 id="outlined-disabled"
                 type="file"
+                helperText={`* Engedélyezett állomány kiterjesztések (${AllowedMimeTypes.map(
+                  (x) => ` ${x}`
+                )})`}
                 multiple={true}
                 onChange={(e) => handleNewAttachmentUpload(e)}
               />
@@ -460,13 +559,42 @@ function MechanicWorkshop({ handleChangeTab }) {
               })}
           </Grid>
 
-          <Editor
-            apiKey="jdakkbjup13h3wxbimqnu4sii9msv6jim9sx9y7qfzk43spo"
-            onInit={(evt, editor) => (serviceMessageHTML.current = editor)}
-            init={{
-              menubar: false,
-            }}
-          />
+          {!isUploaded && (
+            <Editor
+              apiKey="jdakkbjup13h3wxbimqnu4sii9msv6jim9sx9y7qfzk43spo"
+              onInit={(evt, editor) => (serviceMessageHTML.current = editor)}
+              init={{
+                max_chars: 2000,
+                selector: "textarea",
+                language: "hu_HU",
+                menubar: false,
+                plugins: [
+                  "advlist",
+                  "autolink",
+                  "lists",
+                  "link",
+                  "image",
+                  "charmap",
+                  "preview",
+                  "anchor",
+                  "searchreplace",
+                  "visualblocks",
+                  "fullscreen",
+                  "insertdatetime",
+                  "media",
+                  "table",
+                  "help",
+                  "wordcount",
+                ],
+                toolbar:
+                  "undo redo | casechange blocks | bold italic backcolor | " +
+                  "alignleft aligncenter alignright alignjustify | " +
+                  "bullist numlist checklist outdent indent | removeformat | a11ycheck code table help",
+                content_style:
+                  "body { font-family:Helvetica,Arial,sans-serif; font-size:14px }",
+              }}
+            />
+          )}
 
           {isSent ? (
             <UploadButton

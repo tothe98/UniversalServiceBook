@@ -44,8 +44,12 @@ import RightArrow from '@mui/icons-material/KeyboardArrowRight';
 import LeftArrow from '@mui/icons-material/KeyboardArrowLeft';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WarningIcon from '../assets/warning.png'
+import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOffOutlined';
 
 export {
+    VisibilityIcon,
+    VisibilityOffIcon,
     WarningIcon,
     CancelIcon,
     RightArrow,

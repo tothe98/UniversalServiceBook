@@ -1,7 +1,14 @@
+import styled from "@emotion/styled";
 import { Backdrop, Grid, IconButton, Typography } from "@mui/material";
 import React, { Component, useEffect, useState } from "react";
 import { CancelIcon, LeftArrow, RightArrow } from "../lib/GlobalIcons";
 import { ImageGrid, ViewImage } from "../lib/StyledComponents";
+
+const MyBackdrop = styled(Backdrop)(({ theme }) => ({
+  color: "#fff",
+  zIndex: theme.zIndex.drawer + 1,
+  backgroundColor: "rgba(0, 0, 0, 0.3)",
+}));
 
 /*
 
@@ -77,15 +84,7 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
   if (images.length === 1) {
     return (
       <>
-        <Backdrop
-          sx={{
-            color: "#fff",
-            zIndex: (theme) => theme.zIndex.drawer + 1,
-            backgroundColor: "rgba(0, 0, 0, 0.9)",
-          }}
-          open={open}
-          onClick={onClose}
-        >
+        <MyBackdrop open={open} onClick={onClose}>
           <ImageGrid
             container
             gap={2}
@@ -93,11 +92,11 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
             justifyContent="center"
             alignItems="center"
           >
-            <Grid item xs={2}>
+            <Grid item sx={{ width: "100%" }}>
               <Grid
                 container
                 direction="row"
-                justifyContent="center"
+                justifyContent="flex-end"
                 alignItems="center"
               >
                 <Grid item>
@@ -106,8 +105,8 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <IconButton onClick={onClose} sx={{ color: "#fff" }}>
-                    <CancelIcon />
+                  <IconButton onClick={onClose} sx={{ color: "#111" }}>
+                    <CancelIcon sx={{ width: "60px", height: "60px" }} />
                   </IconButton>
                 </Grid>
               </Grid>
@@ -127,24 +126,19 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
               )}
             </Grid>
           </ImageGrid>
-        </Backdrop>
+        </MyBackdrop>
       </>
     );
   }
 
   return (
     <>
-      <Backdrop
-        sx={{
-          color: "#fff",
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          backgroundColor: "rgba(0, 0, 0, 0.9)",
-        }}
-        open={open}
-      >
+      <MyBackdrop open={open}>
         <ImageGrid
           container
           gap={2}
+          direction="row"
+          wrap="nowrap"
           justifyContent="center"
           alignItems="center"
         >
@@ -153,7 +147,7 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
               sx={{ color: "#fff" }}
               onClick={(e) => handleSlideLeftPagination()}
             >
-              <LeftArrow />
+              <LeftArrow sx={{ width: "45px", height: "45px" }} />
             </IconButton>
           </Grid>
 
@@ -161,7 +155,9 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
             <Grid
               container
               gap={2}
-              justifyContent="flex-end"
+              direction="column"
+              wrap="nowrap"
+              justifyContent="center"
               alignItems="center"
             >
               <Grid item>
@@ -178,11 +174,12 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
                   </Grid>
                   <Grid item>
                     <IconButton onClick={onClose} sx={{ color: "#fff" }}>
-                      <CancelIcon />
+                      <CancelIcon sx={{ width: "45px", height: "45px" }} />
                     </IconButton>
                   </Grid>
                 </Grid>
               </Grid>
+
               <Grid item>
                 {isURL ? (
                   // if the isURL is false then I want to render a base64 image
@@ -199,16 +196,17 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
               </Grid>
             </Grid>
           </Grid>
+
           <Grid item xs={1}>
             <IconButton
               sx={{ color: "#fff" }}
               onClick={(e) => handleSlideRightPagination()}
             >
-              <RightArrow />
+              <RightArrow sx={{ width: "45px", height: "45px" }} />
             </IconButton>
           </Grid>
         </ImageGrid>
-      </Backdrop>
+      </MyBackdrop>
     </>
   );
 }

@@ -99,6 +99,11 @@ import NewVehicleDriveTypeInput from "../components/garage/NewVehicleDriveTypeIn
 import NewVehicleChangeGearInput from "../components/garage/NewVehicleChangeGearInput.component";
 import NewVehicleNODInput from "../components/garage/NewVehicleNODInput.component";
 import NewVehicleMOTInput from "../components/garage/NewVehicleMOTInput.component";
+import {
+  AllowedMimeTypes,
+  getFileMimeType,
+  isValidFileMimeType,
+} from "../lib/FileUploader";
 
 function Garage({ handleChangeTab }) {
   const { auth } = useAuth();
@@ -355,6 +360,17 @@ function Garage({ handleChangeTab }) {
 
   /* file upload methods */
   const handleVehiclePreviewChange = async (e) => {
+    const isValidMimeType = isValidFileMimeType(e.target.files[0]);
+    if (!isValidMimeType) {
+      toast.error(
+        `Hiba! A feltölteni kívánt állomány kiterjesztése nem támogatott! (.${getFileMimeType(
+          e.target.files[0]
+        )}) `
+      );
+      e.target.value = "";
+      return;
+    }
+
     const file = e.target.files[0];
     const base64 = await convertBase64(file);
     setNewVehicleWallpaperInBase64(base64);
@@ -376,6 +392,17 @@ function Garage({ handleChangeTab }) {
     setNewVehicleGalleryImageLoading(false);
   };
   const handleNewVehicleGalleryUpload = async (e) => {
+    const isValidMimeType = isValidFileMimeType(e.target.files[0]);
+    if (!isValidMimeType) {
+      toast.error(
+        `Hiba! A feltölteni kívánt állomány kiterjesztése nem támogatott! (.${getFileMimeType(
+          e.target.files[0]
+        )}) `
+      );
+      e.target.value = "";
+      return;
+    }
+
     setNewVehicleGalleryImageLoading(true);
     const attachments = [...newVehicleGallery];
 
@@ -896,6 +923,13 @@ function Garage({ handleChangeTab }) {
                           id="outlined-disabled"
                           type="file"
                           multiple
+                          inputProps={{
+                            accept:
+                              "image/jpeg, image/jpg, image/png, image/webp",
+                          }}
+                          helperText={`* Engedélyezett állomány kiterjesztések (${AllowedMimeTypes.map(
+                            (x) => ` ${x}`
+                          )})`}
                           onChange={(e) => handleNewVehicleGalleryUpload(e)}
                         />
                       </Grid>
