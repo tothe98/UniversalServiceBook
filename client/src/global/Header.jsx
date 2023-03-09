@@ -60,6 +60,12 @@ const LoginButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+const NameText = styled(Typography)(({ theme }) => ({
+  wordBreak: "break-all",
+  maxWidth: "250px",
+  width: "100%",
+}));
+
 function Header({ routes, handleChangeTab }) {
   const { auth } = useAuth();
   const underS = useMediaQuery(theme.breakpoints.down("sm"));
@@ -136,6 +142,11 @@ function Header({ routes, handleChangeTab }) {
           >
             <MyAvatar>
               <img
+                style={{
+                  objectFit: "scale-down",
+                  height: "40px",
+                  widht: "40px",
+                }}
                 src={
                   auth?.user?.picture !== undefined
                     ? auth.user.picture
@@ -144,11 +155,9 @@ function Header({ routes, handleChangeTab }) {
                 alt="profilkép"
               />
             </MyAvatar>
-            <ListItemText
-              primary={`${
-                auth.user && auth.user.lName + " " + auth.user.fName
-              }`}
-            />
+            <NameText>
+              {auth.user && auth.user.lName + " " + auth.user.fName}
+            </NameText>
           </ListItemButton>
         </ListItem>
       </>

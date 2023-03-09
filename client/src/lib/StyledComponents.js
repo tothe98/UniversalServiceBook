@@ -393,9 +393,9 @@ const ImageGrid = styled(Grid)(({ theme }) => ({
 }))
 
 const ViewImage = styled("img")(({ theme }) => ({
+    maxWidth: "700px",
     width: "100%",
-    minHeight: "100%",
-    maxHeight: "900px",
+    height: "auto",
     objectFit: "scale-down"
 }))
 const WarningImage = styled("img")(({ theme }) => ({

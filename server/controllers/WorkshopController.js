@@ -42,7 +42,7 @@ exports.addWorkshop = async (req, res) => {
                 user: req.userId,
                 data: JSON.stringify(req.body)
             })
-            return res.status(422).json({ message: 'EmailIsNotExists', data: {} })
+            return res.status(404).json({ message: 'EmailIsNotExists', data: {} })
         }
         const isAlreadyEmployeeOrOwner = await Workshops.findOne({ $or: [{ employees: isExistUser._id }, { _owner: isExistUser._id }] })
         if (isAlreadyEmployeeOrOwner) {

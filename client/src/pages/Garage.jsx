@@ -212,6 +212,11 @@ function Garage({ handleChangeTab }) {
       mileage: newVehicleKm,
     };
 
+    if (newVehicleVin.length < process.env.REACT_APP_MAXIMUM_VIN_LENGTH) {
+      toast.error("Hiba! Az alvázszám hossza nem megfelelő!");
+      return;
+    }
+
     if (!newVehicleManufacture["id"]) {
       toast.error("Hiba! Nem adta meg járművének gyártóját!");
       return;

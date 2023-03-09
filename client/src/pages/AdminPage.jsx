@@ -55,6 +55,12 @@ const MyTextField = styled(TextField)(({ theme }) => ({
   marginBottom: "0.6rem",
 }));
 
+const WorkshopFieldDetailField = styled(TextField)(({ theme }) => ({
+  wordBreak: "break-all",
+  maxWidth: "300px",
+  width: "100%",
+}));
+
 const CarDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialog-paper": {
     backgroundColor: "none",
@@ -126,7 +132,7 @@ function AdminPage() {
       isErrorWorkshopPhoneContact ||
       isErrorWorkshopEmailContact
     ) {
-      toast.error("Hiba! Valamelyik mezőt nem töltötte ki!");
+      toast.error("Hiba! Valamelyik mezőt nem/ vagy hibásan töltötte ki!");
       return;
     }
 
@@ -271,7 +277,7 @@ function AdminPage() {
 
   return (
     <React.Fragment>
-      <SubTitle variant="h3">Műhely kezelő</SubTitle>
+      <SubTitle variant="h3">Műhely-kezelő</SubTitle>
 
       <Grid container direction="row" gap={2} justifyContent="center">
         <Card variant="contained">

@@ -38,6 +38,12 @@ const SettingsButton = styled(Button)(({ theme }) => ({
   },
 }));
 
+const NameText = styled(Typography)(({ theme }) => ({
+  wordBreak: "break-all",
+  maxWidth: "250px",
+  width: "100%",
+}));
+
 function Profile({ handleChangeTab, loggedIn }) {
   const { auth } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
@@ -176,16 +182,16 @@ function Profile({ handleChangeTab, loggedIn }) {
                 </Grid>
 
                 <Grid item>
-                  <Typography align="center" variant="h2">
+                  <NameText align="center" variant="h2">
                     {auth.user && auth.user.lName}
-                  </Typography>
-                  <Typography
+                  </NameText>
+                  <NameText
                     align="center"
                     variant="h2"
                     sx={{ wordBreak: "break-word" }}
                   >
                     {auth.user && auth.user.fName}
-                  </Typography>
+                  </NameText>
                 </Grid>
               </Grid>
             </Grid>
@@ -204,20 +210,20 @@ function Profile({ handleChangeTab, loggedIn }) {
               />
             </Grid>
             <Grid item sx={{ width: "100%", height: "auto" }}>
-              <Typography
+              <NameText
                 align="center"
                 variant="h2"
                 sx={{ wordBreak: "break-word" }}
               >
                 {auth.user && auth.user.lName}
-              </Typography>
-              <Typography
+              </NameText>
+              <NameText
                 align="center"
                 variant="h2"
                 sx={{ wordBreak: "break-word" }}
               >
                 {auth.user && auth.user.fName}
-              </Typography>
+              </NameText>
             </Grid>
           </React.Fragment>
         )}

@@ -40,8 +40,8 @@ import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Person4Icon from '@mui/icons-material/Person4';
 import ChangeCircleIcon from '@mui/icons-material/ChangeCircle';
-import RightArrow from '@mui/icons-material/KeyboardArrowRight';
-import LeftArrow from '@mui/icons-material/KeyboardArrowLeft';
+import RightArrow from '@mui/icons-material/ArrowCircleRight';
+import LeftArrow from '@mui/icons-material/ArrowCircleLeft';
 import CancelIcon from '@mui/icons-material/Cancel';
 import WarningIcon from '../assets/warning.png'
 import VisibilityIcon from '@mui/icons-material/VisibilityOutlined';

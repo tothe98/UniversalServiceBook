@@ -92,7 +92,7 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
             justifyContent="center"
             alignItems="center"
           >
-            <Grid item sx={{ width: "100%" }}>
+            <Grid item xs={1}>
               <Grid
                 container
                 direction="row"
@@ -111,6 +111,7 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
                 </Grid>
               </Grid>
             </Grid>
+
             <Grid item xs>
               {isURL ? (
                 <ViewImage
@@ -137,21 +138,12 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
         <ImageGrid
           container
           gap={2}
-          direction="row"
+          direction="column"
           wrap="nowrap"
           justifyContent="center"
           alignItems="center"
         >
-          <Grid item xs={1}>
-            <IconButton
-              sx={{ color: "#fff" }}
-              onClick={(e) => handleSlideLeftPagination()}
-            >
-              <LeftArrow sx={{ width: "45px", height: "45px" }} />
-            </IconButton>
-          </Grid>
-
-          <Grid item xs>
+          <Grid item xs={5}>
             <Grid
               container
               gap={2}
@@ -197,13 +189,31 @@ function ImageViewer({ isURL, images, index, open, onClose }) {
             </Grid>
           </Grid>
 
-          <Grid item xs={1}>
-            <IconButton
-              sx={{ color: "#fff" }}
-              onClick={(e) => handleSlideRightPagination()}
+          <Grid item xs={7}>
+            <Grid
+              container
+              direction="row"
+              justifyContent="center"
+              alignItems="center"
             >
-              <RightArrow sx={{ width: "45px", height: "45px" }} />
-            </IconButton>
+              <Grid item>
+                <IconButton
+                  sx={{ color: "#fff" }}
+                  onClick={(e) => handleSlideLeftPagination()}
+                >
+                  <LeftArrow sx={{ width: "45px", height: "45px" }} />
+                </IconButton>
+              </Grid>
+
+              <Grid item>
+                <IconButton
+                  sx={{ color: "#fff" }}
+                  onClick={(e) => handleSlideRightPagination()}
+                >
+                  <RightArrow sx={{ width: "45px", height: "45px" }} />
+                </IconButton>
+              </Grid>
+            </Grid>
           </Grid>
         </ImageGrid>
       </MyBackdrop>

@@ -44,6 +44,13 @@ import {
   getFieldMessage,
 } from "../config/MessageHandler";
 
+const WorkshopFieldDetailField = styled(Typography)(({ theme }) => ({
+  wordBreak: "break-all",
+  maxWidth: "800px",
+  width: "100%",
+  fontWeight: "bold",
+}));
+
 function OwnerPage() {
   const theme = useTheme();
   const [isLoading, setIsLoading] = useState(true);
@@ -191,49 +198,49 @@ function OwnerPage() {
 
       {underSmall ? (
         <>
-          <Typography variant="h4">
+          <WorkshopFieldDetailField variant="h4">
             Műhely neve: <strong>{employeeWorkshop["name"]}</strong>
-          </Typography>
-          <Typography variant="h4">
+          </WorkshopFieldDetailField>
+          <WorkshopFieldDetailField variant="h4">
             Műhely címe:{" "}
             <strong>
               {employeeWorkshop["address"]}, {employeeWorkshop["city"]}
             </strong>
-          </Typography>
-          <Typography variant="h4">
+          </WorkshopFieldDetailField>
+          <WorkshopFieldDetailField variant="h4">
             Ország: <strong>{employeeWorkshop["country"]}</strong>
-          </Typography>
-          <Typography variant="h4">
+          </WorkshopFieldDetailField>
+          <WorkshopFieldDetailField variant="h4">
             Tulajdonos: <strong>{employeeWorkshop["owner"]}</strong>
-          </Typography>
-          <Typography variant="h4">
+          </WorkshopFieldDetailField>
+          <WorkshopFieldDetailField variant="h4">
             E-mail cím: <strong>{employeeWorkshop["email"]}</strong>
-          </Typography>
-          <Typography variant="h4">
+          </WorkshopFieldDetailField>
+          <WorkshopFieldDetailField variant="h4">
             Telefonszám: <strong>{employeeWorkshop["phone"]}</strong>
-          </Typography>
+          </WorkshopFieldDetailField>
         </>
       ) : (
         <dl>
           <dd>
-            <Typography variant="h4">
+            <WorkshopFieldDetailField variant="h4">
               Műhely neve: <strong>{employeeWorkshop["name"]}</strong>
-            </Typography>
-            <Typography variant="h4">
+            </WorkshopFieldDetailField>
+            <WorkshopFieldDetailField variant="h4">
               Műhely címe:{" "}
               <strong>
                 {employeeWorkshop["address"]}, {employeeWorkshop["city"]}
               </strong>
-            </Typography>
-            <Typography variant="h4">
+            </WorkshopFieldDetailField>
+            <WorkshopFieldDetailField variant="h4">
               Ország: <strong>{employeeWorkshop["country"]}</strong>
-            </Typography>
-            <Typography variant="h4">
+            </WorkshopFieldDetailField>
+            <WorkshopFieldDetailField variant="h4">
               Tulajdonos: <strong>{employeeWorkshop["owner"]}</strong>
-            </Typography>
-            <Typography variant="h4">
+            </WorkshopFieldDetailField>
+            <WorkshopFieldDetailField variant="h4">
               E-mail cím: <strong>{employeeWorkshop["email"]}</strong>
-            </Typography>
+            </WorkshopFieldDetailField>
             <Typography variant="h4">
               Telefonszám: <strong>{employeeWorkshop["phone"]}</strong>
             </Typography>

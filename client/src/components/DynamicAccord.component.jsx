@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import {
   AccordionDetails,
   AccordionSummary,
@@ -16,6 +17,12 @@ import {
 } from "../lib/StyledComponents";
 import theme from "../themes/theme";
 import ImageViewer from "./ImageViewer.component";
+
+const Description = styled(Typography)(({ theme }) => ({
+  maxWidth: "600px",
+  width: "100%",
+  wordBreak: "break-all",
+}));
 
 function DynamicAccord({ service, panel, serialNumber }) {
   const underMD = useMediaQuery(theme.breakpoints.down("md"));
@@ -113,23 +120,21 @@ function DynamicAccord({ service, panel, serialNumber }) {
           </SubTitle>
 
           {underS ? (
-            <Typography
+            <Description
               variant="body1"
-              sx={{ maxWidth: "600px" }}
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(service.description),
               }}
-            ></Typography>
+            ></Description>
           ) : (
             <dl>
               <dd>
-                <Typography
+                <Description
                   variant="body1"
-                  sx={{ maxWidth: "600px" }}
                   dangerouslySetInnerHTML={{
                     __html: DOMPurify.sanitize(service.description),
                   }}
-                ></Typography>
+                ></Description>
               </dd>
             </dl>
           )}
