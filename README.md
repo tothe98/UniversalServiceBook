@@ -14,7 +14,7 @@ MongoDB adatbázis szerver, ahol a `test` adatbázisban  léteznie kell az aláb
 - DesignTypes
 - Transmissions
 
-(A többi gyűjteményt az szoftver automatikusan generálja futás közben)
+(A többi gyűjteményt a szoftver automatikusan generálja futás közben)
 
 ##### __`.env` fájl létrehozása a server/config mappába__
 - `PORT="8080"`
