@@ -1,0 +1,1492 @@
+{
+	"info": {
+		"_postman_id": "d33b35d0-5fca-4009-9e1d-4030e7f53f0e",
+		"name": "UniversalServiceBook",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11632591"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "singUp",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status test\", function () {",
+									"    pm.response.to.have.status(409);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"fName\": \"Példa\",\r\n  \"lName\": \"Felhasználó\",\r\n  \"email\": \"pelda.felhasznalo@teszt.com\",\r\n  \"password\": \"12345678\",\r\n  \"phone\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/signup",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "signIn",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"pelda.felhasznalo@teszt.com\",\r\n    \"password\":\"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/signin",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "isLogged",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/isLoggedIn",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"isLoggedIn"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "emailConfirmation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"verificationCode\":\"3mn9b2YbtxpCgjRVEI7G\",\r\n    \"userId\":\"63cedba060b2d544e96c93f7\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/emailConfirmation",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"emailConfirmation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "isValidToken",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"token\": \"token\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/isValidToken",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"isValidToken"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "VehicleParameter",
+			"item": [
+				{
+					"name": "addCategory",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicleType\":\"Autó\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addCategory",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addCategory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getCategories",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "{{URL}}/getCategories",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getCategories"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addManufacture",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicleType\":\"637e08068850125b86f2ad69\",\n    \"manufacture\":\"Audi\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addManufacture",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addManufacture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getManufactures",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"category\":\"637e08068850125b86f2ad69\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/getManufactures",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getManufactures"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addModel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"manufacture\":\"637e11afbac824abedef9b8a\",\n    \"model\":\"A4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addModel",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addModel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getModels",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"manufacture\":\"6386aabc95f1d8f5460a5c36\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/getModels",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getModels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addFuel",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fuel\":\"Hibrid\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addFuel",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addFuel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getFuels",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/getFuels",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getFuels"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addDesignType",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicleType\":\"637e09118850125b86f2ad6e\",\n    \"designType\":\"Túra\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addDesignType",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addDesignType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDesignTypes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicleType\":\"637e09118850125b86f2ad6e\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/getDesignTypes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getDesignTypes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addDriveType",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicleType\":\"637e09118850125b86f2ad6e\",\n    \"driveType\":\"Szíj\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addDriveType",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addDriveType"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getDriveTypes",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicleType\": \"637e08068850125b86f2ad69\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/getDriveTypes",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getDriveTypes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addTransmission",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicleType\":\"637e09118850125b86f2ad6e\",\n    \"transmission\":\"Fokozatmentes automata\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addTransmission",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addTransmission"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTransmissions",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"vehicleType\": \"637e09118850125b86f2ad6e\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/getTransmissions",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getTransmissions"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mzc2MGQ4ODc4Mjc3Yzc1MTYxZTMwMzYiLCJlbWFpbCI6Im1lY3Nlay5sYWpvc0BlbWFpbC5jb20iLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjcwMzMyOTg0fQ.z88upJUp_N3tDq5pT9hM4LeK6OtsbrcUHOmRMJWsZBU",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "getUserData",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/getUserData",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getUserData"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateUser",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2Mzc0MTIwYzE0MmQzNzcwOTYzMDJhMzQiLCJlbWFpbCI6InBlbGRhQGVtYWlsLmNvbSIsInJvbGVzIjpbMjAwMSw2NTMwLDMwMzBdLCJpYXQiOjE2NzM5MDE1ODd9.YnvzvCJCQCKRPivreDBzSvNMQbcw8Adcki1YdCfb0ik",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "fName",
+									"value": "Frissített",
+									"type": "text"
+								},
+								{
+									"key": "lName",
+									"value": "Felhasználó",
+									"type": "text"
+								},
+								{
+									"key": "picture",
+									"type": "file",
+									"src": "/C:/Users/tothe/OneDrive/Asztali gép/tesztImage/dsc00531.jpg"
+								},
+								{
+									"key": "home",
+									"value": "Kőszeg",
+									"type": "text"
+								},
+								{
+									"key": "oldPassword",
+									"value": "Titok",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "newPassword",
+									"value": "titok",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/updateUser",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"updateUser"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgotPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"pelda.felhasznalo@teszt.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/forgotPassword",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"forgotPassword"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "newPassword",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\": \"63cee76ae4f0037c7c223e64\",\r\n    \"verificationCode\": \"VWUcTQjHk8AQtD6dgGKaMcrxQ\",\r\n    \"password\": \"12345678\",\r\n    \"cpassword\": \"12345678\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/newPassword",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"newPassword"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Vehicle",
+			"item": [
+				{
+					"name": "addVehicle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "picture",
+									"type": "file",
+									"src": [
+										"/C:/Users/tothe/OneDrive/Képek/ErikFS/logo.png",
+										"/C:/Users/tothe/OneDrive/Képek/ErikFS/logo.svg"
+									]
+								},
+								{
+									"key": "manufacture",
+									"value": "6386aaba95f1d8f5460a5b2c",
+									"type": "text"
+								},
+								{
+									"key": "model",
+									"value": "6386aac295f1d8f5460a5e2b",
+									"type": "text"
+								},
+								{
+									"key": "fuel",
+									"value": "638e48e4a7f2bd92a0519918",
+									"type": "text"
+								},
+								{
+									"key": "designType",
+									"value": "638e4e60cecb5381004410ec",
+									"type": "text"
+								},
+								{
+									"key": "driveType",
+									"value": "638e535ed24d672cb8d163e8",
+									"type": "text"
+								},
+								{
+									"key": "transmission",
+									"value": "638e56a84e91cb0297f08116",
+									"type": "text"
+								},
+								{
+									"key": "vin",
+									"value": "WAZZUMOOUZSAAQ",
+									"type": "text"
+								},
+								{
+									"key": "vintage",
+									"value": "2020",
+									"type": "text"
+								},
+								{
+									"key": "ownMass",
+									"value": "1200",
+									"type": "text"
+								},
+								{
+									"key": "fullMass",
+									"value": "2600",
+									"type": "text"
+								},
+								{
+									"key": "cylinderCapacity",
+									"value": "1996",
+									"type": "text"
+								},
+								{
+									"key": "performance",
+									"value": "150",
+									"type": "text"
+								},
+								{
+									"key": "nod",
+									"value": "GB",
+									"type": "text"
+								},
+								{
+									"key": "mileage",
+									"value": "196367",
+									"type": "text"
+								},
+								{
+									"key": "licenseNumber",
+									"value": "ABBA123",
+									"type": "text"
+								},
+								{
+									"key": "preview",
+									"type": "file",
+									"src": "/C:/Users/tothe/OneDrive/Asztali gép/tesztImage/h-preview.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/addVehicle",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addVehicle"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getVehicles",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/getVehicles",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getVehicles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getVehicleById",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/getVehicle/63cc0997840ee7cc52622a65",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getVehicle",
+								"63cc0997840ee7cc52622a65"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteVehicle",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/deleteVehicle/63cb1258238062ad857261b5",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"deleteVehicle",
+								"63cb1258238062ad857261b5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updateVehicle",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "deletedPictures",
+									"value": "uploads/63bea1b4392aeeb37d6a2c21/vehicles/75eb0cb292897866550d804768a2ffbe.png",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "picture",
+									"type": "file",
+									"src": [
+										"/C:/Users/tothe/OneDrive/Képek/ErikFS/cover2.png",
+										"/C:/Users/tothe/OneDrive/Képek/ErikFS/logoBlack.png",
+										"/C:/Users/tothe/OneDrive/Képek/ErikFS/twitch.png"
+									]
+								},
+								{
+									"key": "ownMass",
+									"value": "1300",
+									"type": "text"
+								},
+								{
+									"key": "fullMass",
+									"value": "2665",
+									"type": "text"
+								},
+								{
+									"key": "performance",
+									"value": "252",
+									"type": "text"
+								},
+								{
+									"key": "mot",
+									"value": "2024-10-10",
+									"type": "text"
+								},
+								{
+									"key": "nod",
+									"value": "HU",
+									"type": "text"
+								},
+								{
+									"key": "licenseNumber",
+									"value": "RIY707",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "preview",
+									"type": "file",
+									"src": "/C:/Users/tothe/OneDrive/Képek/ErikFS/logo.png",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/updateVehicle/63bea796392aeeb37d6a2c54",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"updateVehicle",
+								"63bea796392aeeb37d6a2c54"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "shareVehicle",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/shareVehicle/63cc0997840ee7cc52622a65",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"shareVehicle",
+								"63cc0997840ee7cc52622a65"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getPublicVehicle",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{URL}}/getPublicVehicle/63bea796392aeeb37d6a2c54",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getPublicVehicle",
+								"63bea796392aeeb37d6a2c54"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "changeOwner",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/changeOwner/63d90595c2266e3807c7e9bf",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"changeOwner",
+								"63d90595c2266e3807c7e9bf"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Workshop",
+			"item": [
+				{
+					"name": "getWorkshops",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/getWorkshops",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getWorkshops"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addNewWorkshop",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Példa Motorszervíz KFT.\",\r\n    \"country\":\"Magyarország\",\r\n    \"city\":\"Budapest\",\r\n    \"address\":\"Puskás Tivadar utca 11\",\r\n    \"phone\":\"+36305678762\",\r\n    \"email\":\"szerelo@motor.hu\",\r\n    \"owner\":\"user@gmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addNewWorkshop",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addNewWorkshop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteWorkshop",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/deleteWorkshop/63c1c5a53dc2bdb00d4baf66",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"deleteWorkshop",
+								"63c1c5a53dc2bdb00d4baf66"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getMyWorkshop",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/getMyWorkshop",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getMyWorkshop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "editWorkshop",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"Autó- és Motorszerelő KFT.\",\r\n    \"country\":\"Magyarország\",\r\n    \"city\":\"Kecskemét\",\r\n    \"address\":\"Zrínyi Ilona utca 15/A\",\r\n    \"phone\":\"+36211009653\",\r\n    \"email\":\"szerelo@motor.hu\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/editWorkshop",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"editWorkshop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getEmployees",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/getEmployees",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getEmployees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addEmployee",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"pelda@email.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{URL}}/addEmployee",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addEmployee"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "deleteEmployee",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/deleteEmployee/6374120c142d377096302a34",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"deleteEmployee",
+								"6374120c142d377096302a34"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getVehicleByVin",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/getVehicleByVin/IIEEOO933889WWW",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"getVehicleByVin",
+								"IIEEOO933889WWW"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "addServiceEntry",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "pictures",
+									"type": "file",
+									"src": [
+										"/C:/Users/tothe/OneDrive/Képek/ErikFS/cover2.png",
+										"/C:/Users/tothe/OneDrive/Képek/ErikFS/logo.png",
+										"/C:/Users/tothe/OneDrive/Képek/ErikFS/logoBlack.png"
+									]
+								},
+								{
+									"key": "vehicleID",
+									"value": "63bea796392aeeb37d6a2c54",
+									"type": "text"
+								},
+								{
+									"key": "date",
+									"value": "2023-01-14 10:10",
+									"type": "text"
+								},
+								{
+									"key": "mileage",
+									"value": "1045500",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "<html><head></head><body><h1>Helló</h1></body></html>",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/addServiceEntry",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"addServiceEntry"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "RecentActivations",
+			"item": [
+				{
+					"name": "serviceInformation",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/serviceInformation",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"serviceInformation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "lastViewed",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "token",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{URL}}/lastViewed",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"lastViewed"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "URL",
+			"value": "http://localhost:8080/api/v1",
+			"type": "string"
+		},
+		{
+			"key": "ProdURL",
+			"value": "https://api.uniszervizkonyv.hu/api/v1",
+			"type": "string"
+		}
+	]
+}

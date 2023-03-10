@@ -1,0 +1,191 @@
+[{
+  "_id": {
+    "$oid": "638e4e17cecb5381004410db"
+  },
+  "designType": "Terepjáró",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e2ccecb5381004410e0"
+  },
+  "designType": "Cabrio",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e3acecb5381004410e3"
+  },
+  "designType": "Egyterű",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e49cecb5381004410e6"
+  },
+  "designType": "Ferdehátú",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e56cecb5381004410e9"
+  },
+  "designType": "Kisbusz",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e60cecb5381004410ec"
+  },
+  "designType": "Kombi",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e72cecb5381004410ef"
+  },
+  "designType": "Lépcsőshátú",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e7ccecb5381004410f2"
+  },
+  "designType": "Sedan",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e8acecb5381004410f5"
+  },
+  "designType": "Sport",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4e8fcecb5381004410f8"
+  },
+  "designType": "SUV",
+  "_vehicleType": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4ed7cecb5381004410fd"
+  },
+  "designType": "Chopper",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4ee2cecb538100441101"
+  },
+  "designType": "Veterán",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4ef1cecb538100441104"
+  },
+  "designType": "Cross",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4f0dcecb538100441107"
+  },
+  "designType": "Enduro",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4f18cecb53810044110b"
+  },
+  "designType": "Sport",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4f23cecb53810044110e"
+  },
+  "designType": "Quad",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4f2ececb538100441111"
+  },
+  "designType": "Robogó",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4f3dcecb538100441114"
+  },
+  "designType": "Supermoto",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e4f46cecb538100441117"
+  },
+  "designType": "Túra",
+  "_vehicleType": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "isActive": true,
+  "__v": 0
+}]

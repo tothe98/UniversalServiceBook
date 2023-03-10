@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"vin":{"$numberInt":"1"}},"name":"vin_1","background":true,"unique":true}],"uuid":"aa931503ad0b45a3a10ee6994c2618ea","collectionName":"Vehicles","type":"collection"}

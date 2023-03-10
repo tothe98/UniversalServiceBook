@@ -1,0 +1,15 @@
+[{
+  "_id": {
+    "$oid": "637e08068850125b86f2ad69"
+  },
+  "vehicleType": "Autó",
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "637e09118850125b86f2ad6e"
+  },
+  "vehicleType": "Motorkerékpár",
+  "isActive": true,
+  "__v": 0
+}]

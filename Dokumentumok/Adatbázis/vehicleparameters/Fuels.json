@@ -1,0 +1,29 @@
+[{
+  "_id": {
+    "$oid": "6388ac80f2142189bf4c84a0"
+  },
+  "fuel": "Benzin",
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e48e4a7f2bd92a0519918"
+  },
+  "fuel": "Dízel",
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "638e48fba7f2bd92a051991e"
+  },
+  "fuel": "Elektromos",
+  "isActive": true,
+  "__v": 0
+},{
+  "_id": {
+    "$oid": "63b46b6639585c1ae7833ea3"
+  },
+  "fuel": "Hibrid",
+  "isActive": true,
+  "__v": 0
+}]

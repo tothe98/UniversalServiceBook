@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"29c6675cf1b04b7d9373e6d0b42c1ab5","collectionName":"Fuels","type":"collection"}
